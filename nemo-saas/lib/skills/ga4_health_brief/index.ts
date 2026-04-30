@@ -28,7 +28,8 @@ import type { Connector, Site } from "@/lib/db/types";
 export const Input = z.object({
   windowDays: z.number().int().min(7).max(90).default(28),
 });
-export type Input = z.infer<typeof Input>;
+// z.input lets callers omit fields with .default(); Input.parse() fills them in.
+export type Input = z.input<typeof Input>;
 
 const Window = z.object({
   sessions: z.number().int(),

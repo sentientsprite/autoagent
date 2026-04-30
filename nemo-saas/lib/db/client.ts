@@ -1,4 +1,4 @@
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { createClient as createSupabaseClient, type SupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
@@ -22,7 +22,7 @@ export async function dbAsUser(): Promise<SupabaseClient> {
   return createServerClient(url, anon, {
     cookies: {
       getAll: () => cookieStore.getAll(),
-      setAll: (toSet) => {
+      setAll: (toSet: { name: string; value: string; options: CookieOptions }[]) => {
         for (const { name, value, options } of toSet) {
           cookieStore.set(name, value, options);
         }

@@ -47,7 +47,8 @@ export const Input = z.object({
   endDate: z.string().default("today"),
   rowLimit: z.number().int().min(1).max(25_000).default(5_000),
 });
-export type Input = z.infer<typeof Input>;
+// z.input lets callers omit fields with .default(); Input.parse() fills them in.
+export type Input = z.input<typeof Input>;
 
 const Opportunity = z.object({
   page: z.string(),

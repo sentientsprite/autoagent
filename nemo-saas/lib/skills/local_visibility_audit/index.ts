@@ -41,7 +41,9 @@ export const Input = z.object({
   /** When known (paid tier), pass real review velocity; the wedge estimates. */
   reviewsLast90d: z.number().int().optional(),
 });
-export type Input = z.infer<typeof Input>;
+// Use z.input so callers can omit fields that have .default() — runtime
+// Input.parse() fills them in. z.infer/z.output is for what the parser returns.
+export type Input = z.input<typeof Input>;
 
 const GradedOutput = z.object({
   grade: z.enum(["A", "B", "C", "D", "F"]),

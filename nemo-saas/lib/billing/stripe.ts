@@ -8,7 +8,9 @@ export function stripe(): Stripe {
   if (cached) return cached;
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) throw new Error("STRIPE_SECRET_KEY missing");
-  cached = new Stripe(key, { apiVersion: "2024-12-18.acacia" });
+  // Pin to the SDK's current default API version. Bump intentionally when
+  // upgrading the stripe package; do not chase versions silently.
+  cached = new Stripe(key);
   return cached;
 }
 
