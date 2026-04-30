@@ -1,0 +1,27 @@
+{
+  "business": {
+    "name": "Hudson Plumbing Co.",
+    "zip": "80301",
+    "website": "https://hudsonplumbing.example",
+    "city": "Boulder",
+    "region": "CO"
+  },
+  "gbp_profile": {
+    "hasName": true,
+    "hasAddress": true,
+    "hasPhone": false,
+    "hasWebsite": true,
+    "hasHours": false,
+    "hasPrimaryCategory": true,
+    "photoCount": 4,
+    "serviceAreaZipCount": 4,
+    "expectedServiceAreaZipCount": 4,
+    "reviewCount": 38,
+    "avgRating": 4.6,
+    "reviewsLast90d": 1
+  },
+  "nap_records": [
+    { "source": "yelp",   "name": "Hudson Plumbing Co.", "address": "1 Pearl St, Boulder, CO 80301", "phone": "303-555-0100" },
+    { "source": "bbb",    "name": "Hudson Plumbing Co.", "address": "1 Pearl St, Boulder, CO 80301", "phone": "303-555-0100" }
+  ]
+}

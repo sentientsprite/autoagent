@@ -1,0 +1,8 @@
+name = "gsc.case_01_basic_pos_4_to_15"
+skill = "gsc_opportunity_finder"
+description = "Small GSC export — agent must surface the queries with high impressions in pos 4-15 grouped by page."
+timeout_sec = 120
+difficulty = "medium"
+
+[meta]
+expected_top_page = "https://example.com/services/water-heater-repair"

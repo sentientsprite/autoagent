@@ -5,6 +5,7 @@ __pycache__/
 
 # Virtual environments
 .venv
+venv/
 
 # Secrets
 .env
@@ -14,10 +15,13 @@ __pycache__/
 results.tsv
 run.log
 jobs/
-tasks/
 tasks-archived/
 tasks-archived-sheets/
 tasks-sheets-verified/
 tasks-sheets/
+
+# nemo-saas/ Phase 4 scaffold deps (not built yet, gated by M-SEP-30)
+nemo-saas/node_modules/
+nemo-saas/.next/
 
 dev/

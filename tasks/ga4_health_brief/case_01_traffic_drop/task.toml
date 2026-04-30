@@ -1,0 +1,8 @@
+name = "ga4.case_01_traffic_drop"
+skill = "ga4_health_brief"
+description = "Sessions down >15% MoM with high bounce — should fire ga.traffic_drop and ga.high_bounce."
+timeout_sec = 120
+difficulty = "easy"
+
+[meta]
+expected_rule_ids = ["ga.traffic_drop", "ga.high_bounce"]

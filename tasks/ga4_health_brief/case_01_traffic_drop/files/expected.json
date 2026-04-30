@@ -1,0 +1,4 @@
+{
+  "rule_ids": ["ga.traffic_drop", "ga.high_bounce"],
+  "must_not_fire": ["ga.traffic_spike", "ga.shallow_engagement", "ga.seo_opportunity"]
+}

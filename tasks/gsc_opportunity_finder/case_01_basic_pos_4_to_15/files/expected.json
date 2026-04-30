@@ -1,0 +1,10 @@
+{
+  "pages": [
+    "https://example.com/services/water-heater-repair",
+    "https://example.com/services/drain-cleaning",
+    "https://example.com/"
+  ],
+  "must_not_appear": [
+    "https://example.com/services/emergency"
+  ]
+}

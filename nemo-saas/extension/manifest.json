@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Nemo Growth Coach",
+  "version": "0.2.0",
+  "description": "In-flow SEO/marketing insights inside Google Analytics, Search Console, and Google Business Profile.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Nemo Growth Coach"
+  },
+  "background": { "service_worker": "background.js", "type": "module" },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://analytics.google.com/*",
+        "https://search.google.com/search-console/*",
+        "https://business.google.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": [
+    "https://app.nemo.local/*",
+    "https://analytics.google.com/*",
+    "https://search.google.com/*",
+    "https://business.google.com/*"
+  ],
+  "options_page": "options.html"
+}

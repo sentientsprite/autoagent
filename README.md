@@ -12,6 +12,26 @@
 
 > Like autoresearch but for agent engineering. Give an AI agent a task, let it build and iterate on an agent harness autonomously overnight. It modifies the system prompt, tools, agent configuration, and orchestration, runs the benchmark, checks the score, keeps or discards the change, and repeats.
 
+---
+
+> **This repo is a component of [Prana Marketing Solutions](https://github.com/sentientsprite/NEMO-APP-v.1).**
+> Two roles right now:
+>
+> - **SkillEval** ([`tasks/`](tasks/)) — Harbor regression tests scoring
+>   the agent skills that Prana's `openclaw` runtime executes. Active
+>   today; runs nightly; mean ≥ 0.85 / min ≥ 0.70 per skill is the release gate.
+> - **Phase 4 — Nemo SaaS** ([`nemo-saas/`](nemo-saas/)) —
+>   productization scaffold for turning Prana's stack into a multi-tenant
+>   B2B SaaS. **Dormant** until Prana hits the M-SEP-30 milestone in
+>   [NEMO-APP-v.1/MILESTONES.md](https://github.com/sentientsprite/NEMO-APP-v.1/blob/main/MILESTONES.md).
+>
+> Strategy, pricing, ICP, and pipeline live in the trunk:
+> [BUSINESS_PLAN.md](https://github.com/sentientsprite/NEMO-APP-v.1/blob/main/BUSINESS_PLAN.md).
+> See [`.prana/component.yaml`](.prana/component.yaml) for this repo's
+> declared role and reporting cadence.
+
+---
+
 ![teaser](progress.png)
 
 The core idea is the same: you're not touching the harness Python files like you normally would as an engineer. Instead, you program `program.md`, the Markdown file that provides context to the meta-agent and defines the agent-engineering loop.

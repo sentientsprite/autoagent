@@ -1,0 +1,27 @@
+{
+  "business": {
+    "name": "Greenline Landscaping",
+    "zip": "80302",
+    "website": "https://greenline.example",
+    "city": "Boulder",
+    "region": "CO"
+  },
+  "gbp_profile": {
+    "hasName": true,
+    "hasAddress": true,
+    "hasPhone": true,
+    "hasWebsite": true,
+    "hasHours": true,
+    "hasPrimaryCategory": true,
+    "photoCount": 47,
+    "serviceAreaZipCount": 6,
+    "expectedServiceAreaZipCount": 6,
+    "reviewCount": 184,
+    "avgRating": 4.8,
+    "reviewsLast90d": 12
+  },
+  "nap_records": [
+    { "source": "yelp", "name": "Greenline Landscaping", "address": "20 Folsom St, Boulder, CO 80302", "phone": "303-555-0188" },
+    { "source": "bbb",  "name": "Greenline Landscaping", "address": "20 Folsom St, Boulder, CO 80302", "phone": "303-555-0188" }
+  ]
+}

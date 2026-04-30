@@ -1,0 +1,44 @@
+# Declares this repo's role in Prana Marketing Solutions.
+# Trunk: https://github.com/sentientsprite/NEMO-APP-v.1
+# Schema: https://github.com/sentientsprite/NEMO-APP-v.1/blob/main/templates/component.yaml.example
+
+id: autoagent
+
+role: skill_eval_and_phase4_saas
+
+business_plan_section: "5 — Operations & Technology (quality net) + Phase 4 productization (post-Sept 30 gate)"
+
+trunk:
+  repo: sentientsprite/NEMO-APP-v.1
+
+owners:
+  - raymond
+
+cadence: nightly
+
+provides:
+  - skilleval_regression_tests   # tasks/ — Harbor task packs scoring agent skill outputs
+  - autoagent_meta_loop          # agent.py + program.md — autonomous agent-engineering loop (upstream thirdlayer/autoagent)
+  - nemo_saas_scaffold         # nemo-saas/ — Phase 4 productization scaffold (Next.js + Supabase + Inngest)
+
+depends_on:
+  - openclaw                     # SkillEval cases mirror openclaw's agent skills
+  - nemo-workspace               # SkillEval cases reference agent personas / playbooks here
+
+local:
+  workspace: ~/autoagent
+
+phase: |
+  Active for: SkillEval (Harbor regression tests run nightly).
+  Dormant for: nemo-saas/ — gated by M-SEP-30 (Prana hitting $4,500+
+  verified MRR). Until then, treat nemo-saas/ as a scaffold-on-ice.
+
+notes: |
+  This repo is a fork of thirdlayer/autoagent. Two distinct surfaces:
+
+  1. The autoagent harness itself (agent.py, program.md, tasks/) —
+     general-purpose autonomous agent-engineering loop.
+  2. SkillEval (tasks/) — Harbor task packs that score Prana's agent
+     skill outputs as a release gate. Mean ≥ 0.85, min ≥ 0.70 per skill.
+  3. nemo-saas/ — Phase 4 SaaS productization scaffold. Activated only
+     after M-SEP-30 in NEMO-APP-v.1/MILESTONES.md.

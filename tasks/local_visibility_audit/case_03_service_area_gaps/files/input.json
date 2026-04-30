@@ -1,0 +1,24 @@
+{
+  "business": {
+    "name": "Front Range HVAC",
+    "zip": "80303",
+    "website": "https://frontrangehvac.example",
+    "city": "Boulder",
+    "region": "CO"
+  },
+  "gbp_profile": {
+    "hasName": true,
+    "hasAddress": true,
+    "hasPhone": true,
+    "hasWebsite": true,
+    "hasHours": true,
+    "hasPrimaryCategory": true,
+    "photoCount": 22,
+    "serviceAreaZipCount": 2,
+    "expectedServiceAreaZipCount": 6,
+    "reviewCount": 67,
+    "avgRating": 4.5,
+    "reviewsLast90d": 5
+  },
+  "nap_records": []
+}

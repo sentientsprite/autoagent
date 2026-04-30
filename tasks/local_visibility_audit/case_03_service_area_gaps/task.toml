@@ -1,0 +1,8 @@
+name = "lvs.case_03_service_area_gaps"
+skill = "local_visibility_audit"
+description = "Listed in 2 zips but configured for 6 — should fire service_area_gaps."
+timeout_sec = 120
+difficulty = "easy"
+
+[meta]
+expected_rule_ids = ["gbp.service_area_gaps"]

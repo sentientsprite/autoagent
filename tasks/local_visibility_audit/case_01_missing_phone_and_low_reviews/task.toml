@@ -1,0 +1,8 @@
+name = "lvs.case_01_missing_phone_and_low_reviews"
+skill = "local_visibility_audit"
+description = "Solo plumber with incomplete GBP (missing phone, hours) and review velocity stalled."
+timeout_sec = 120
+difficulty = "easy"
+
+[meta]
+expected_rule_ids = ["gbp.profile_incomplete", "gbp.thin_photos", "gbp.low_review_velocity"]

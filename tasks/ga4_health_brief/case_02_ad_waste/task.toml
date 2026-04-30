@@ -1,0 +1,8 @@
+name = "ga4.case_02_ad_waste"
+skill = "ga4_health_brief"
+description = "Paid >40% of sessions and bouncing 0.62 — must fire ga.ad_waste plus ga.high_bounce."
+timeout_sec = 120
+difficulty = "medium"
+
+[meta]
+expected_rule_ids = ["ga.ad_waste", "ga.high_bounce", "ga.seo_opportunity"]

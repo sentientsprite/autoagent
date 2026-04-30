@@ -1,0 +1,8 @@
+name = "lvs.case_02_high_rating_complete_profile"
+skill = "local_visibility_audit"
+description = "Healthy GBP — should fire NO critical/warning rules. Tests precision (over-warning is a regression)."
+timeout_sec = 120
+difficulty = "easy"
+
+[meta]
+expected_rule_ids = []

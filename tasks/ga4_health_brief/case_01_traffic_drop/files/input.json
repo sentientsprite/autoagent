@@ -1,0 +1,16 @@
+{
+  "current": {
+    "sessions": 4200,
+    "users": 3100,
+    "bounceRate": 0.68,
+    "avgSessionDurationSec": 65,
+    "channels": { "organic": 1100, "paid": 900, "direct": 1300, "social": 600, "referral": 300 }
+  },
+  "prior": {
+    "sessions": 5400,
+    "users": 4000,
+    "bounceRate": 0.55,
+    "avgSessionDurationSec": 80,
+    "channels": { "organic": 1500, "paid": 800, "direct": 1700, "social": 900, "referral": 500 }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "rule_ids": [],
+  "must_not_fire": [
+    "gbp.profile_incomplete",
+    "gbp.thin_photos",
+    "gbp.service_area_gaps",
+    "gbp.low_review_velocity",
+    "gbp.rating_under_4_2",
+    "nap.inconsistent"
+  ]
+}

@@ -1,0 +1,15 @@
+[
+  { "query": "water heater repair boulder", "page": "https://example.com/services/water-heater-repair", "clicks": 22, "impressions": 1840, "ctr": 0.012, "position": 7.4 },
+  { "query": "tankless water heater install",  "page": "https://example.com/services/water-heater-repair", "clicks": 18, "impressions": 1320, "ctr": 0.014, "position": 8.1 },
+  { "query": "broken water heater fix",        "page": "https://example.com/services/water-heater-repair", "clicks": 9,  "impressions": 740,  "ctr": 0.012, "position": 9.2 },
+
+  { "query": "drain cleaning boulder",         "page": "https://example.com/services/drain-cleaning",      "clicks": 6,  "impressions": 410,  "ctr": 0.015, "position": 11.0 },
+  { "query": "kitchen sink clog",              "page": "https://example.com/services/drain-cleaning",      "clicks": 4,  "impressions": 320,  "ctr": 0.013, "position": 12.5 },
+
+  { "query": "best plumber boulder",           "page": "https://example.com/",                              "clicks": 12, "impressions": 600,  "ctr": 0.020, "position": 6.5 },
+
+  { "query": "frozen pipe repair",             "page": "https://example.com/services/emergency",            "clicks": 3,  "impressions": 95,   "ctr": 0.032, "position": 9.0 },
+  { "query": "cheap plumber",                  "page": "https://example.com/",                              "clicks": 1,  "impressions": 80,   "ctr": 0.013, "position": 14.0 },
+  { "query": "plumber 80301 free",             "page": "https://example.com/",                              "clicks": 0,  "impressions": 60,   "ctr": 0.0,   "position": 18.0 },
+  { "query": "rooter service",                 "page": "https://example.com/services/drain-cleaning",      "clicks": 0,  "impressions": 30,   "ctr": 0.0,   "position": 22.0 }
+]

@@ -1,0 +1,9 @@
+{
+  "rule_ids": ["gbp.service_area_gaps"],
+  "must_not_fire": [
+    "gbp.profile_incomplete",
+    "gbp.thin_photos",
+    "gbp.low_review_velocity",
+    "gbp.rating_under_4_2"
+  ]
+}

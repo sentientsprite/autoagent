@@ -1,0 +1,26 @@
+project_id = "nemo-saas"
+
+[api]
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[storage]
+file_size_limit = "50MiB"
+
+[storage.buckets.artifacts]
+public = false
+file_size_limit = "50MiB"
+
+[storage.buckets.public-reports]
+public = true
+file_size_limit = "10MiB"
+
+[auth]
+enable_signup = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/api/oauth/google/callback"]
