@@ -9,6 +9,7 @@ have to fork the gateway. Each file documents its provenance.
 | [`rule-engine.ts`](rule-engine.ts) | `DGTL-MKTG-ASST-main/background.js` `analyzeDataWithAI()` | Deterministic GA4 / GBP / NAP rules. Server-side, tenant-aware, stable rule ids for Harbor verifiers. |
 | [`playbook.ts`](playbook.ts) | nemo-workspace markdown pattern (`AGENTS.md`, `MEMORY.md`, `SOUL.md`) | Renders a per-tenant Markdown playbook used as system prompt for narrative LLM calls. |
 | [`llm.ts`](llm.ts) | new (Vercel AI SDK) | One choke point for narrative model calls so prompts/usage stay observable. |
+| [`stub.ts`](stub.ts) | new | Helper for skills that are advertised in PLAN_JOBS / pricing.md but not implemented yet. Each stub is gated on a milestone in NEMO-APP-v.1/MILESTONES.md. |
 | [`../../crawler/client.ts`](../../crawler/client.ts) | Nemo `src/browser/` Playwright wiring | Snapshots a URL via the worker; falls back to `fetch + cheerio` for tests. |
 
 ## Rules-as-data

@@ -15,6 +15,10 @@ import { dbAsService } from "@/lib/db/client";
 import { run as runLvs } from "@/lib/skills/local_visibility_audit";
 import { run as runGsc } from "@/lib/skills/gsc_opportunity_finder";
 import { run as runGa4 } from "@/lib/skills/ga4_health_brief";
+import { run as runLocalLandingBuilder } from "@/lib/skills/local_landing_builder";
+import { run as runPaidQa } from "@/lib/skills/paid_qa";
+import { run as runReputationLoop } from "@/lib/skills/reputation_loop";
+import { run as runCompetitorPulse } from "@/lib/skills/competitor_pulse";
 import type { Connector, Site } from "@/lib/db/types";
 
 // =============================================================================
@@ -175,6 +179,17 @@ async function runSkillByKind(db: ReturnType<typeof dbAsService>, job: JobRow): 
       const r = await runGa4({ connector: c, site, withNarrative: true });
       return r.deterministic;
     }
+    // ----- Stubs: advertised in PLAN_JOBS but gated on a milestone. -----
+    // Each throws NonRetriableError so Inngest does not retry; the dashboard
+    // surfaces the milestone in error_message. See lib/skills/_shared/stub.ts.
+    case "local_landing_builder":
+      return (await runLocalLandingBuilder({}, {})).deterministic;
+    case "paid_qa":
+      return (await runPaidQa({}, {})).deterministic;
+    case "reputation_loop":
+      return (await runReputationLoop({}, {})).deterministic;
+    case "competitor_pulse":
+      return (await runCompetitorPulse({}, {})).deterministic;
     default:
       throw new NonRetriableError(`unsupported_kind:${job.kind}`);
   }

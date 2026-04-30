@@ -8,9 +8,20 @@
 | Tier | Price | ICP | Included skills (scheduled) | On-demand |
 |---|---|---|---|---|
 | **Free / Wedge** | $0 | Anyone running the LVS audit | none scheduled | `local_visibility_audit` (one shot, emailed PDF) |
-| **Nemo Local — Local Autopilot** | $99/mo (solo) · $199/mo (multi-tech) | Home services SMB | `local_visibility_audit` weekly · `reputation_loop` weekly · `local_landing_builder` monthly · `ga4_health_brief` monthly | All of the above + `local_visibility_audit` ad-hoc |
-| **Nemo Growth — Growth Operator** | $299/mo (single site) · $599/mo (3 sites) · $799/mo (5 sites) | Growing online business (e-com, SaaS, info-product, local chains) | `gsc_opportunity_finder` weekly · `ga4_health_brief` monthly · `paid_qa` weekly · `local_landing_builder` monthly · everything in Local | Includes Chrome extension |
-| **Nemo Agency** (phase 3) | $499/mo per analyst seat OR $1,999/mo for 25 client locations | Local agencies / fractional CMOs | All skills incl. `competitor_pulse` | White-label PDFs, multi-client workspace, REST API |
+| **Nemo Local — Local Autopilot** | $99/mo (solo) · $199/mo (multi-tech) | Home services SMB | `local_visibility_audit` weekly · `reputation_loop` weekly † · `local_landing_builder` monthly † · `ga4_health_brief` monthly | All of the above + `local_visibility_audit` ad-hoc |
+| **Nemo Growth — Growth Operator** | $299/mo (single site) · $599/mo (3 sites) · $799/mo (5 sites) | Growing online business (e-com, SaaS, info-product, local chains) | `gsc_opportunity_finder` weekly · `ga4_health_brief` monthly · `paid_qa` weekly † · `local_landing_builder` monthly † · everything in Local | Includes Chrome extension |
+| **Nemo Agency** (phase 3) | $499/mo per analyst seat OR $1,999/mo for 25 client locations | Local agencies / fractional CMOs | All skills incl. `competitor_pulse` † | White-label PDFs, multi-client workspace, REST API |
+
+> **†** Skill is defined in `lib/skills/<kind>/` as a stub gated on a milestone:
+> `local_landing_builder` → M-MAY-15 (Beacon launch).
+> `reputation_loop` → M-JUN-15 (Echo launch).
+> `paid_qa` → M-JUL-15 (Bloom launch + Google Ads OAuth verification).
+> `competitor_pulse` → M-SEP-30 (Phase 4 SaaS activation).
+> See [NEMO-APP-v.1/MILESTONES.md](https://github.com/sentientsprite/NEMO-APP-v.1/blob/main/MILESTONES.md).
+> Until each milestone hits, the skill throws `not_implemented_yet:<kind>`
+> with the gating milestone in the error message. Scheduling is allowed
+> (so a customer can opt into the launch) but each run fails fast and
+> the dashboard surfaces the milestone instead of an opaque error.
 
 Add-ons (any tier above Free):
 

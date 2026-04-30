@@ -11,16 +11,6 @@ type Events = {
       kind: JobKind;
     };
   };
-  "nemo/lvs.requested": {
-    data: {
-      leadId: string;
-      jobId: string;
-      businessName: string;
-      zip: string;
-      websiteUrl?: string;
-      email: string;
-    };
-  };
   "nemo/site.report.monthly": {
     data: { siteId: string; orgId: string };
   };
