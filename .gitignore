@@ -25,3 +25,7 @@ nemo-saas/node_modules/
 nemo-saas/.next/
 
 dev/
+
+# Local clones for inspecting external repos (never commit)
+_vendor-openclaw/
+_vendor-nemo-workspace/
