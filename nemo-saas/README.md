@@ -17,6 +17,20 @@ The scaffold implements a slim, multi-tenant SMB marketing SaaS — wedge
 Phase 4 activates, this is the codebase that productizes Beacon, Echo,
 and Bloom for buyers outside Raymond's hand-delivered agency clients.
 
+## Customer-facing UI screenshots
+
+The live wedge landing lives at **`/`** (`app/(marketing)/`). To regenerate PNGs for decks or listings:
+
+```bash
+npm install && npx playwright install chromium
+npm run dev   # in one terminal
+npm run screenshots:products   # in another; outputs under product-screenshots/
+```
+
+Use `BASE_URL=https://…` to capture a deployed **`nemo-app-v-1`** build instead of localhost. Details in [`product-screenshots/README.md`](product-screenshots/README.md).
+
+> Today this repo only exposes that **single marketing route** as code. Beacon / Echo / Bloom SKUs in [`BUSINESS_PLAN.md`](https://github.com/sentientsprite/NEMO-APP-v.1/blob/main/BUSINESS_PLAN.md) are not separate pages here yet — use deck mocks or export those UIs when those surfaces ship.
+
 ## When Phase 4 activates, start here
 
 - **Run it locally in 30 minutes** → [`QUICKSTART.md`](QUICKSTART.md)
