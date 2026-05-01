@@ -26,7 +26,10 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
         <Link href="/" style={{ fontWeight: 700, fontSize: 14, color: "#111", textDecoration: "none" }}>
           NEMO LOCAL
         </Link>
-        <nav style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
+        <nav style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center" }}>
+          <Link href="/portal" style={navLink}>
+            Customer portal
+          </Link>
           <Link href="/products/beacon" style={navLink}>
             Beacon
           </Link>
@@ -38,6 +41,10 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
           </Link>
           <Link href="/" style={navLink}>
             Free score
+          </Link>
+          <span style={{ color: "#ccc", userSelect: "none" }}>|</span>
+          <Link href="/team" style={{ ...navLink, color: "#64748b", fontSize: 13 }}>
+            Team
           </Link>
         </nav>
       </header>

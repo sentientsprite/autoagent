@@ -27,7 +27,7 @@ npm run dev   # in one terminal
 npm run screenshots:products   # in another; outputs under product-screenshots/
 ```
 
-Customer-facing routes live under **`app/(marketing)/`**: **`/`** (free Local Visibility Score), **`/?demo=post-submit`** (screenshot-only scorecard state), and **`/products/beacon`**, **`/products/echo`**, **`/products/bloom`** (add-on SKUs aligned with [`BUSINESS_PLAN.md`](https://github.com/sentientsprite/NEMO-APP-v.1/blob/main/BUSINESS_PLAN.md)).
+Customer-facing routes live under **`app/(marketing)/`**: **`/`**, **`/portal`** (buyer tools), **`/team`** (employee bookmarks, `noindex`), **`/products/*`**, demo scorecard query on `/`. Access matrix: **[`docs/ACCESS_AND_PORTALS.md`](docs/ACCESS_AND_PORTALS.md)**.
 
 Use `BASE_URL=https://…` to capture a deployed **`nemo-app-v-1`** build instead of localhost (that project must deploy **this** Next app — see trunk [`README.md`](https://github.com/sentientsprite/NEMO-APP-v.1/blob/main/README.md) § customer vs internal). Details in [`product-screenshots/README.md`](product-screenshots/README.md).
 
@@ -50,7 +50,7 @@ Use `BASE_URL=https://…` to capture a deployed **`nemo-app-v-1`** build instea
 ```
 nemo-saas/
 ├── app/                       # Next.js App Router (web + API)
-│   ├── (marketing)/           # Wedge `/`, demo scorecard, `/products/*` SKUs
+│   ├── (marketing)/           # `/`, `/portal`, `/team`, `/products/*`
 │   ├── (app)/                 # Authenticated dashboard
 │   └── api/                   # API routes (oauth, inngest, stripe webhook, lvs)
 ├── lib/
