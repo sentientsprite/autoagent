@@ -19,7 +19,7 @@ and Bloom for buyers outside Raymond's hand-delivered agency clients.
 
 ## Customer-facing UI screenshots
 
-The live wedge landing lives at **`/`** (`app/(marketing)/`). To regenerate PNGs for decks or listings:
+To regenerate PNGs for decks or listings (wedge, demo scorecard, Beacon/Echo/Bloom pages):
 
 ```bash
 npm install && npx playwright install chromium
@@ -27,9 +27,9 @@ npm run dev   # in one terminal
 npm run screenshots:products   # in another; outputs under product-screenshots/
 ```
 
-Use `BASE_URL=https://…` to capture a deployed **`nemo-app-v-1`** build instead of localhost. Details in [`product-screenshots/README.md`](product-screenshots/README.md).
+Customer-facing routes live under **`app/(marketing)/`**: **`/`** (free Local Visibility Score), **`/?demo=post-submit`** (screenshot-only scorecard state), and **`/products/beacon`**, **`/products/echo`**, **`/products/bloom`** (add-on SKUs aligned with [`BUSINESS_PLAN.md`](https://github.com/sentientsprite/NEMO-APP-v.1/blob/main/BUSINESS_PLAN.md)).
 
-> Today this repo only exposes that **single marketing route** as code. Beacon / Echo / Bloom SKUs in [`BUSINESS_PLAN.md`](https://github.com/sentientsprite/NEMO-APP-v.1/blob/main/BUSINESS_PLAN.md) are not separate pages here yet — use deck mocks or export those UIs when those surfaces ship.
+Use `BASE_URL=https://…` to capture a deployed **`nemo-app-v-1`** build instead of localhost (that project must deploy **this** Next app — see trunk [`README.md`](https://github.com/sentientsprite/NEMO-APP-v.1/blob/main/README.md) § customer vs internal). Details in [`product-screenshots/README.md`](product-screenshots/README.md).
 
 ## When Phase 4 activates, start here
 
@@ -50,7 +50,7 @@ Use `BASE_URL=https://…` to capture a deployed **`nemo-app-v-1`** build instea
 ```
 nemo-saas/
 ├── app/                       # Next.js App Router (web + API)
-│   ├── (marketing)/           # Wedge landing page
+│   ├── (marketing)/           # Wedge `/`, demo scorecard, `/products/*` SKUs
 │   ├── (app)/                 # Authenticated dashboard
 │   └── api/                   # API routes (oauth, inngest, stripe webhook, lvs)
 ├── lib/

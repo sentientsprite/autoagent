@@ -5,8 +5,8 @@
  *   1. Start the app: npm run dev   (default http://127.0.0.1:3000)
  *   2. npm run screenshots:products
  *
- * Or point at production:
- *   BASE_URL=https://your-nemo-app.vercel.app npm run screenshots:products
+ * Production (deploy **this** app to your customer Vercel project, e.g. nemo-app-v-1):
+ *   BASE_URL=https://nemo-app-v-1.vercel.app npm run screenshots:products
  */
 import { chromium } from "playwright";
 import { mkdir } from "node:fs/promises";
@@ -31,6 +31,36 @@ const shots = [
     name: "02-wedge-landing-mobile",
     path: "/",
     viewport: { width: 390, height: 844 },
+    fullPage: true,
+  },
+  {
+    name: "03-wedge-post-submit-desktop",
+    path: "/?demo=post-submit",
+    viewport: { width: 1440, height: 900 },
+    fullPage: true,
+  },
+  {
+    name: "04-wedge-post-submit-mobile",
+    path: "/?demo=post-submit",
+    viewport: { width: 390, height: 844 },
+    fullPage: true,
+  },
+  {
+    name: "05-product-beacon-desktop",
+    path: "/products/beacon",
+    viewport: { width: 1440, height: 900 },
+    fullPage: true,
+  },
+  {
+    name: "06-product-echo-desktop",
+    path: "/products/echo",
+    viewport: { width: 1440, height: 900 },
+    fullPage: true,
+  },
+  {
+    name: "07-product-bloom-desktop",
+    path: "/products/bloom",
+    viewport: { width: 1440, height: 900 },
     fullPage: true,
   },
 ];
