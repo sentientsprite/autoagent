@@ -1,0 +1,19 @@
+{
+  "name": "spryte",
+  "private": true,
+  "scripts": {
+    "build:libs": "pnpm --filter @spryte/llm build && pnpm --filter @spryte/core build && pnpm --filter @spryte/auditor build",
+    "build": "pnpm build:libs && pnpm --filter @spryte/web build",
+    "dev": "pnpm build:libs && pnpm --filter @spryte/web dev",
+    "lint": "pnpm -r run lint",
+    "db:generate": "pnpm --filter @spryte/db prisma:generate",
+    "db:push": "pnpm --filter @spryte/db prisma:push"
+  },
+  "packageManager": "pnpm@10.18.3",
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

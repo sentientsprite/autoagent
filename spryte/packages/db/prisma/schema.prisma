@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id                String      @id @default(cuid())
+  name              String
+  url               String?
+  gbpId             String?     @map("gbp_id")
+  stripeCustomerId  String?     @map("stripe_customer_id")
+  plan              String      @default("starter")
+  createdAt         DateTime    @default(now()) @map("created_at")
+
+  audits     Audit[]
+  agentTasks AgentTask[]
+  reviews    Review[]
+  reports    Report[]
+
+  @@map("clients")
+}
+
+model Audit {
+  id        String   @id @default(cuid())
+  clientId  String?  @map("client_id")
+  scores    Json
+  rawData   Json?    @map("raw_data")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  client Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt(sort: Desc)])
+  @@map("audits")
+}
+
+model AgentTask {
+  id           String    @id @default(cuid())
+  clientId     String?   @map("client_id")
+  agent        String
+  type         String
+  status       String
+  draft        Json?
+  approvedBy   String?   @map("approved_by")
+  executedAt   DateTime? @map("executed_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  rejectedReason String? @map("rejected_reason")
+
+  client Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  @@index([status, agent])
+  @@map("agent_tasks")
+}
+
+model Review {
+  id              String    @id @default(cuid())
+  clientId        String    @map("client_id")
+  platform        String
+  rating          Int
+  text            String?
+  responseDraft   String?   @map("response_draft")
+  respondedAt     DateTime? @map("responded_at")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId, platform])
+  @@map("reviews")
+}
+
+model Report {
+  id         String    @id @default(cuid())
+  clientId   String    @map("client_id")
+  weekEnding DateTime  @map("week_ending")
+  metrics    Json
+  sentAt     DateTime? @map("sent_at")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId, weekEnding(sort: Desc)])
+  @@map("reports")
+}
