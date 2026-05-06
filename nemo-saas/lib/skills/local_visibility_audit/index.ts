@@ -178,11 +178,32 @@ export async function runNarrative(args: {
 // run — convenience wrapper used by the wedge endpoint
 // =============================================================================
 
+function narrativeApiConfigured(): boolean {
+  const model = process.env.NEMO_NARRATIVE_MODEL ?? "gpt-4o-mini";
+  if (model.startsWith("claude")) {
+    return Boolean(process.env.ANTHROPIC_API_KEY?.trim());
+  }
+  return Boolean(process.env.OPENAI_API_KEY?.trim());
+}
+
 export async function run(input: Input, opts: { withNarrative?: boolean; site?: Site } = {}): Promise<SkillResult> {
   const deterministic = await runDeterministic(input);
   if (!opts.withNarrative) return { deterministic };
-  const n = await runNarrative({ deterministic, site: opts.site });
-  return { deterministic, narrative: n.value, llmUsage: n.usage };
+
+  if (!narrativeApiConfigured()) {
+    console.warn(
+      "local_visibility_audit: skipping narrative (set OPENAI_API_KEY or ANTHROPIC_API_KEY + matching NEMO_NARRATIVE_MODEL)",
+    );
+    return { deterministic };
+  }
+
+  try {
+    const n = await runNarrative({ deterministic, site: opts.site });
+    return { deterministic, narrative: n.value, llmUsage: n.usage };
+  } catch (e) {
+    console.error("local_visibility_audit: narrative failed; returning deterministic-only", e);
+    return { deterministic };
+  }
 }
 
 // =============================================================================

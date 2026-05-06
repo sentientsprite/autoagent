@@ -84,7 +84,7 @@ export async function POST(req: Request) {
   // 2. Open an anonymous job row (org_id null is not allowed -> use the special wedge org).
   // For the wedge we attribute jobs to a system org; promotion later moves them.
   const wedgeOrgId = await ensureWedgeOrg(db);
-  const { data: job } = await db
+  const { data: job, error: jobErr } = await db
     .from("jobs")
     .insert({
       org_id: wedgeOrgId,
@@ -96,18 +96,39 @@ export async function POST(req: Request) {
     .select("id")
     .single();
 
+  if (jobErr || !job) {
+    console.error("lvs job insert failed", jobErr);
+    return NextResponse.json(
+      {
+        error: "job_persist_failed",
+        detail: jobErr?.message ?? "unknown",
+      },
+      { status: 500 },
+    );
+  }
+
   // 3. Run skill synchronously with narrative on (it's the wedge — story matters).
   const startedAt = Date.now();
   let result;
   try {
     result = await run(parsed, { withNarrative: true });
   } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("lvs audit failed", err);
     await db.from("jobs").update({
       status: "failed",
-      error_message: String(err),
+      error_message: msg.slice(0, 2000),
       finished_at: new Date().toISOString(),
-    }).eq("id", job!.id);
-    return NextResponse.json({ error: "audit_failed" }, { status: 500 });
+    }).eq("id", job.id);
+    return NextResponse.json(
+      {
+        error: "audit_failed",
+        detail: msg,
+        hint:
+          "Most narrative failures are skipped automatically. If this persists, check Vercel logs — possible Zod/schema error in insights.",
+      },
+      { status: 500 },
+    );
   }
   const durationMs = Date.now() - startedAt;
 
@@ -130,7 +151,7 @@ export async function POST(req: Request) {
 
   // 5. Save artifact + finalize job.
   await db.from("artifacts").insert({
-    job_id: job!.id,
+    job_id: job.id,
     org_id: wedgeOrgId,
     kind: "pdf",
     storage_path: storagePath,
@@ -145,8 +166,8 @@ export async function POST(req: Request) {
     llm_tokens_in: result.llmUsage?.tokensIn ?? null,
     llm_tokens_out: result.llmUsage?.tokensOut ?? null,
     finished_at: new Date().toISOString(),
-  }).eq("id", job!.id);
-  await db.from("leads").update({ audit_job_id: job!.id }).eq("id", lead.id);
+    }).eq("id", job.id);
+  await db.from("leads").update({ audit_job_id: job.id }).eq("id", lead.id);
 
   // 6. Email the lead. Best effort — don't fail the wedge if Resend is down.
   if (process.env.RESEND_API_KEY) {

@@ -40,24 +40,25 @@ export interface PlaceResult {
 export async function findPlace(q: PlaceLookup): Promise<PlaceResult | null> {
   if (!PLACES_KEY) return null;
 
-  const text = [q.businessName, q.city, q.region, q.zip].filter(Boolean).join(" ");
-  const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "X-Goog-Api-Key": PLACES_KEY,
-      "X-Goog-FieldMask":
-        "places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber," +
-        "places.websiteUri,places.rating,places.userRatingCount,places.primaryType," +
-        "places.regularOpeningHours,places.photos",
-    },
-    body: JSON.stringify({ textQuery: text, pageSize: 1 }),
-  });
-  if (!res.ok) return null;
-  const j = (await res.json()) as PlacesSearchTextResponse;
-  const p = j.places?.[0];
-  if (!p) return null;
-  return {
+  try {
+    const text = [q.businessName, q.city, q.region, q.zip].filter(Boolean).join(" ");
+    const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "X-Goog-Api-Key": PLACES_KEY,
+        "X-Goog-FieldMask":
+          "places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber," +
+          "places.websiteUri,places.rating,places.userRatingCount,places.primaryType," +
+          "places.regularOpeningHours,places.photos",
+      },
+      body: JSON.stringify({ textQuery: text, pageSize: 1 }),
+    });
+    if (!res.ok) return null;
+    const j = (await res.json()) as PlacesSearchTextResponse;
+    const p = j.places?.[0];
+    if (!p) return null;
+    return {
     placeId: p.id,
     name: p.displayName?.text ?? q.businessName,
     formattedAddress: p.formattedAddress ?? "",
@@ -69,6 +70,10 @@ export async function findPlace(q: PlaceLookup): Promise<PlaceResult | null> {
     photoCount: p.photos?.length ?? 0,
     hours: !!p.regularOpeningHours,
   };
+  } catch (e) {
+    console.warn("findPlace: Places API request failed", e);
+    return null;
+  }
 }
 
 /**
