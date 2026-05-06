@@ -2,7 +2,7 @@
   "name": "spryte",
   "private": true,
   "scripts": {
-    "build:libs": "pnpm --filter @spryte/llm build && pnpm --filter @spryte/core build && pnpm --filter @spryte/auditor build",
+    "build:libs": "pnpm --filter @spryte/db build && pnpm --filter @spryte/llm build && pnpm --filter @spryte/core build && pnpm --filter @spryte/auditor build",
     "build": "pnpm build:libs && pnpm --filter @spryte/web build",
     "dev": "pnpm build:libs && pnpm --filter @spryte/web dev",
     "lint": "pnpm -r run lint",

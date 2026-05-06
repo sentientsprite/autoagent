@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { FreeAuditResult } from "@spryte/auditor";
 
@@ -42,6 +42,18 @@ export default function AuditPage() {
   const [error, setError] = useState<string | null>(null);
   const [payload, setPayload] = useState<FreeAuditResult | null>(null);
 
+  const [leadEmail, setLeadEmail] = useState("");
+  const [leadName, setLeadName] = useState("");
+  const [leadPlan, setLeadPlan] = useState<"starter" | "growth" | "pro" | "agency">("starter");
+  const [leadBusy, setLeadBusy] = useState(false);
+  const [leadDone, setLeadDone] = useState(false);
+  const [leadError, setLeadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLeadDone(false);
+    setLeadError(null);
+  }, [payload?.url, url]);
+
   const averages = useMemo(() => {
     if (!payload) return null;
     const s = payload.scores;
@@ -77,16 +89,67 @@ export default function AuditPage() {
       }
 
       if (asObj.ok === false) {
-        throw new Error("Validation failed — check URL and optional fields.");
+        const flat = (asObj as { error?: { fieldErrors?: Record<string, string[]> } }).error;
+        const first =
+          flat?.fieldErrors &&
+          Object.values(flat.fieldErrors).find((v) => Array.isArray(v) && v.length)?.[0];
+        setError(first ?? "Validation failed — check URL and optional fields.");
+        return;
+      }
+
+      if (!res.ok) {
+        setError(`Audit request failed (${res.status}). Try again in a moment.`);
+        return;
       }
 
       const data = dataUnknown as ApiOk;
 
       setPayload(data.result);
-    } catch {
-      setError("Audit failed — check your URL and try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Audit failed — check your URL and try again.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function onLeadSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLeadBusy(true);
+    setLeadError(null);
+    const auditUrl = (payload?.url ?? url.trim()) || undefined;
+    try {
+      const parsedUrl = auditUrl ? new URL(auditUrl) : null;
+      if (!parsedUrl) {
+        setLeadError("Add a valid website above (or run the audit first) so we know who to follow up with.");
+        return;
+      }
+      const res = await fetch("/api/audit-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: leadEmail.trim(),
+          name: leadName.trim() ? leadName.trim() : undefined,
+          auditUrl: parsedUrl.toString(),
+          city: city.trim() ? city.trim() : undefined,
+          businessName: (businessName.trim() || payload?.businessName || undefined) ?? undefined,
+          planInterest: leadPlan,
+        }),
+      });
+      const body: unknown = await res.json().catch(() => null);
+      const ok =
+        typeof body === "object" &&
+        body !== null &&
+        "ok" in body &&
+        (body as { ok: unknown }).ok === true;
+      if (!res.ok || !ok) {
+        setLeadError("Could not save your request. Check the email and try again.");
+        return;
+      }
+      setLeadDone(true);
+    } catch {
+      setLeadError("Network error — try again.");
+    } finally {
+      setLeadBusy(false);
     }
   }
 
@@ -222,16 +285,77 @@ export default function AuditPage() {
               </ul>
             ) : null}
           </div>
-
-          <div className="rounded-2xl bg-gradient-to-r from-signal/15 to-transparent p-6 ring-1 ring-signal/35">
-            <p className="font-mono text-xs uppercase tracking-wider text-signal">Growth plan</p>
-            <p className="mt-3 max-w-2xl leading-relaxed text-white/85">
-              Want SPRYTE running weekly with human approvals before anything goes live? Book the Starter audit — GBP
-              monitoring, weekly digest, plain-English next steps — built for Salt Lake County service businesses.
-            </p>
-          </div>
         </section>
       ) : null}
+
+      <div className="mt-10 rounded-2xl bg-gradient-to-r from-signal/15 to-transparent p-6 ring-1 ring-signal/35">
+        <p className="font-mono text-xs uppercase tracking-wider text-signal">Get your full growth plan</p>
+        <p className="mt-3 max-w-2xl leading-relaxed text-white/85">
+          SPRYTE runs weekly playbooks with human approvals before anything goes live — built for Salt Lake County service
+          businesses. Tell us where to send next steps (your website URL above is enough).
+        </p>
+
+        {leadDone ? (
+          <p className="mt-5 rounded-lg bg-signal/10 px-4 py-3 font-mono text-sm text-signal ring-1 ring-signal/35">
+            You are on the list — watch your inbox for the Starter outline and scheduling link.
+          </p>
+        ) : (
+          <form onSubmit={onLeadSubmit} className="mt-5 grid gap-4 md:grid-cols-2">
+            <label className="md:col-span-2">
+              <span className="font-mono text-xs uppercase tracking-wider text-mist">Work email</span>
+              <input
+                type="email"
+                required
+                value={leadEmail}
+                onChange={(e) => setLeadEmail(e.target.value)}
+                autoComplete="email"
+                placeholder="owner@business.com"
+                className="mt-2 w-full rounded-lg bg-void px-3 py-3 font-mono text-sm text-white ring-1 ring-line outline-none placeholder:text-white/35 focus:ring-signal/40"
+              />
+            </label>
+            <label>
+              <span className="font-mono text-xs uppercase tracking-wider text-mist">Name (optional)</span>
+              <input
+                value={leadName}
+                onChange={(e) => setLeadName(e.target.value)}
+                autoComplete="name"
+                    placeholder="Your name"
+                className="mt-2 w-full rounded-lg bg-void px-3 py-3 font-mono text-sm text-white ring-1 ring-line outline-none placeholder:text-white/35 focus:ring-signal/40"
+              />
+            </label>
+            <label>
+              <span className="font-mono text-xs uppercase tracking-wider text-mist">Plan interest</span>
+              <select
+                value={leadPlan}
+                onChange={(e) => setLeadPlan(e.target.value as typeof leadPlan)}
+                className="mt-2 w-full rounded-lg bg-void px-3 py-3 font-mono text-sm text-white ring-1 ring-line outline-none focus:ring-signal/40"
+              >
+                <option value="starter">Starter — $149/mo</option>
+                <option value="growth">Growth — $299/mo</option>
+                <option value="pro">Pro — $599/mo</option>
+                <option value="agency">Agency — $1,500/mo</option>
+              </select>
+            </label>
+            <div className="md:col-span-2 flex flex-wrap items-center gap-3">
+              <button
+                type="submit"
+                disabled={leadBusy}
+                className="inline-flex items-center gap-2 rounded-lg bg-signal px-4 py-3 font-mono text-sm text-void ring-1 ring-signal transition hover:bg-signal/90 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {leadBusy ? "Sending..." : "Send me the growth plan"}
+              </button>
+              <p className="text-xs text-white/55">
+                We log every signup; enable your database to persist rows for follow-up.
+              </p>
+            </div>
+            {leadError ? (
+              <p className="md:col-span-2 rounded-lg bg-danger/10 px-3 py-2 font-mono text-sm text-danger ring-1 ring-danger/35">
+                {leadError}
+              </p>
+            ) : null}
+          </form>
+        )}
+      </div>
     </main>
   );
 }

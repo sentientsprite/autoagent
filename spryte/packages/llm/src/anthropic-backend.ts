@@ -23,6 +23,7 @@ export async function completeAnthropic(options: {
   }
 
   const model =
+    process.env.SPRYTE_ANTHROPIC_MODEL?.trim() ||
     process.env.SPRITE_ANTHROPIC_MODEL?.trim() ||
     "claude-3-5-haiku-20241022";
 

@@ -12,6 +12,7 @@ if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export type {
   Audit,
+  AuditLead,
   AgentTask,
   Client,
   Report,

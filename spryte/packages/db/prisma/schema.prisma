@@ -82,3 +82,19 @@ model Report {
   @@index([clientId, weekEnding(sort: Desc)])
   @@map("reports")
 }
+
+/// Anonymous conversion capture from the free /audit lead magnet (no Client yet).
+model AuditLead {
+  id            String   @id @default(cuid())
+  email         String
+  name          String?
+  auditUrl      String?  @map("audit_url")
+  city          String?
+  businessName  String?  @map("business_name")
+  planInterest  String?  @map("plan_interest")
+
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt(sort: Desc)])
+  @@map("audit_leads")
+}
