@@ -65,12 +65,17 @@ export async function POST(req: Request) {
     .single();
   if (leadErr || !lead) {
     console.error("lvs lead insert failed", leadErr);
+    const msg = leadErr?.message ?? "unknown";
+    const missingTable =
+      /relation .* does not exist|Could not find the table/i.test(msg) ||
+      /schema cache/i.test(msg);
     return NextResponse.json(
       {
         error: "lead_persist_failed",
-        detail: leadErr?.message ?? "unknown",
-        hint:
-          "Confirm migrations are applied and SUPABASE_SERVICE_ROLE_KEY is the service_role JWT (not anon).",
+        detail: msg,
+        hint: missingTable
+          ? "Run hosted Supabase migrations in order (see nemo-saas/QUICKSTART.md § Hosted Supabase). Then wait ~1m and retry."
+          : "Confirm migrations are applied and SUPABASE_SERVICE_ROLE_KEY is the service_role JWT (not anon).",
       },
       { status: 500 },
     );

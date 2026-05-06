@@ -16,6 +16,24 @@
 
 ---
 
+## Hosted Supabase (production — `lead_persist_failed`)
+
+If **`/api/lvs`** returns **`Could not find the table 'public.leads'`**, the hosted project has **no schema** yet (migrations never ran).
+
+1. Open **Supabase** → your production project → **SQL Editor**.
+2. Run these files **in order** (paste full contents, run each as one script):
+
+   1. [`supabase/migrations/20260429000000_init.sql`](supabase/migrations/20260429000000_init.sql)
+   2. [`supabase/migrations/20260506120000_service_role_wedge_rls.sql`](supabase/migrations/20260506120000_service_role_wedge_rls.sql)
+   3. [`supabase/migrations/20260507100000_storage_public_reports_bucket.sql`](supabase/migrations/20260507100000_storage_public_reports_bucket.sql)
+
+3. **Settings → API** — copy **`service_role`** into Vercel **`SUPABASE_SERVICE_ROLE_KEY`** (not anon). Redeploy **nemo-app-v-1**.
+4. Wait ~1 minute for PostgREST to refresh its schema cache, then retry the wedge.
+
+**CLI (optional):** from `nemo-saas/`, `supabase link` to the project, then `supabase db push`.
+
+---
+
 ## Prerequisites
 
 | Tool | Version | Why |
