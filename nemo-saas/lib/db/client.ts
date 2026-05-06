@@ -6,6 +6,23 @@ const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const service = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+function assertServiceRoleKey(key: string): void {
+  const parts = key.split(".");
+  if (parts.length < 2) return;
+  try {
+    const b64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
+    const payload = JSON.parse(atob(padded)) as { role?: string };
+    if (payload.role === "anon") {
+      throw new Error(
+        "SUPABASE_SERVICE_ROLE_KEY is the anon key. Use the service_role secret from Supabase → Project Settings → API.",
+      );
+    }
+  } catch (e) {
+    if (e instanceof Error && e.message.includes("SUPABASE_SERVICE_ROLE_KEY")) throw e;
+  }
+}
+
 if (!url || !anon) {
   // Don't throw at import time so build doesn't fail in CI without env.
   // Throw at first use instead.
@@ -40,6 +57,7 @@ export async function dbAsUser(): Promise<SupabaseClient> {
  */
 export function dbAsService(): SupabaseClient {
   if (!url || !service) throw new Error("Supabase service env vars missing");
+  assertServiceRoleKey(service);
   return createSupabaseClient(url, service, {
     auth: { autoRefreshToken: false, persistSession: false },
   });

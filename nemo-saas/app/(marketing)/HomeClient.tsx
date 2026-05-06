@@ -52,9 +52,17 @@ export default function HomeClient() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(body),
       });
-      const json = (await res.json()) as AuditResponse;
-      if (!res.ok || !json.ok) throw new Error(json.error ?? "Audit failed");
-      setResult(json);
+      const json = (await res.json()) as AuditResponse & {
+        ok?: boolean;
+        error?: string;
+        detail?: string;
+        hint?: string;
+      };
+      if (!res.ok || !json.ok) {
+        const parts = [json.error, json.detail, json.hint].filter(Boolean);
+        throw new Error(parts.join(" — ") || "Audit failed");
+      }
+      setResult(json as AuditResponse);
     } catch (err) {
       setError(String(err));
     } finally {

@@ -40,7 +40,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "invalid_input", detail: String(e) }, { status: 400 });
   }
 
-  const db = dbAsService();
+  let db;
+  try {
+    db = dbAsService();
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return NextResponse.json(
+      { error: "supabase_misconfigured", detail: msg },
+      { status: 503 },
+    );
+  }
 
   // 1. Persist the lead immediately so we never lose an email even if the audit fails.
   const { data: lead, error: leadErr } = await db
@@ -55,7 +64,16 @@ export async function POST(req: Request) {
     .select("id")
     .single();
   if (leadErr || !lead) {
-    return NextResponse.json({ error: "lead_persist_failed" }, { status: 500 });
+    console.error("lvs lead insert failed", leadErr);
+    return NextResponse.json(
+      {
+        error: "lead_persist_failed",
+        detail: leadErr?.message ?? "unknown",
+        hint:
+          "Confirm migrations are applied and SUPABASE_SERVICE_ROLE_KEY is the service_role JWT (not anon).",
+      },
+      { status: 500 },
+    );
   }
 
   // 2. Open an anonymous job row (org_id null is not allowed -> use the special wedge org).

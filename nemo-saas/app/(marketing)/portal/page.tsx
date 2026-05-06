@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { dgtlMkgtAssistAppUrl, github, growthCoachStoreUrl } from "@/lib/access-directory";
+import { growthCoachInstallLabel, growthCoachInstallUrl } from "@/lib/access-directory";
 import {
   badge,
   cardBody,
@@ -17,92 +17,74 @@ import {
 
 export const metadata: Metadata = {
   title: "Customer portal | Nemo Local",
-  description:
-    "Links to GrowthCoach Chrome extension, DGTL Marketing Assistant, and Prana product surfaces.",
+  description: "Install the GrowthCoach extension and explore Nemo Local SKUs: Beacon, Echo, and Bloom.",
 };
 
 export default function CustomerPortalPage() {
-  const storeUrl = growthCoachStoreUrl();
-  const assistUrl = dgtlMkgtAssistAppUrl();
+  const installUrl = growthCoachInstallUrl();
+  const installLabel = growthCoachInstallLabel();
 
   return (
     <main style={hubMain}>
       <p style={{ ...badge, marginBottom: 8 }}>Customers</p>
-      <h1 style={hubH1}>Your tools &amp; product portals</h1>
+      <h1 style={hubH1}>Your tools &amp; products</h1>
       <p style={hubLead}>
-        Public hub for buyers. Each product keeps its own login or Chrome install — this page only routes you there.
-        Authenticated customer dashboards (Beacon/Echo/Bloom) ship with Phase 4; placeholders below point at SKU overviews.
+        One place to install the extension and read what&apos;s included in each plan. Customer dashboards (Beacon / Echo
+        / Bloom) ship in a later phase — SKU pages describe scope today.
       </p>
 
       <section style={grid}>
         <article style={cardShell()}>
           <p style={badge}>Free · Browser</p>
-          <h2 style={cardTitle}>GrowthCoach Chrome extension</h2>
+          <h2 style={cardTitle}>GrowthCoach extension</h2>
           <p style={cardBody}>
-            DGTL Marketing GrowthCoach — signals inside Google tools. Chrome Web Store link when published; repo for
-            builds and issues.
+            Signals and shortcuts inside Google — install from Google Play (Android companion) when configured, otherwise
+            the Chrome Web Store listing.
           </p>
-          {storeUrl ? (
-            <Link href={storeUrl} target="_blank" rel="noreferrer" style={linkBtn}>
-              Chrome Web Store →
-            </Link>
-          ) : (
-            <Link href={github.chromeGrowthCoach} target="_blank" rel="noreferrer" style={linkBtn}>
-              GitHub: MKTG-Chrome-Extenstion →
-            </Link>
-          )}
+          <Link href={installUrl} target="_blank" rel="noreferrer" style={linkBtn}>
+            {installLabel}
+          </Link>
         </article>
 
         <article style={cardShell()}>
-          <p style={badge}>Product</p>
-          <h2 style={cardTitle}>DGTL Marketing Assistant</h2>
+          <p style={badge}>SKU overview</p>
+          <h2 style={cardTitle}>Nemo Local — Beacon, Echo &amp; Bloom</h2>
           <p style={cardBody}>
-            DGTL-MKTG-ASST — strategist workflows and extension/backend surface (repo{" "}
-            <code style={{ fontSize: 12 }}>spryte-engine/DGTL-MKTG-ASST-main</code>
-            ).
+            Three packaged automations for home-services operators. Each SKU page has pricing context; delivery is
+            human-in-the-loop before anything goes live.
           </p>
-          {assistUrl ? (
-            <Link href={assistUrl} target="_blank" rel="noreferrer" style={linkBtn}>
-              Open app →
+          <ul style={{ margin: "12px 0 0", paddingLeft: 18, color: "#334155", fontSize: 14, lineHeight: 1.5 }}>
+            <li>
+              <strong>Beacon</strong> — GBP footprint: rankings signals, posts &amp; updates, citations / NAP consistency
+              checks.
+            </li>
+            <li>
+              <strong>Echo</strong> — Review flywheel: post-job prompts, draft replies, velocity and sentiment tracking.
+            </li>
+            <li>
+              <strong>Bloom</strong> — Seasonal calendar, draft posts &amp; assets, rollout checklist per location.
+            </li>
+          </ul>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 16 }}>
+            <Link href="/products/beacon" style={linkBtn}>
+              Beacon →
             </Link>
-          ) : (
-            <Link href={github.dgtlMkgtAssist} target="_blank" rel="noreferrer" style={linkBtn}>
-              GitHub repo →
+            <Link href="/products/echo" style={linkBtn}>
+              Echo →
             </Link>
-          )}
-        </article>
-
-        <article style={cardShell()}>
-          <p style={badge}>SKU overview</p>
-          <h2 style={cardTitle}>Beacon · GBP Autopilot</h2>
-          <p style={cardBody}>Marketing overview on this site. Customer-facing dashboard + SSO — placeholder.</p>
-          <Link href="/products/beacon" style={linkBtn}>
-            Read SKU →
-          </Link>
-        </article>
-
-        <article style={cardShell()}>
-          <p style={badge}>SKU overview</p>
-          <h2 style={cardTitle}>Echo · Review flywheel</h2>
-          <p style={cardBody}>Customer portal post-job triggers + replies — placeholder until wired.</p>
-          <Link href="/products/echo" style={linkBtn}>
-            Read SKU →
-          </Link>
-        </article>
-
-        <article style={cardShell()}>
-          <p style={badge}>SKU overview</p>
-          <h2 style={cardTitle}>Bloom · Seasonal content</h2>
-          <p style={cardBody}>Calendar + drafts — placeholder client workspace.</p>
-          <Link href="/products/bloom" style={linkBtn}>
-            Read SKU →
-          </Link>
+            <Link href="/products/bloom" style={linkBtn}>
+              Bloom →
+            </Link>
+          </div>
         </article>
 
         <article style={cardShell()}>
           <p style={badge}>Free · Lead magnet</p>
           <h2 style={cardTitle}>Local Visibility Score</h2>
-          <p style={cardBody}>Anonymous wedge PDF path — same funnel as the homepage.</p>
+          <p style={cardBody}>
+            One-minute scorecard: GBP strength, reviews, and listing consistency — PDF by email when the wedge is fully
+            configured.
+          </p>
           <Link href="/" style={linkBtn}>
             Get score →
           </Link>
@@ -110,14 +92,13 @@ export default function CustomerPortalPage() {
       </section>
 
       <p style={mutedNote}>
-        <strong>Missing?</strong> Paid analytics dashboard per tenant, unified SSO across Beacon/Echo/Bloom, and
-        white-label portal domains — tracked in{" "}
+        <strong>Ops note:</strong> Extension install URL uses{" "}
+        <code style={{ fontSize: 11 }}>NEXT_PUBLIC_GROWTHCOACH_PLAY_STORE_URL</code> first, then{" "}
+        <code style={{ fontSize: 11 }}>NEXT_PUBLIC_GROWTHCOACH_STORE_URL</code> (Chrome Web Store). Staff resources live on{" "}
         <Link href="/team" style={{ color: "#334155" }}>
-          team hub notes
+          /team
         </Link>{" "}
-        / trunk docs. Chrome Store + DGTL app URLs: set{" "}
-        <code style={{ fontSize: 11 }}>NEXT_PUBLIC_GROWTHCOACH_STORE_URL</code> and{" "}
-        <code style={{ fontSize: 11 }}>NEXT_PUBLIC_DGTL_MKTG_ASSIST_URL</code> on Vercel.
+        (not indexed).
       </p>
     </main>
   );
