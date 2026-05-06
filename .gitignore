@@ -30,3 +30,4 @@ dev/
 _vendor-openclaw/
 _vendor-nemo-workspace/
 .vercel
+.env*.local
