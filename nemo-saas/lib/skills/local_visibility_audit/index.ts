@@ -23,7 +23,7 @@ import { z } from "zod";
 import { gbpInsights, napInsights, type Insight } from "@/lib/skills/_shared/rule-engine";
 import { narrative, type Usage } from "@/lib/skills/_shared/llm";
 import { findPlace, placeToGbpProfile, fetchNapRecords } from "@/lib/connectors/places";
-import { renderPlaybook } from "@/lib/skills/_shared/playbook";
+import { renderBusinessContext, renderPlaybook } from "@/lib/skills/_shared/playbook";
 import type { Site } from "@/lib/db/types";
 
 // =============================================================================
@@ -155,12 +155,14 @@ export async function runDeterministic(input: Input): Promise<DeterministicOutpu
 export async function runNarrative(args: {
   deterministic: DeterministicOutput;
   site?: Site;
+  /** Canonical per-site CLIENT.md loaded by the workflow before the run. */
+  clientMd?: string | null;
   /** Override playbook (e.g. for the wedge with no Site row yet). */
   playbookOverride?: string;
 }): Promise<{ value: NarrativeOutput; usage: Usage }> {
   const playbook = args.playbookOverride
     ?? (args.site
-      ? renderPlaybook(args.site)
+      ? renderBusinessContext(args.site, { clientMd: args.clientMd })
       : renderPlaybook(SYNTHETIC_WEDGE_SITE));
 
   return narrative({
@@ -186,7 +188,10 @@ function narrativeApiConfigured(): boolean {
   return Boolean(process.env.OPENAI_API_KEY?.trim());
 }
 
-export async function run(input: Input, opts: { withNarrative?: boolean; site?: Site } = {}): Promise<SkillResult> {
+export async function run(
+  input: Input,
+  opts: { withNarrative?: boolean; site?: Site; clientMd?: string | null } = {},
+): Promise<SkillResult> {
   const deterministic = await runDeterministic(input);
   if (!opts.withNarrative) return { deterministic };
 
@@ -198,7 +203,7 @@ export async function run(input: Input, opts: { withNarrative?: boolean; site?: 
   }
 
   try {
-    const n = await runNarrative({ deterministic, site: opts.site });
+    const n = await runNarrative({ deterministic, site: opts.site, clientMd: opts.clientMd });
     return { deterministic, narrative: n.value, llmUsage: n.usage };
   } catch (e) {
     console.error("local_visibility_audit: narrative failed; returning deterministic-only", e);

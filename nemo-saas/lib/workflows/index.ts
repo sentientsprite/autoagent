@@ -19,7 +19,15 @@ import { run as runLocalLandingBuilder } from "@/lib/skills/local_landing_builde
 import { run as runPaidQa } from "@/lib/skills/paid_qa";
 import { run as runReputationLoop } from "@/lib/skills/reputation_loop";
 import { run as runCompetitorPulse } from "@/lib/skills/competitor_pulse";
-import type { Connector, Site } from "@/lib/db/types";
+import {
+  appendClientIntelligenceEvent,
+  ensureClientIntelligenceFile,
+  getClientMd,
+  recentClientIntelligenceEvents,
+  renderWeeklyBrief,
+  upsertWeeklyClientBrief,
+} from "@/lib/client-intelligence";
+import type { Connector, Job, Site } from "@/lib/db/types";
 
 // =============================================================================
 // monthlySiteReport — the headline workflow that bundles audit + GSC + GA4
@@ -43,6 +51,11 @@ export const monthlySiteReport = inngest.createFunction(
       return (data ?? []) as Connector[];
     });
 
+    const clientMd = await step.run("load-client-intelligence", async () => {
+      const file = await ensureClientIntelligenceFile(db, site, { actor: "monthly-site-report" });
+      return file.client_md;
+    });
+
     const gsc = connectors.find((c) => c.kind === "google_search_console");
     const ga4 = connectors.find((c) => c.kind === "google_analytics_4");
 
@@ -58,21 +71,21 @@ export const monthlySiteReport = inngest.createFunction(
         region: site.region ?? undefined,
         websiteUrl: site.website_url ?? undefined,
         expectedServiceAreaZipCount: site.service_area_zips?.length ?? 1,
-      }, { withNarrative: true, site });
+      }, { withNarrative: true, site, clientMd });
       await persistJob(db, { orgId, siteId, kind: "local_visibility_audit", input: { trigger: "monthly" }, result: r.deterministic });
       return r;
     });
 
     // 2. GSC if connected.
     const gscResult = gsc ? await step.run("gsc_opportunity_finder", async () => {
-      const r = await runGsc({ connector: gsc, site, withNarrative: true });
+      const r = await runGsc({ connector: gsc, site, withNarrative: true, clientMd });
       await persistJob(db, { orgId, siteId, kind: "gsc_opportunity_finder", input: { window: "90d" }, result: r.deterministic });
       return r;
     }) : null;
 
     // 3. GA4 if connected.
     const ga4Result = ga4 ? await step.run("ga4_health_brief", async () => {
-      const r = await runGa4({ connector: ga4, site, withNarrative: true });
+      const r = await runGa4({ connector: ga4, site, withNarrative: true, clientMd });
       await persistJob(db, { orgId, siteId, kind: "ga4_health_brief", input: { windowDays: 28 }, result: r.deterministic });
       return r;
     }) : null;
@@ -131,6 +144,85 @@ export const jobRequested = inngest.createFunction(
       finished_at: new Date().toISOString(),
       duration_ms: Date.now() - startedAt,
     }).eq("id", jobId);
+
+    if (job.site_id) {
+      await appendClientIntelligenceEvent(db, {
+        orgId: job.org_id,
+        siteId: job.site_id,
+        jobId,
+        actor: "workflow",
+        section: "changes",
+        eventMd: `${job.kind} completed successfully.`,
+        evidence: { jobId, kind: job.kind },
+      });
+    }
+  },
+);
+
+// =============================================================================
+// weeklyClientBrief — two-paragraph Monday account note
+// =============================================================================
+
+export const weeklyClientBrief = inngest.createFunction(
+  { id: "weekly-client-brief", name: "Weekly client brief", retries: 1 },
+  { event: "nemo/site.brief.weekly" },
+  async ({ event, step }) => {
+    const { siteId, orgId, weekStart } = event.data as { siteId: string; orgId: string; weekStart?: string };
+    const db = dbAsService();
+
+    const site = await step.run("load-site", async () => {
+      const { data, error } = await db.from("sites").select("*").eq("id", siteId).single();
+      if (error || !data) throw new NonRetriableError("site_not_found");
+      return data as Site;
+    });
+
+    const clientMd = await step.run("load-client-intelligence", async () => {
+      const file = await ensureClientIntelligenceFile(db, site, { actor: "weekly-client-brief" });
+      return file.client_md;
+    });
+
+    const events = await step.run("load-recent-intelligence-events", () =>
+      recentClientIntelligenceEvents(db, siteId, 20),
+    );
+
+    const since = new Date();
+    since.setDate(since.getDate() - 7);
+    const jobs = await step.run("load-recent-jobs", async () => {
+      const { data, error } = await db
+        .from("jobs")
+        .select("*")
+        .eq("site_id", siteId)
+        .eq("status", "succeeded")
+        .gte("created_at", since.toISOString())
+        .order("created_at", { ascending: false })
+        .limit(20);
+      if (error) throw new Error(error.message);
+      return (data ?? []) as Job[];
+    });
+
+    const start = weekStart ?? mondayIsoDate(new Date());
+    const brief = await step.run("upsert-weekly-brief", () =>
+      upsertWeeklyClientBrief(db, {
+        orgId,
+        siteId,
+        weekStart: start,
+        briefMd: renderWeeklyBrief({ site, clientMd, events, jobs }),
+        sourceJobIds: jobs.map((j) => j.id),
+      }),
+    );
+
+    await step.run("append-intelligence-event", () =>
+      appendClientIntelligenceEvent(db, {
+        orgId,
+        siteId,
+        actor: "reporter",
+        section: "changes",
+        eventMd: `Weekly client brief generated for week of ${start}.`,
+        evidence: { weeklyClientBriefId: brief.id, sourceJobIds: jobs.map((j) => j.id) },
+      }),
+    );
+
+    return { briefId: brief.id, weekStart: start };
   },
 );
 
@@ -150,6 +242,7 @@ async function runSkillByKind(db: ReturnType<typeof dbAsService>, job: JobRow): 
   const site = job.site_id
     ? ((await db.from("sites").select("*").eq("id", job.site_id).single()).data as Site | null)
     : null;
+  const clientMd = site ? await getClientMd(db, site.id) : null;
   const connectors = job.site_id
     ? (((await db.from("connectors").select("*").eq("site_id", job.site_id).eq("status", "connected")).data ?? []) as Connector[])
     : [];
@@ -164,19 +257,19 @@ async function runSkillByKind(db: ReturnType<typeof dbAsService>, job: JobRow): 
         region: site.region ?? undefined,
         websiteUrl: site.website_url ?? undefined,
         expectedServiceAreaZipCount: site.service_area_zips?.length ?? 1,
-      }, { withNarrative: true, site });
+      }, { withNarrative: true, site, clientMd });
       return r.deterministic;
     }
     case "gsc_opportunity_finder": {
       const c = connectors.find((x) => x.kind === "google_search_console");
       if (!site || !c) throw new NonRetriableError("missing_gsc_connector");
-      const r = await runGsc({ connector: c, site, withNarrative: true });
+      const r = await runGsc({ connector: c, site, withNarrative: true, clientMd });
       return r.deterministic;
     }
     case "ga4_health_brief": {
       const c = connectors.find((x) => x.kind === "google_analytics_4");
       if (!site || !c) throw new NonRetriableError("missing_ga4_connector");
-      const r = await runGa4({ connector: c, site, withNarrative: true });
+      const r = await runGa4({ connector: c, site, withNarrative: true, clientMd });
       return r.deterministic;
     }
     // ----- Stubs: advertised in PLAN_JOBS but gated on a milestone. -----
@@ -199,7 +292,7 @@ async function persistJob(
   db: ReturnType<typeof dbAsService>,
   args: { orgId: string; siteId: string; kind: string; input: Record<string, unknown>; result: unknown },
 ): Promise<void> {
-  await db.from("jobs").insert({
+  const { data } = await db.from("jobs").insert({
     org_id: args.orgId,
     site_id: args.siteId,
     kind: args.kind,
@@ -208,7 +301,24 @@ async function persistJob(
     result: args.result as Record<string, unknown>,
     started_at: new Date().toISOString(),
     finished_at: new Date().toISOString(),
+  }).select("id").single();
+
+  await appendClientIntelligenceEvent(db, {
+    orgId: args.orgId,
+    siteId: args.siteId,
+    jobId: data?.id ?? null,
+    actor: "workflow",
+    section: "changes",
+    eventMd: `${args.kind} completed successfully.`,
+    evidence: { jobId: data?.id ?? null, kind: args.kind },
   });
 }
 
-export const functions = [monthlySiteReport, jobRequested];
+function mondayIsoDate(d: Date): string {
+  const copy = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+  const day = copy.getUTCDay() || 7;
+  copy.setUTCDate(copy.getUTCDate() - day + 1);
+  return copy.toISOString().slice(0, 10);
+}
+
+export const functions = [monthlySiteReport, jobRequested, weeklyClientBrief];

@@ -20,7 +20,9 @@ export type JobKind =
   | "local_landing_builder"
   | "paid_qa"
   | "reputation_loop"
-  | "competitor_pulse";
+  | "competitor_pulse"
+  | "client_intelligence_update"
+  | "weekly_client_brief";
 
 export type JobStatus = "queued" | "running" | "succeeded" | "failed" | "cancelled";
 export type ArtifactKind = "json" | "pdf" | "html" | "markdown" | "csv";
@@ -127,4 +129,39 @@ export interface Lead {
   audit_job_id: string | null;
   promoted_org_id: string | null;
   created_at: string;
+}
+
+export interface ClientIntelligenceFile {
+  site_id: string;
+  org_id: string;
+  client_md: string;
+  summary: Record<string, unknown>;
+  version: number;
+  last_event_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClientIntelligenceEvent {
+  id: string;
+  org_id: string;
+  site_id: string;
+  job_id: string | null;
+  actor: string;
+  section: string;
+  event_md: string;
+  evidence: Record<string, unknown>;
+  created_by: string | null;
+  created_at: string;
+}
+
+export interface WeeklyClientBrief {
+  id: string;
+  org_id: string;
+  site_id: string;
+  week_start: string;
+  brief_md: string;
+  source_job_ids: string[];
+  created_at: string;
+  sent_at: string | null;
 }

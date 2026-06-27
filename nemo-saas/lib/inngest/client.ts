@@ -14,6 +14,9 @@ type Events = {
   "nemo/site.report.monthly": {
     data: { siteId: string; orgId: string };
   };
+  "nemo/site.brief.weekly": {
+    data: { siteId: string; orgId: string; weekStart?: string };
+  };
 };
 
 export const inngest = new Inngest({

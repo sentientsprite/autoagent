@@ -18,7 +18,7 @@ import { z } from "zod";
 import { ga4Window } from "@/lib/connectors/google";
 import { ga4Insights, type Ga4Window as RuleGa4Window } from "@/lib/skills/_shared/rule-engine";
 import { narrative, type Usage } from "@/lib/skills/_shared/llm";
-import { renderPlaybook } from "@/lib/skills/_shared/playbook";
+import { renderBusinessContext } from "@/lib/skills/_shared/playbook";
 import type { Connector, Site } from "@/lib/db/types";
 
 // =============================================================================
@@ -117,12 +117,15 @@ export async function runDeterministic(args: RunDeterministicArgs): Promise<Dete
 export async function runNarrative(args: {
   deterministic: DeterministicOutput;
   site: Site;
+  /** Canonical per-site CLIENT.md loaded by the workflow before the run. */
+  clientMd?: string | null;
   /** Optional rolling-memory snippet to append before the narrative call. */
   memorySnippet?: string;
 }): Promise<{ value: NarrativeOutput; usage: Usage }> {
+  const baseContext = renderBusinessContext(args.site, { clientMd: args.clientMd });
   const playbook = args.memorySnippet
-    ? renderPlaybook(args.site) + `\n\n## Memory snippet (since last report)\n${args.memorySnippet}\n`
-    : renderPlaybook(args.site);
+    ? baseContext + `\n\n## Memory snippet (since last report)\n${args.memorySnippet}\n`
+    : baseContext;
 
   return narrative({
     playbook,
@@ -135,9 +138,21 @@ export async function runNarrative(args: {
   });
 }
 
-export async function run(args: RunDeterministicArgs & { site?: Site; withNarrative?: boolean; memorySnippet?: string }): Promise<SkillResult> {
+export async function run(
+  args: RunDeterministicArgs & {
+    site?: Site;
+    withNarrative?: boolean;
+    memorySnippet?: string;
+    clientMd?: string | null;
+  },
+): Promise<SkillResult> {
   const deterministic = await runDeterministic(args);
   if (!args.withNarrative || !args.site) return { deterministic };
-  const n = await runNarrative({ deterministic, site: args.site, memorySnippet: args.memorySnippet });
+  const n = await runNarrative({
+    deterministic,
+    site: args.site,
+    memorySnippet: args.memorySnippet,
+    clientMd: args.clientMd,
+  });
   return { deterministic, narrative: n.value, llmUsage: n.usage };
 }

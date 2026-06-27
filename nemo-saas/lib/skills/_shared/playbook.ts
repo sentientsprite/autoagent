@@ -55,3 +55,15 @@ ${''}
 > before each narrative call. This file is the single context source.
 `;
 }
+
+export function renderBusinessContext(site: Site, opts: PlaybookOptions & { clientMd?: string | null } = {}): string {
+  const clientMd = opts.clientMd?.trim();
+  const playbook = renderPlaybook(site, opts);
+  if (!clientMd) return playbook;
+
+  return `${clientMd}
+
+---
+
+${playbook}`;
+}

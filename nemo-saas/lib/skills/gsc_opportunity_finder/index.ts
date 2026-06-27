@@ -23,7 +23,7 @@ import { z } from "zod";
 
 import { gscQueryByPage, type GscQueryRow } from "@/lib/connectors/google";
 import { narrative, type Usage } from "@/lib/skills/_shared/llm";
-import { renderPlaybook } from "@/lib/skills/_shared/playbook";
+import { renderBusinessContext } from "@/lib/skills/_shared/playbook";
 import type { Connector, Site } from "@/lib/db/types";
 
 const MIN_IMPRESSIONS = 100;
@@ -159,10 +159,12 @@ export async function runDeterministic(args: RunDeterministicArgs): Promise<Dete
 export async function runNarrative(args: {
   deterministic: DeterministicOutput;
   site: Site;
+  /** Canonical per-site CLIENT.md loaded by the workflow before the run. */
+  clientMd?: string | null;
   /** Cap LLM cost: only rewrite the top N pages per run. */
   topN?: number;
 }): Promise<{ value: NarrativeOutput; usage: Usage }> {
-  const playbook = renderPlaybook(args.site);
+  const playbook = renderBusinessContext(args.site, { clientMd: args.clientMd });
   const limited = {
     ...args.deterministic,
     opportunities: args.deterministic.opportunities.slice(0, args.topN ?? 10),
@@ -178,10 +180,12 @@ export async function runNarrative(args: {
   });
 }
 
-export async function run(args: RunDeterministicArgs & { site?: Site; withNarrative?: boolean }): Promise<SkillResult> {
+export async function run(
+  args: RunDeterministicArgs & { site?: Site; withNarrative?: boolean; clientMd?: string | null },
+): Promise<SkillResult> {
   const deterministic = await runDeterministic(args);
   if (!args.withNarrative || !args.site) return { deterministic };
-  const n = await runNarrative({ deterministic, site: args.site });
+  const n = await runNarrative({ deterministic, site: args.site, clientMd: args.clientMd });
   return { deterministic, narrative: n.value, llmUsage: n.usage };
 }
 
