@@ -213,8 +213,10 @@ export async function POST(req: Request) {
     }
   }
 
-  // 7. Follow-up loop: internal alert, outbound CRM, scheduled nurture (best effort).
-  void runLeadFollowUp({
+  // 7. Follow-up loop: internal alert, outbound CRM, scheduled nurture.
+  // This is still best-effort inside runLeadFollowUp, but awaiting it keeps
+  // Vercel from ending the function before the CRM sync starts.
+  const followUp = await runLeadFollowUp({
     leadId: lead.id,
     email: parsed.email,
     businessName: parsed.businessName,
@@ -225,7 +227,7 @@ export async function POST(req: Request) {
     reportUrl,
     topFixTitle: topFix?.title ?? null,
     topFixAction: topFix?.do_this ?? null,
-  }).catch((err) => console.error("lvs follow-up failed", err));
+  });
 
   return NextResponse.json({
     ok: true,
@@ -238,6 +240,7 @@ export async function POST(req: Request) {
     warningCount,
     winCount,
     topFix,
+    followUp,
   });
 }
 
