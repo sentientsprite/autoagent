@@ -1,0 +1,122 @@
+# Client Intelligence Layer
+
+Every paid site gets a canonical **`CLIENT.md`**: a living local-SMB
+intelligence file read before any agent touches the account.
+
+This is the SPRYTE/Nemo version of a persistent VELLUM-style memory file, but
+scoped to a business, not a person. It compounds agency knowledge over time:
+what messaging works, which hypotheses are live, what changed, and which
+questions still matter.
+
+## Schema Contract
+
+Migration:
+[`supabase/migrations/20260627000000_client_intelligence.sql`](../supabase/migrations/20260627000000_client_intelligence.sql)
+
+Tables:
+
+| Table | Purpose |
+|-------|---------|
+| `client_intelligence_files` | Current canonical `CLIENT.md` per `site_id` |
+| `client_intelligence_events` | Append-only agent/human updates after actions |
+| `weekly_client_briefs` | Monday two-paragraph customer briefs |
+
+New job kinds:
+
+- `client_intelligence_update`
+- `weekly_client_brief`
+
+## CLIENT.md Template
+
+```md
+# [Business Name] Intelligence File
+
+## Who They Are
+- Owner:
+- Years in business:
+- Service area:
+- Revenue / demand signals:
+
+## What We Know Works
+- Messaging:
+- Offers:
+- Seasonality:
+- Channels:
+
+## Current Beliefs We're Testing
+- Hypothesis:
+- Test:
+- Check cadence:
+
+## What Changed
+- Week 1:
+- Week 2:
+
+## Open Questions
+- Question:
+```
+
+## Agent Rules
+
+Before any agent or skill run:
+
+1. Load `client_intelligence_files.client_md` for the `site_id`.
+2. Pass it as the **first business-context block** to narrative skills.
+3. Treat open hypotheses as active experiments, not facts.
+4. Prefer updates with evidence (`job_id`, metric, URL, connector row, artifact).
+
+After any meaningful action:
+
+1. Insert a row in `client_intelligence_events`.
+2. Patch/regenerate `client_intelligence_files.client_md`.
+3. Increment `version`.
+4. Keep the file plain English. No raw chart dumps.
+
+Meaningful actions include:
+
+- audit finding changed
+- GBP/review/ranking movement
+- new page, campaign, offer, or post shipped
+- customer conversation created a belief or contradicted one
+- weekly brief produced a next action
+
+## Weekly Client Brief
+
+Every Monday at the customer’s local 8 AM, the reporter writes **two paragraphs
+max**:
+
+1. **What changed / what worked** — grounded in `CLIENT.md`, recent jobs, and
+   evidence.
+2. **What’s next** — the next test or action, with plain-language rationale.
+
+This is intentionally **not** a dashboard report with charts. It should read
+like a sharp account manager update:
+
+> This week your Google Business Profile moved from incomplete to ready for
+> spring cleanup traffic. The strongest signal was three new reviews, including
+> one commercial client, which supports the “family-owned but professional”
+> positioning we’re testing.
+>
+> Next week we’re watching Herriman rankings and separating HOA maintenance from
+> one-off cleanup content. If Herriman stays flat, the next move is a dedicated
+> service-area page and a GBP post tied to that offer.
+
+## Onboarding Behavior
+
+At onboarding, generate a starter `CLIENT.md` from:
+
+- business name, owner/contact, website, category, service area
+- wedge audit result
+- known plan/tier
+- initial hypotheses from the local visibility audit
+- user-provided goals and constraints
+
+If data is unknown, leave an **Open Question** rather than inventing it.
+
+## Product Notes
+
+- Agency tier: each client site has its own `CLIENT.md`.
+- Customer portal: expose a read-only “What we know about your business” panel
+  later, but keep editing agent/human controlled first.
+- Harbor tests should include fixtures that verify weekly briefs cite the
+  intelligence file and do not hallucinate unsupported facts.

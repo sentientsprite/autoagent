@@ -45,8 +45,9 @@ psql postgresql://postgres:postgres@localhost:54322/postgres -c "
 "
 ```
 
-Expected: `artifacts`, `connectors`, `jobs`, `leads`, `org_members`, `orgs`,
-`schedules`, `sites` (8 tables).
+Expected: `artifacts`, `client_intelligence_events`,
+`client_intelligence_files`, `connectors`, `jobs`, `leads`, `org_members`,
+`orgs`, `schedules`, `sites`, `weekly_client_briefs` (11 tables).
 
 ```bash
 psql postgresql://postgres:postgres@localhost:54322/postgres -c "

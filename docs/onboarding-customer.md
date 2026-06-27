@@ -80,13 +80,18 @@ control, electricians, roofers, painters.
    with the `business.manage` scope. Required.
 4. **Confirm site profile**: business name, address, phone, primary
    category, service-area zips. Pre-filled from GBP wherever possible.
-5. **Auto-enable starter schedules** (server-side, plan-gated):
+5. **Generate `CLIENT.md`**: create the starter intelligence file from the
+   business profile, wedge audit, initial goals, constraints, and open
+   hypotheses. Unknowns become **Open Questions**, never invented facts. This
+   writes `client_intelligence_files` and the first
+   `client_intelligence_events` row.
+6. **Auto-enable starter schedules** (server-side, plan-gated):
    - `local_visibility_audit` — weekly
    - `reputation_loop` — weekly
    - `ga4_health_brief` — monthly (only if user connects GA4 in step 6)
    - `local_landing_builder` — monthly (skipped until website URL is set)
-6. **Optional**: connect GA4 (skipped without slowing onboarding).
-7. **First report runs immediately**: same flow as the wedge but with the
+7. **Optional**: connect GA4 (skipped without slowing onboarding).
+8. **First report runs immediately**: same flow as the wedge but with the
    GBP-managed (not Places-only) signals. Email sent within 3 min.
 
 ### 1b. The "we're working" reassurance loop
@@ -96,6 +101,8 @@ between logins. We send:
 
 - **Weekly SMS** (opt-in during signup): "Nemo fixed 3 listings and
   asked 4 customers for reviews this week. View report ↗"
+- **Monday client brief**: two paragraphs max — what changed/worked, what we
+  test next — generated from `CLIENT.md` + recent jobs.
 - **Monthly email**: full PDF, narrative + actions taken
 - **In-app banner** on next login: "Since you were last here: …"
 

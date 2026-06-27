@@ -69,6 +69,7 @@ nemo-saas/
 │   ├── crawler/               # Wraps Playwright worker (borrowed from Nemo)
 │   └── kms/                   # Per-tenant envelope encryption
 ├── extension/                 # Chrome extension (rewired thin client)
+├── docs/CLIENT_INTELLIGENCE.md # Per-site CLIENT.md + weekly brief contract
 └── supabase/migrations/       # SQL schema (orgs, sites, connectors, jobs, artifacts)
 ```
 
@@ -102,6 +103,15 @@ Each skill is a folder under [`lib/skills/`](lib/skills/) and exports:
 - A README documenting tool allowlist, scopes required, and verifier hooks
 
 Skills are pure libraries. The **workflow engine** (Inngest, [`lib/workflows/`](lib/workflows/)) is the supervisor: it sequences skills, persists artifacts, and emits events.
+
+## Client intelligence
+
+Every paid `Site` gets a canonical **`CLIENT.md`** stored in
+`client_intelligence_files`. Agents must read it before touching the account
+and append `client_intelligence_events` after meaningful actions. The Monday
+`weekly_client_brief` is a two-paragraph plain-English account note, not a chart
+report. Full contract:
+[`docs/CLIENT_INTELLIGENCE.md`](docs/CLIENT_INTELLIGENCE.md).
 
 ## Why this is not a fork of Nemo/OpenClaw
 

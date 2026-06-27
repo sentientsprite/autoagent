@@ -1,0 +1,22 @@
+---
+description: CLIENT.md intelligence files are required context for Nemo/SPRYTE client work
+globs: nemo-saas/**/*
+alwaysApply: false
+---
+
+# Client Intelligence Rule
+
+When working on Nemo/SPRYTE customer workflows, treat `CLIENT.md` as part of the
+database and prompt contract.
+
+- Each paid `sites` row has a canonical `CLIENT.md` in
+  `client_intelligence_files`.
+- Before any agent/skill touches a customer account, load and pass the current
+  `client_md` as the first business-context block.
+- After meaningful actions, append a `client_intelligence_events` row and patch
+  the canonical file.
+- Weekly customer updates are `weekly_client_briefs`: two paragraphs max,
+  plain English, grounded in `CLIENT.md` plus recent job evidence.
+- Do not invent unknown business facts. Put them under **Open Questions**.
+
+Reference: `nemo-saas/docs/CLIENT_INTELLIGENCE.md`.
