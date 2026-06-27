@@ -169,6 +169,23 @@ export async function POST(req: Request) {
     }).eq("id", job.id);
   await db.from("leads").update({ audit_job_id: job.id }).eq("id", lead.id);
 
+  // Build a lightweight preview so the on-page scorecard has substance
+  // without leaking the full report (that lives in the PDF).
+  const insights = result.deterministic.insights;
+  const criticalCount = insights.filter((i) => i.severity === "critical").length;
+  const warningCount = insights.filter((i) => i.severity === "warning").length;
+  const winCount = insights.filter((i) => i.severity === "win").length;
+  const narrativeFix = result.narrative?.topFixes?.[0];
+  const fallbackFix =
+    insights.find((i) => i.severity === "critical") ??
+    insights.find((i) => i.severity === "warning") ??
+    insights[0];
+  const topFix = narrativeFix
+    ? { title: narrativeFix.title, do_this: narrativeFix.do_this }
+    : fallbackFix
+      ? { title: fallbackFix.title, do_this: fallbackFix.action }
+      : null;
+
   // 6. Email the lead. Best effort — don't fail the wedge if Resend is down.
   if (process.env.RESEND_API_KEY) {
     try {
@@ -200,6 +217,12 @@ export async function POST(req: Request) {
     grade: result.deterministic.grade,
     score: result.deterministic.score,
     reportUrl,
+    headline: result.narrative?.headline ?? null,
+    findingCount: insights.length,
+    criticalCount,
+    warningCount,
+    winCount,
+    topFix,
   });
 }
 
