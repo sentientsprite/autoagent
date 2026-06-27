@@ -17,6 +17,16 @@ type Events = {
   "nemo/site.brief.weekly": {
     data: { siteId: string; orgId: string; weekStart?: string };
   };
+  "nemo/lead.wedge.followup": {
+    data: {
+      leadId: string;
+      email: string;
+      businessName: string;
+      grade: string;
+      reportUrl: string;
+      topFixAction: string | null;
+    };
+  };
 };
 
 export const inngest = new Inngest({

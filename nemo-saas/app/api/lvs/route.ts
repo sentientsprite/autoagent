@@ -19,6 +19,7 @@ import { dbAsService } from "@/lib/db/client";
 import { run } from "@/lib/skills/local_visibility_audit";
 import { renderLvsReportPdf } from "@/lib/pdf/lvs-report";
 import { LvsEmail } from "@/lib/email/lvs";
+import { runLeadFollowUp } from "@/lib/lead-followup";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -211,6 +212,20 @@ export async function POST(req: Request) {
       // swallow — the user still has the report URL
     }
   }
+
+  // 7. Follow-up loop: internal alert, outbound CRM, scheduled nurture (best effort).
+  void runLeadFollowUp({
+    leadId: lead.id,
+    email: parsed.email,
+    businessName: parsed.businessName,
+    zip: parsed.zip,
+    websiteUrl: parsed.websiteUrl,
+    grade: result.deterministic.grade,
+    score: result.deterministic.score,
+    reportUrl,
+    topFixTitle: topFix?.title ?? null,
+    topFixAction: topFix?.do_this ?? null,
+  }).catch((err) => console.error("lvs follow-up failed", err));
 
   return NextResponse.json({
     ok: true,

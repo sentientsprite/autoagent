@@ -121,6 +121,14 @@ Pass criteria:
   `result` JSON includes `insights[]`.
 - Supabase `artifacts` table contains a `kind='pdf'` row pointing at the storage path.
 
+**Follow-up loop** (optional env — see `.env.example`):
+
+- With `LVS_INTERNAL_NOTIFY_EMAIL` + `RESEND_API_KEY`: internal alert email arrives.
+- With `OUTBOUND_CRM_WEBHOOK_URL` + `HUNTER_WEBHOOK_SECRET`: outbound CRM gets a row
+  with `source=lvs_wedge`, `external_id=lvs:{leadId}`, email in notes.
+- With `INNGEST_EVENT_KEY`: Inngest receives `nemo/lead.wedge.followup` (nurture runs after
+  `LVS_NURTURE_DELAY_HOURS`, default 48).
+
 Failure paths to test:
 
 ```bash

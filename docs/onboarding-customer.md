@@ -53,6 +53,10 @@ What the wedge does (mapped to code):
 - Renders PDF via [`lib/pdf/lvs-report.tsx`](../nemo-saas/lib/pdf/lvs-report.tsx)
 - Emails via Resend ([`lib/email/lvs.tsx`](../nemo-saas/lib/email/lvs.tsx))
 - Returns `reportUrl` for instant display
+- **Follow-up loop** ([`lib/lead-followup.ts`](../nemo-saas/lib/lead-followup.ts)):
+  - Internal alert to `LVS_INTERNAL_NOTIFY_EMAIL`
+  - Sync to outbound CRM via Hunter webhook (`source=lvs_wedge`, `external_id=lvs:{leadId}`)
+  - 48h nurture email via Inngest if `promoted_org_id` is still null
 
 What support says when it breaks:
 

@@ -28,6 +28,10 @@ import {
   upsertWeeklyClientBrief,
 } from "@/lib/client-intelligence";
 import type { Connector, Job, Site } from "@/lib/db/types";
+import { LvsNurtureEmail } from "@/lib/email/lvs-nurture";
+import { Resend } from "resend";
+import { render } from "@react-email/render";
+import React from "react";
 
 // =============================================================================
 // monthlySiteReport — the headline workflow that bundles audit + GSC + GA4
@@ -321,4 +325,57 @@ function mondayIsoDate(d: Date): string {
   return copy.toISOString().slice(0, 10);
 }
 
-export const functions = [monthlySiteReport, jobRequested, weeklyClientBrief];
+// =============================================================================
+// wedgeLeadFollowUp — nurture email if lead hasn't promoted to a paying org
+// =============================================================================
+
+const NURTURE_DELAY_HOURS = Math.max(1, parseInt(process.env.LVS_NURTURE_DELAY_HOURS ?? "48", 10) || 48);
+
+export const wedgeLeadFollowUp = inngest.createFunction(
+  { id: "wedge-lead-followup", name: "Wedge lead nurture (48h)", retries: 2 },
+  { event: "nemo/lead.wedge.followup" },
+  async ({ event, step, logger }) => {
+    const { leadId, email, businessName, grade, reportUrl, topFixAction } = event.data;
+
+    await step.sleep("wait-before-nurture", `${NURTURE_DELAY_HOURS}h`);
+
+    const stillOpen = await step.run("check-lead-still-open", async () => {
+      const db = dbAsService();
+      const { data } = await db.from("leads").select("promoted_org_id").eq("id", leadId).maybeSingle();
+      return !data?.promoted_org_id;
+    });
+
+    if (!stillOpen) {
+      logger.info("lead already promoted — skip nurture", { leadId });
+      return { skipped: "promoted" };
+    }
+
+    const apiKey = (process.env.RESEND_API_KEY ?? "").trim();
+    if (!apiKey) {
+      logger.warn("RESEND_API_KEY missing — cannot send nurture");
+      return { skipped: "no_resend" };
+    }
+
+    await step.run("send-nurture-email", async () => {
+      const html = await render(
+        React.createElement(LvsNurtureEmail, {
+          businessName,
+          grade,
+          reportUrl,
+          topFix: topFixAction,
+        }),
+      );
+      const resend = new Resend(apiKey);
+      await resend.emails.send({
+        from: process.env.RESEND_FROM_EMAIL ?? "Nemo Local <reports@nemo.local>",
+        to: email,
+        subject: `Still thinking about your ${grade} Local Visibility Score?`,
+        html,
+      });
+    });
+
+    return { sent: true, leadId };
+  },
+);
+
+export const functions = [monthlySiteReport, jobRequested, weeklyClientBrief, wedgeLeadFollowUp];
