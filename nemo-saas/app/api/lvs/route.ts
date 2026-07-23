@@ -17,6 +17,7 @@ import React from "react";
 
 import { dbAsService } from "@/lib/db/client";
 import { run } from "@/lib/skills/local_visibility_audit";
+import { insightsToActionItems } from "@/lib/skills/local_visibility_audit/action-items";
 import { renderLvsReportPdf } from "@/lib/pdf/lvs-report";
 import { LvsEmail } from "@/lib/email/lvs";
 import { runLeadFollowUp } from "@/lib/lead-followup";
@@ -186,6 +187,7 @@ export async function POST(req: Request) {
     : fallbackFix
       ? { title: fallbackFix.title, do_this: fallbackFix.action }
       : null;
+  const actionItems = insightsToActionItems(insights);
 
   // 6. Email the lead. Best effort — don't fail the wedge if Resend is down.
   if (process.env.RESEND_API_KEY) {
@@ -240,6 +242,7 @@ export async function POST(req: Request) {
     warningCount,
     winCount,
     topFix,
+    actionItems,
     followUp,
   });
 }

@@ -4,6 +4,26 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
+import { OwnedDemandPanel } from "./OwnedDemandPanel";
+
+type HomeTab = "visibility" | "lead-sources";
+
+interface ActionChecklistStep {
+  id: string;
+  label: string;
+  detail?: string;
+}
+
+interface ActionItem {
+  id: string;
+  priority: "do_first" | "this_week" | "keep_going";
+  severity: "critical" | "warning" | "info" | "win";
+  title: string;
+  why: string;
+  outcome: string;
+  steps: ActionChecklistStep[];
+}
+
 interface AuditResponse {
   ok: boolean;
   grade: string;
@@ -15,6 +35,7 @@ interface AuditResponse {
   warningCount?: number;
   winCount?: number;
   topFix?: { title: string; do_this: string } | null;
+  actionItems?: ActionItem[];
   error?: string;
 }
 
@@ -24,36 +45,101 @@ const DEMO_RESULT: AuditResponse = {
   grade: "B",
   score: 84,
   reportUrl: "https://example.com/sample-local-visibility-report.pdf",
-  headline: "Strong profile, a few high-impact gaps",
-  findingCount: 6,
+  headline: "Strong profile — fix these three gaps this week",
+  findingCount: 3,
   criticalCount: 1,
   warningCount: 2,
-  winCount: 3,
+  winCount: 1,
   topFix: {
-    title: "Add 8 more recent photos to your Google Business Profile",
-    do_this:
-      "Upload geo-tagged photos of recent jobs — listings with 10+ photos get ~2x more direction requests.",
+    title: "Add more photos to your Google Business Profile",
+    do_this: "Upload geo-tagged photos of recent jobs.",
   },
+  actionItems: [
+    {
+      id: "gbp.profile_incomplete",
+      priority: "do_first",
+      severity: "critical",
+      title: "Finish your Google Business Profile",
+      why: "Missing: phone, business hours.",
+      outcome: "Completed profiles get more calls from local search.",
+      steps: [
+        { id: "0", label: "Open business.google.com → your listing → Edit profile" },
+        { id: "1", label: "Add your phone in Info" },
+        { id: "2", label: "Add business hours customers actually call you" },
+        { id: "3", label: "Save, then search your name + ZIP on Google to confirm" },
+      ],
+    },
+    {
+      id: "gbp.thin_photos",
+      priority: "this_week",
+      severity: "warning",
+      title: "Add more photos",
+      why: "Only 4 photos. Listings with 10+ get more direction requests.",
+      outcome: "Upload 10 fresh job photos this week.",
+      steps: [
+        { id: "1", label: "Gather 6+ recent job photos (before/after works best)" },
+        { id: "2", label: "Google Maps → your listing → Photos → Add" },
+        { id: "3", label: "Upload exteriors, completed work, and vans — no stock images" },
+        { id: "4", label: "Caption with the city or neighborhood when asked" },
+      ],
+    },
+    {
+      id: "gbp.low_review_velocity",
+      priority: "this_week",
+      severity: "warning",
+      title: "Get fresh reviews",
+      why: "Only 1 new review in the last 90 days.",
+      outcome: "Ask after every completed job until you hit 3+ per quarter.",
+      steps: [
+        { id: "1", label: "After each job, text a short review ask the same day" },
+        { id: "2", label: "Use your direct Google review link from GBP" },
+        { id: "3", label: "Reply to every new review within 48 hours" },
+      ],
+    },
+    {
+      id: "win.photos",
+      priority: "keep_going",
+      severity: "win",
+      title: "Primary category looks solid",
+      why: "Your main category matches how customers search.",
+      outcome: "No change needed.",
+      steps: [{ id: "1", label: "No change needed — keep doing this." }],
+    },
+  ],
 };
 
 const GRADE_THEME: Record<string, { ring: string; bg: string; label: string }> = {
-  A: { ring: "#16a34a", bg: "#f0fdf4", label: "Excellent" },
+  A: { ring: "#0f766e", bg: "#f0fdfa", label: "Excellent" },
   B: { ring: "#0d9488", bg: "#f0fdfa", label: "Good" },
-  C: { ring: "#d97706", bg: "#fffbeb", label: "Needs work" },
-  D: { ring: "#ea580c", bg: "#fff7ed", label: "At risk" },
-  F: { ring: "#dc2626", bg: "#fef2f2", label: "Critical" },
+  C: { ring: "#b45309", bg: "#fffbeb", label: "Needs work" },
+  D: { ring: "#c2410c", bg: "#fff7ed", label: "At risk" },
+  F: { ring: "#b91c1c", bg: "#fef2f2", label: "Critical" },
+};
+
+const PRIORITY_LABEL: Record<ActionItem["priority"], string> = {
+  do_first: "Do first",
+  this_week: "This week",
+  keep_going: "Already good",
 };
 
 export default function HomeClient() {
   const searchParams = useSearchParams();
+  const [tab, setTab] = useState<HomeTab>("visibility");
+  const [ownedDemo, setOwnedDemo] = useState(false);
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<AuditResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (searchParams.get("demo") === "post-submit") {
+    const demo = searchParams.get("demo");
+    if (demo === "post-submit") {
+      setTab("visibility");
       setResult(DEMO_RESULT);
       setError(null);
+    }
+    if (demo === "owned-demand") {
+      setTab("lead-sources");
+      setOwnedDemo(true);
     }
   }, [searchParams]);
 
@@ -91,70 +177,146 @@ export default function HomeClient() {
     }
   }
 
+  const onLeadSources = tab === "lead-sources";
+
   return (
     <main style={mainStyle}>
       <div style={bgAccent} aria-hidden />
       <section style={heroStyle}>
-        <span style={pillStyle}>Free · 60-second audit · No credit card</span>
+        <span style={pillStyle}>
+          {onLeadSources
+            ? "Free · Lead-source scorecard · No login"
+            : "Free · 60-second audit · No credit card"}
+        </span>
         <h1 style={h1Style}>
-          See exactly why local customers <span style={{ color: "#4f46e5" }}>can&apos;t find you</span> on Google.
+          {onLeadSources ? (
+            <>
+              Stop renting leads.{" "}
+              <span style={{ color: "#0f766e" }}>Build owned demand</span>.
+            </>
+          ) : (
+            <>
+              See exactly why local customers{" "}
+              <span style={{ color: "#0f766e" }}>can&apos;t find you</span> on Google.
+            </>
+          )}
         </h1>
         <p style={subStyle}>
-          Enter your business name and ZIP. We grade your Google Business Profile, review velocity, and
-          listing consistency — then email you a one-page PDF with the top fixes, ranked by impact.
+          {onLeadSources
+            ? "Score every lead source from 0–14. See rented vs mixed vs owned demand, run booked-job math, and follow the replacement checklist — one source at a time."
+            : "Enter your business name and ZIP. We grade your Google Business Profile, then give you a short checklist of fixes — expand each item for step-by-step instructions."}
         </p>
 
-        <div style={trustRow}>
-          <TrustItem label="Built for home services" />
-          <TrustItem label="Same checks agencies charge $500 for" />
-          <TrustItem label="Plain-English fixes" />
+        <div style={tabRow} role="tablist" aria-label="Nemo Local tools">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={!onLeadSources}
+            onClick={() => setTab("visibility")}
+            style={{
+              ...tabBtn,
+              background: !onLeadSources ? "#0f766e" : "#fff",
+              color: !onLeadSources ? "#fff" : "#334155",
+              borderColor: !onLeadSources ? "#0f766e" : "#e2e8f0",
+            }}
+          >
+            Local Visibility
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={onLeadSources}
+            onClick={() => setTab("lead-sources")}
+            style={{
+              ...tabBtn,
+              background: onLeadSources ? "#0f766e" : "#fff",
+              color: onLeadSources ? "#fff" : "#334155",
+              borderColor: onLeadSources ? "#0f766e" : "#e2e8f0",
+            }}
+          >
+            Lead sources
+          </button>
         </div>
 
-        {!result ? (
-          <form onSubmit={onSubmit} style={cardStyle}>
-            <div style={fieldGrid}>
-              <Field name="businessName" placeholder="Business name" required />
-              <Field name="zip" placeholder="ZIP (e.g. 84088)" required pattern="\d{5}" inputMode="numeric" />
+        {onLeadSources ? (
+          <>
+            <div style={trustRow}>
+              <TrustItem label="Seven-question scorecard" />
+              <TrustItem label="Booked-job cost math" />
+              <TrustItem label="Owned-proof checklist" />
             </div>
-            <Field name="websiteUrl" placeholder="Website (optional)" type="url" />
-            <Field name="email" placeholder="Your email — we send the PDF here" required type="email" />
-            <button type="submit" disabled={pending} style={{ ...btnStyle, opacity: pending ? 0.7 : 1 }}>
-              {pending ? "Auditing your profile…" : "Get my free score →"}
-            </button>
-            <p style={fineprint}>
-              We&apos;ll email your report and occasional local-marketing tips. Unsubscribe anytime.
-            </p>
-          </form>
+            <OwnedDemandPanel key={ownedDemo ? "demo" : "live"} demo={ownedDemo} />
+          </>
         ) : (
-          <Scorecard result={result} onReset={() => setResult(null)} />
-        )}
-
-        {error ? (
-          <div style={errorBox}>
-            <strong>Couldn&apos;t finish the audit.</strong>
-            <span style={{ display: "block", marginTop: 4, color: "#7f1d1d" }}>{error}</span>
-          </div>
-        ) : null}
-
-        {!result ? (
-          <div style={{ marginTop: 40 }}>
-            <p style={sectionLabel}>What you get in the report</p>
-            <div style={featureGrid}>
-              <Feature
-                title="Your Local Visibility Score"
-                body="A 0–100 grade across the signals that actually move local rankings."
-              />
-              <Feature
-                title="The top fixes, ranked"
-                body="No 40-page export. The 3 changes that move the needle, in priority order."
-              />
-              <Feature
-                title="A shareable PDF"
-                body="One page you can hand to whoever runs your marketing — or do it yourself."
-              />
+          <>
+            <div style={trustRow}>
+              <TrustItem label="Built for home services" />
+              <TrustItem label="Plain-English action list" />
+              <TrustItem label="Expandable how-to steps" />
             </div>
-          </div>
-        ) : null}
+
+            {!result ? (
+              <form onSubmit={onSubmit} style={cardStyle}>
+                <div style={fieldGrid}>
+                  <Field name="businessName" placeholder="Business name" required />
+                  <Field
+                    name="zip"
+                    placeholder="ZIP (e.g. 84088)"
+                    required
+                    pattern="\d{5}"
+                    inputMode="numeric"
+                  />
+                </div>
+                <Field name="websiteUrl" placeholder="Website (optional)" type="url" />
+                <Field
+                  name="email"
+                  placeholder="Your email — we send the PDF here"
+                  required
+                  type="email"
+                />
+                <button
+                  type="submit"
+                  disabled={pending}
+                  style={{ ...btnStyle, opacity: pending ? 0.7 : 1 }}
+                >
+                  {pending ? "Auditing your profile…" : "Get my free score →"}
+                </button>
+                <p style={fineprint}>
+                  We&apos;ll email your report and occasional local-marketing tips. Unsubscribe anytime.
+                </p>
+              </form>
+            ) : (
+              <Scorecard result={result} onReset={() => setResult(null)} />
+            )}
+
+            {error ? (
+              <div style={errorBox}>
+                <strong>Couldn&apos;t finish the audit.</strong>
+                <span style={{ display: "block", marginTop: 4, color: "#7f1d1d" }}>{error}</span>
+              </div>
+            ) : null}
+
+            {!result ? (
+              <div style={{ marginTop: 40 }}>
+                <p style={sectionLabel}>What you get</p>
+                <div style={featureGrid}>
+                  <Feature
+                    title="A clear score"
+                    body="0–100 across the signals that move local rankings — not a 40-page dump."
+                  />
+                  <Feature
+                    title="Action items, ranked"
+                    body="Do first / this week / already good. Tap any item for a checklist."
+                  />
+                  <Feature
+                    title="A shareable PDF"
+                    body="One page you can hand to whoever runs your marketing — or do it yourself."
+                  />
+                </div>
+              </div>
+            ) : null}
+          </>
+        )}
       </section>
     </main>
   );
@@ -163,6 +325,28 @@ export default function HomeClient() {
 function Scorecard({ result, onReset }: { result: AuditResponse; onReset: () => void }) {
   const theme = GRADE_THEME[result.grade] ?? GRADE_THEME.C;
   const pct = Math.max(0, Math.min(100, result.score));
+  const items = result.actionItems?.length
+    ? result.actionItems
+    : result.topFix
+      ? [
+          {
+            id: "top",
+            priority: "do_first" as const,
+            severity: "critical" as const,
+            title: result.topFix.title,
+            why: result.headline ?? "Highest-impact fix from this audit.",
+            outcome: result.topFix.do_this,
+            steps: [
+              { id: "1", label: result.topFix.do_this },
+              { id: "2", label: "Open business.google.com and make the change" },
+              { id: "3", label: "Save, then search your business on Google to verify" },
+            ],
+          },
+        ]
+      : [];
+
+  const todoCount = items.filter((i) => i.priority !== "keep_going").length;
+
   return (
     <div style={{ ...cardStyle, background: "#fff", padding: 0, overflow: "hidden" }}>
       <div style={{ display: "flex", gap: 20, alignItems: "center", padding: "24px 24px 20px", background: theme.bg }}>
@@ -183,32 +367,27 @@ function Scorecard({ result, onReset }: { result: AuditResponse; onReset: () => 
 
       <div style={{ padding: 24 }}>
         {result.headline ? (
-          <p style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", margin: "0 0 14px" }}>{result.headline}</p>
+          <p style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", margin: "0 0 6px" }}>{result.headline}</p>
         ) : null}
+        <p style={{ fontSize: 14, color: "#64748b", margin: "0 0 18px", lineHeight: 1.5 }}>
+          {todoCount === 0
+            ? "No urgent gaps — keep the wins below going."
+            : `${todoCount} action item${todoCount === 1 ? "" : "s"} below. Expand any row for the checklist.`}
+        </p>
 
-        <div style={countRow}>
-          <CountPill n={result.criticalCount} label="critical" color="#dc2626" />
-          <CountPill n={result.warningCount} label="to improve" color="#d97706" />
-          <CountPill n={result.winCount} label="already good" color="#16a34a" />
+        <div style={{ display: "grid", gap: 10 }}>
+          {items.map((item, index) => (
+            <ActionItemRow key={item.id} item={item} defaultOpen={index === 0 && item.priority !== "keep_going"} />
+          ))}
         </div>
 
-        {result.topFix ? (
-          <div style={topFixCard}>
-            <p style={{ fontSize: 11, letterSpacing: 1, textTransform: "uppercase", color: "#4f46e5", margin: "0 0 6px", fontWeight: 700 }}>
-              Your #1 fix
-            </p>
-            <p style={{ fontSize: 15, fontWeight: 700, color: "#0f172a", margin: "0 0 4px" }}>{result.topFix.title}</p>
-            <p style={{ fontSize: 14, color: "#475569", margin: 0, lineHeight: 1.5 }}>{result.topFix.do_this}</p>
-          </div>
-        ) : null}
-
-        <a href={result.reportUrl} target="_blank" rel="noreferrer" style={btnStyle}>
+        <a href={result.reportUrl} target="_blank" rel="noreferrer" style={{ ...btnStyle, marginTop: 18 }}>
           Open the full report (PDF) →
         </a>
 
         <div style={upsellBox}>
-          <span style={{ color: "#475569", fontSize: 14 }}>Want us to fix these every week, automatically?</span>
-          <Link href="/products/beacon" style={{ color: "#4f46e5", fontWeight: 700, fontSize: 14, textDecoration: "none" }}>
+          <span style={{ color: "#475569", fontSize: 14 }}>Want these fixed every week, automatically?</span>
+          <Link href="/products/beacon" style={{ color: "#0f766e", fontWeight: 700, fontSize: 14, textDecoration: "none" }}>
             See Beacon →
           </Link>
         </div>
@@ -221,6 +400,134 @@ function Scorecard({ result, onReset }: { result: AuditResponse; onReset: () => 
   );
 }
 
+function ActionItemRow({ item, defaultOpen }: { item: ActionItem; defaultOpen: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
+  const [done, setDone] = useState<Record<string, boolean>>({});
+  const accent =
+    item.severity === "critical"
+      ? "#b91c1c"
+      : item.severity === "warning"
+        ? "#b45309"
+        : item.severity === "win"
+          ? "#0f766e"
+          : "#475569";
+  const completed = item.steps.filter((s) => done[s.id]).length;
+
+  return (
+    <div
+      style={{
+        border: "1px solid #e2e8f0",
+        borderRadius: 12,
+        overflow: "hidden",
+        background: item.priority === "keep_going" ? "#f8fafc" : "#fff",
+      }}
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        style={{
+          width: "100%",
+          display: "flex",
+          gap: 12,
+          alignItems: "flex-start",
+          textAlign: "left",
+          padding: "14px 16px",
+          border: "none",
+          background: "transparent",
+          cursor: "pointer",
+        }}
+      >
+        <span
+          style={{
+            flexShrink: 0,
+            marginTop: 2,
+            fontSize: 11,
+            fontWeight: 800,
+            letterSpacing: 0.4,
+            textTransform: "uppercase",
+            color: accent,
+            background: `${accent}14`,
+            borderRadius: 6,
+            padding: "4px 8px",
+          }}
+        >
+          {PRIORITY_LABEL[item.priority]}
+        </span>
+        <span style={{ flex: 1, minWidth: 0 }}>
+          <span style={{ display: "block", fontSize: 15, fontWeight: 700, color: "#0f172a", lineHeight: 1.35 }}>
+            {item.title}
+          </span>
+          <span style={{ display: "block", fontSize: 13, color: "#64748b", marginTop: 4, lineHeight: 1.45 }}>
+            {item.why}
+          </span>
+        </span>
+        <span style={{ flexShrink: 0, color: "#94a3b8", fontSize: 18, lineHeight: 1, marginTop: 2 }}>
+          {open ? "▾" : "▸"}
+        </span>
+      </button>
+
+      {open ? (
+        <div style={{ padding: "0 16px 16px", borderTop: "1px solid #f1f5f9" }}>
+          <p style={{ fontSize: 13, color: "#334155", margin: "12px 0 10px", lineHeight: 1.45 }}>
+            <strong style={{ color: "#0f172a" }}>Done when:</strong> {item.outcome}
+          </p>
+          <p style={{ fontSize: 12, color: "#94a3b8", margin: "0 0 8px", fontWeight: 600 }}>
+            Checklist · {completed}/{item.steps.length} done
+          </p>
+          <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: 8 }}>
+            {item.steps.map((step) => {
+              const checked = !!done[step.id];
+              return (
+                <li key={step.id}>
+                  <label
+                    style={{
+                      display: "flex",
+                      gap: 10,
+                      alignItems: "flex-start",
+                      padding: "10px 12px",
+                      borderRadius: 10,
+                      background: checked ? "#f0fdfa" : "#f8fafc",
+                      border: `1px solid ${checked ? "#99f6e4" : "#eef2f7"}`,
+                      cursor: "pointer",
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => setDone((prev) => ({ ...prev, [step.id]: !prev[step.id] }))}
+                      style={{ marginTop: 3, width: 16, height: 16, accentColor: "#0f766e" }}
+                    />
+                    <span>
+                      <span
+                        style={{
+                          display: "block",
+                          fontSize: 14,
+                          color: checked ? "#0f766e" : "#0f172a",
+                          textDecoration: checked ? "line-through" : "none",
+                          lineHeight: 1.4,
+                          fontWeight: 600,
+                        }}
+                      >
+                        {step.label}
+                      </span>
+                      {step.detail ? (
+                        <span style={{ display: "block", fontSize: 12, color: "#64748b", marginTop: 3, lineHeight: 1.4 }}>
+                          {step.detail}
+                        </span>
+                      ) : null}
+                    </span>
+                  </label>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function Field(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} style={inputStyle} />;
 }
@@ -228,17 +535,8 @@ function Field(props: React.InputHTMLAttributes<HTMLInputElement>) {
 function TrustItem({ label }: { label: string }) {
   return (
     <span style={trustItem}>
-      <span style={{ color: "#16a34a", fontWeight: 800 }}>✓</span> {label}
+      <span style={{ color: "#0f766e", fontWeight: 800 }}>✓</span> {label}
     </span>
-  );
-}
-
-function CountPill({ n, label, color }: { n?: number; label: string; color: string }) {
-  return (
-    <div style={countPill}>
-      <span style={{ fontSize: 20, fontWeight: 800, color }}>{n ?? 0}</span>
-      <span style={{ fontSize: 12, color: "#64748b" }}>{label}</span>
-    </div>
   );
 }
 
@@ -252,7 +550,7 @@ function Feature({ title, body }: { title: string; body: string }) {
 }
 
 const mainStyle: React.CSSProperties = {
-  fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
+  fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
   position: "relative",
   padding: "24px 20px 72px",
   overflow: "hidden",
@@ -264,17 +562,17 @@ const bgAccent: React.CSSProperties = {
   transform: "translateX(-50%)",
   width: 900,
   height: 420,
-  background: "radial-gradient(closest-side, rgba(79,70,229,0.10), rgba(79,70,229,0))",
+  background: "radial-gradient(closest-side, rgba(15,118,110,0.10), rgba(15,118,110,0))",
   pointerEvents: "none",
 };
-const heroStyle: React.CSSProperties = { position: "relative", maxWidth: 620, margin: "32px auto 0" };
+const heroStyle: React.CSSProperties = { position: "relative", maxWidth: 640, margin: "32px auto 0" };
 const pillStyle: React.CSSProperties = {
   display: "inline-block",
   fontSize: 12,
   fontWeight: 600,
-  color: "#4f46e5",
-  background: "#eef2ff",
-  border: "1px solid #e0e7ff",
+  color: "#0f766e",
+  background: "#f0fdfa",
+  border: "1px solid #ccfbf1",
   borderRadius: 999,
   padding: "5px 12px",
   marginBottom: 16,
@@ -290,6 +588,20 @@ const h1Style: React.CSSProperties = {
 const subStyle: React.CSSProperties = { color: "#475569", fontSize: 17, lineHeight: 1.55, marginBottom: 20 };
 const trustRow: React.CSSProperties = { display: "flex", flexWrap: "wrap", gap: "8px 16px", marginBottom: 24 };
 const trustItem: React.CSSProperties = { fontSize: 13, color: "#475569", display: "inline-flex", gap: 6, alignItems: "center" };
+const tabRow: React.CSSProperties = {
+  display: "flex",
+  gap: 8,
+  marginBottom: 20,
+  flexWrap: "wrap",
+};
+const tabBtn: React.CSSProperties = {
+  border: "1px solid",
+  borderRadius: 999,
+  padding: "10px 16px",
+  fontSize: 14,
+  fontWeight: 700,
+  cursor: "pointer",
+};
 const cardStyle: React.CSSProperties = {
   display: "grid",
   gap: 10,
@@ -317,7 +629,7 @@ const btnStyle: React.CSSProperties = {
   padding: "14px 16px",
   border: "none",
   borderRadius: 10,
-  background: "#4f46e5",
+  background: "#0f766e",
   color: "#fff",
   fontSize: 16,
   fontWeight: 700,
@@ -360,25 +672,6 @@ const ringStyle: React.CSSProperties = {
 };
 const barTrack: React.CSSProperties = { width: "100%", height: 8, background: "#e2e8f0", borderRadius: 999, overflow: "hidden" };
 const barFill: React.CSSProperties = { height: "100%", borderRadius: 999, transition: "width .6s ease" };
-const countRow: React.CSSProperties = { display: "flex", gap: 10, marginBottom: 16 };
-const countPill: React.CSSProperties = {
-  flex: 1,
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  gap: 2,
-  padding: "12px 8px",
-  background: "#f8fafc",
-  border: "1px solid #eef2f7",
-  borderRadius: 12,
-};
-const topFixCard: React.CSSProperties = {
-  padding: 16,
-  background: "#f5f3ff",
-  border: "1px solid #e0e7ff",
-  borderRadius: 12,
-  marginBottom: 16,
-};
 const upsellBox: React.CSSProperties = {
   marginTop: 14,
   display: "flex",
