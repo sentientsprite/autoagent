@@ -30,6 +30,24 @@ const PRIORITY_FROM_SEVERITY: Record<Insight["severity"], ActionItemPriority> = 
 };
 
 const CHECKLISTS: Record<string, (insight: Insight) => ActionChecklistStep[]> = {
+  "gbp.lookup_unavailable": () => [
+    {
+      id: "1",
+      label: "This finding is about our lookup tool, not your business — we didn’t search Google yet",
+    },
+    {
+      id: "2",
+      label: "If you already have a Google Business Profile, nothing is wrong with it based on this result",
+    },
+    {
+      id: "3",
+      label: "Optional: open business.google.com and confirm your listing is claimed and verified",
+    },
+    {
+      id: "4",
+      label: "Ask us to re-run once live Google Places lookup is enabled for fuller GBP scoring",
+    },
+  ],
   "gbp.not_found": () => [
     { id: "1", label: "Go to business.google.com and sign in with your business Google account" },
     { id: "2", label: "Click “Manage now” / “Add your business” and enter the exact legal name customers search for" },

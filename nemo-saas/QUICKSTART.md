@@ -50,8 +50,8 @@ API keys you can defer:
 - `OPENAI_API_KEY` — needed for narrative LLM step. The skill returns the
   deterministic part without it; narrative just becomes `undefined`.
 - `GOOGLE_MAPS_API_KEY` — needed for live Places lookups. Without it, the
-  wedge marks `placeFound: false` and fires `gbp.not_found` (still useful
-  for testing the rule engine + email flow).
+  wedge marks `placeFound: false` and fires `gbp.lookup_unavailable`
+  (honest “we didn’t search” — not `gbp.not_found`).
 - `GOOGLE_OAUTH_*` — only needed when testing `gsc_opportunity_finder` or
   `ga4_health_brief` against real Google data. Both skills accept fixture
   inputs for tests.
@@ -317,7 +317,7 @@ Suggested release gate (also documented in
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | `Supabase env vars missing` on first request | `.env.local` not loaded | Restart `pnpm dev` after editing the file |
-| Wedge returns `placeFound: false` for every input | `GOOGLE_MAPS_API_KEY` missing | Either add the key or accept fixture-grade output |
+| Wedge returns `gbp.lookup_unavailable` / `placeFound: false` | `GOOGLE_MAPS_API_KEY` missing | Add the key when ready for GCP billing, or accept no live GBP search |
 | LVS PDF has no "Top fixes" section | `OPENAI_API_KEY` missing | Add the key; narrative becomes `undefined` without it |
 | Inngest dev UI shows "0 functions" | Wrong `-u` URL | Must point at `http://localhost:3000/api/inngest` exactly |
 | `supabase db reset` fails on storage | Buckets already exist | Rerun `supabase start`, or manually `supabase storage create` |

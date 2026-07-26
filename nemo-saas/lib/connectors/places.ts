@@ -10,8 +10,13 @@ import pLimit from "p-limit";
 import type { GbpProfile, NapRecord } from "@/lib/skills/_shared/rule-engine";
 import { snapshot } from "@/lib/crawler/client";
 
-const PLACES_KEY = process.env.GOOGLE_MAPS_API_KEY ?? "";
+const PLACES_KEY = (process.env.GOOGLE_MAPS_API_KEY ?? "").trim();
 const limit = pLimit(4);
+
+/** True when a Google Places / Maps API key is configured for live GBP lookup. */
+export function isPlacesConfigured(): boolean {
+  return Boolean(PLACES_KEY);
+}
 
 export interface PlaceLookup {
   businessName: string;

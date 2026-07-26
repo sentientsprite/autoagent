@@ -26,6 +26,7 @@ landing page and weekly for paid `local_autopilot` tenants.
   insights: Insight[];           // stable rule ids, see _shared/rule-engine
   evidence: {
     placeFound: boolean;
+    placesLookupConfigured: boolean; // false when GOOGLE_MAPS_API_KEY unset
     placeId?: string;
     rating?: number;
     reviewCount?: number;
@@ -35,6 +36,8 @@ landing page and weekly for paid `local_autopilot` tenants.
 }
 ```
 
+When `placesLookupConfigured` is false the skill fires `gbp.lookup_unavailable`
+(info) — not `gbp.not_found` (that only fires after a real Places search misses).
 ## Output (narrative, optional)
 
 ```ts

@@ -22,7 +22,7 @@ import { z } from "zod";
 
 import { gbpInsights, napInsights, type Insight } from "@/lib/skills/_shared/rule-engine";
 import { narrative, type Usage } from "@/lib/skills/_shared/llm";
-import { findPlace, placeToGbpProfile, fetchNapRecords } from "@/lib/connectors/places";
+import { findPlace, placeToGbpProfile, fetchNapRecords, isPlacesConfigured } from "@/lib/connectors/places";
 import { renderBusinessContext, renderPlaybook } from "@/lib/skills/_shared/playbook";
 import type { Site } from "@/lib/db/types";
 
@@ -58,6 +58,8 @@ const GradedOutput = z.object({
   })),
   evidence: z.object({
     placeFound: z.boolean(),
+    /** False when GOOGLE_MAPS_API_KEY is unset — we never called Google. */
+    placesLookupConfigured: z.boolean(),
     placeId: z.string().optional(),
     rating: z.number().optional(),
     reviewCount: z.number().optional(),
@@ -122,6 +124,16 @@ export async function runDeterministic(input: Input): Promise<DeterministicOutpu
         records: napRecords,
       }));
     }
+  } else if (!isPlacesConfigured()) {
+    insights.push({
+      id: "gbp.lookup_unavailable",
+      severity: "info",
+      title: "Google Business Profile lookup isn’t configured yet",
+      message:
+        "This free audit couldn’t call Google Places (API key not set on the server), so we didn’t search for your listing. This is not a finding that your GBP is missing.",
+      action:
+        "Re-run after Google Places is enabled, or claim/verify your profile at business.google.com if you don’t have one yet.",
+    });
   } else {
     insights.push({
       id: "gbp.not_found",
@@ -139,6 +151,7 @@ export async function runDeterministic(input: Input): Promise<DeterministicOutpu
     insights,
     evidence: {
       placeFound: !!place,
+      placesLookupConfigured: isPlacesConfigured(),
       placeId: place?.placeId,
       rating: place?.rating,
       reviewCount: place?.userRatingsTotal,
