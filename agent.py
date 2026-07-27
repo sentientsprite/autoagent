@@ -3,10 +3,15 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 
-from agents import Agent, Runner, function_tool
+from openai import AsyncOpenAI
+
+from agents import Agent, Runner, function_tool, set_default_openai_api, set_default_openai_client
+from agents.run_config import RunConfig
 from agents.items import (
     ItemHelpers,
     MessageOutputItem,
@@ -25,9 +30,95 @@ from harbor.models.agent.context import AgentContext
 # EDITABLE HARNESS — prompt, tools, agent construction
 # ============================================================================
 
-SYSTEM_PROMPT = "You are an agent that executes tasks"
-MODEL = "gpt-5"
+SYSTEM_PROMPT = (
+    "You are an agent that executes Harbor SkillEval tasks.\n"
+    "Always read /task/files/input.json first with run_shell.\n"
+    "For local_visibility_audit tasks: run "
+    "`python3 /task/_shared/lvs_apply_rules.py` "
+    "(writes /task/output.json using the deterministic GBP rule engine). "
+    "Do not invent rule ids or re-derive thresholds by hand when that script exists.\n"
+    "For other skills: apply only the rule ids listed in the instruction — "
+    "do not invent data or ZIP codes.\n"
+    "Write the final JSON to /task/output.json exactly in the required shape, then stop.\n"
+    "Do not invent files like service_areas.txt. Use only files under /task/."
+)
 MAX_TURNS = 30
+
+# Local-first: Ollama OpenAI-compatible API (no cloud key). Override via .env:
+#   AUTOAGENT_LLM_PROVIDER=ollama|openai
+#   OLLAMA_BASE_URL=http://127.0.0.1:11434/v1
+#   OLLAMA_MODEL=qwen2.5:7b-instruct
+LLM_PROVIDER = os.getenv("AUTOAGENT_LLM_PROVIDER", "ollama").strip().lower()
+
+
+def _load_local_env() -> None:
+    """Load repo .env without overriding variables already exported in the shell."""
+    env_path = Path(__file__).resolve().parent / ".env"
+    if not env_path.is_file():
+        return
+    for raw in env_path.read_text().splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
+def _resolve_task_dir(logs_dir: Path) -> Path | None:
+    """Harbor writes trial config.json beside agent/ — use it when env is unset."""
+    explicit = os.getenv("AUTOAGENT_TASK_DIR", "").strip()
+    if explicit:
+        return Path(explicit).expanduser().resolve()
+
+    config_path = logs_dir.parent / "config.json"
+    if not config_path.is_file():
+        return None
+
+    data = json.loads(config_path.read_text())
+    rel = (data.get("task") or {}).get("path")
+    if not rel:
+        return None
+
+    repo_root = Path(__file__).resolve().parent
+    return (repo_root / rel).resolve()
+
+
+_load_local_env()
+LLM_PROVIDER = os.getenv("AUTOAGENT_LLM_PROVIDER", "ollama").strip().lower()
+
+
+def configure_llm() -> str:
+    """Wire the OpenAI Agents SDK to Ollama (local) or OpenAI (cloud)."""
+    if LLM_PROVIDER == "ollama":
+        base_url = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434/v1").rstrip("/")
+        model = os.getenv("OLLAMA_MODEL", "qwen2.5:7b")
+        client = AsyncOpenAI(
+            base_url=base_url,
+            api_key=os.getenv("OPENAI_API_KEY", "ollama"),
+        )
+        set_default_openai_client(client, use_for_tracing=False)
+        set_default_openai_api("chat_completions")
+        os.environ.setdefault("OPENAI_AGENTS_TRACE_INCLUDE_SENSITIVE_DATA", "false")
+        return model
+
+    if LLM_PROVIDER == "openai":
+        if not os.getenv("OPENAI_API_KEY"):
+            raise RuntimeError(
+                "OPENAI_API_KEY is required when AUTOAGENT_LLM_PROVIDER=openai"
+            )
+        mode = os.getenv("OPENAI_API_MODE", "responses").strip().lower()
+        set_default_openai_api("chat_completions" if mode == "chat_completions" else "responses")
+        return os.getenv("OPENAI_MODEL", "gpt-5")
+
+    raise RuntimeError(
+        f"Unknown AUTOAGENT_LLM_PROVIDER={LLM_PROVIDER!r}. Use 'ollama' or 'openai'."
+    )
+
+
+MODEL = os.getenv("AUTOAGENT_MODEL") or configure_llm()
 
 
 def create_tools(environment: BaseEnvironment) -> list[FunctionTool]:
@@ -68,7 +159,13 @@ async def run_task(
     """Run the agent on a task and return (result, duration_ms)."""
     agent = create_agent(environment)
     t0 = time.time()
-    result = await Runner.run(agent, input=instruction, max_turns=MAX_TURNS)
+    run_config = RunConfig(tracing_disabled=(LLM_PROVIDER == "ollama"))
+    result = await Runner.run(
+        agent,
+        input=instruction,
+        max_turns=MAX_TURNS,
+        run_config=run_config,
+    )
     duration_ms = int((time.time() - t0) * 1000)
     return result, duration_ms
 
@@ -199,6 +296,8 @@ class AutoAgent(BaseAgent):
     def __init__(self, *args, extra_env: dict[str, str] | None = None, **kwargs):
         super().__init__(*args, **kwargs)
         self._extra_env = dict(extra_env) if extra_env else {}
+        for key, value in self._extra_env.items():
+            os.environ.setdefault(key, value)
 
     @staticmethod
     def name() -> str:
@@ -208,7 +307,29 @@ class AutoAgent(BaseAgent):
         return "0.1.0"
 
     async def setup(self, environment: BaseEnvironment) -> None:
-        pass
+        await environment.exec(command="mkdir -p /task /task/files /task/output")
+        root = _resolve_task_dir(self.logs_dir)
+        if root is None:
+            return
+
+        files_dir = root / "files"
+        if files_dir.is_dir():
+            for file_path in files_dir.iterdir():
+                if file_path.is_file():
+                    await environment.upload_file(
+                        source_path=file_path,
+                        target_path=f"/task/files/{file_path.name}",
+                    )
+
+        shared_dir = root.parents[1] / "_shared"
+        if shared_dir.is_dir():
+            await environment.exec(command="mkdir -p /task/_shared")
+            for file_path in shared_dir.iterdir():
+                if file_path.is_file():
+                    await environment.upload_file(
+                        source_path=file_path,
+                        target_path=f"/task/_shared/{file_path.name}",
+                    )
 
     async def run(self, instruction: str, environment: BaseEnvironment, context: AgentContext) -> None:
         await environment.exec(command="mkdir -p /task")

@@ -69,21 +69,26 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 uv sync
 
 # 3. Set up the environment variables required by your current agent/runtime
-# Example:
-cat > .env << 'EOF'
-OPENAI_API_KEY=...
-EOF
+# Local (default): Ollama — no OpenAI account. Copy .env.example and ensure `ollama serve` is running.
+cp .env.example .env
 
-# 4. Build base image
+# Cloud OpenAI instead:
+# AUTOAGENT_LLM_PROVIDER=openai
+# OPENAI_API_KEY=sk-...
+
+# 4. Build base image (one-time; required before any harbor run)
 docker build -f Dockerfile.base -t autoagent-base .
 
 # 5. Add tasks to tasks/ (see Task format section below)
 
-# 6. Run a single benchmark task
-rm -rf jobs; mkdir -p jobs && uv run harbor run -p tasks/ --task-name "<task-name>" -l 1 -n 1 --agent-import-path agent:AutoAgent -o jobs --job-name latest > run.log 2>&1
+# 6. Run a single benchmark task (PYTHONPATH required; --agent replaces deprecated --agent-import-path)
+rm -rf jobs; mkdir -p jobs && PYTHONPATH=. uv run harbor run -p tasks/ --task-name "<task-name>" -n 1 --agent agent:AutoAgent -o jobs --job-name latest > run.log 2>&1
 
-# 7. Run all tasks in parallel (-n = concurrency, default 4)
-rm -rf jobs; mkdir -p jobs && uv run harbor run -p tasks/ -n 100 --agent-import-path agent:AutoAgent -o jobs --job-name latest > run.log 2>&1
+# Or use the helper script (loads .env, checks Docker + base image):
+# ./scripts/run-skilleval.sh
+
+# 7. Run all tasks in parallel (-n = concurrency; use 1–2 on 16GB RAM Macs)
+rm -rf jobs; mkdir -p jobs && PYTHONPATH=. uv run harbor run -p tasks/ -n 2 --agent agent:AutoAgent -o jobs --job-name latest > run.log 2>&1
 ```
 
 ## Running the meta-agent

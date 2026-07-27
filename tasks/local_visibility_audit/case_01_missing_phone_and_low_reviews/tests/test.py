@@ -4,14 +4,13 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-# Make tasks/_shared importable when test runs in the container.
-sys.path.insert(0, "/task")
-sys.path.insert(0, "/app")
+# Harbor uploads tests/ → /tests; agent may also stage /task/_shared.
+sys.path[:0] = ["/tests", "/task", "/app"]
 
 try:
     from _shared.verify import load_json, score_insights, write_reward
 except ImportError:
-    # When running outside the harbor container, _shared lives one level up.
+    # Host-side / unit-test fallback (repo layout: tasks/<skill>/case_*/tests/test.py)
     sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
     from _shared.verify import load_json, score_insights, write_reward
 

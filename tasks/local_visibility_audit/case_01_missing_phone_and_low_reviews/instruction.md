@@ -8,9 +8,11 @@ You are running the `local_visibility_audit` skill on a fixture business.
    - `business`: name, zip, website
    - `gbp_profile`: a `GbpProfile` object (see schema below)
    - `nap_records`: list of NAP records found in directories
-2. Apply the Nemo rule engine semantics (see "Rules" below) to identify
-   which `Insight` ids should fire.
-3. Write the result to `/task/output.json` in this exact shape:
+2. **Preferred (deterministic):** run  
+   `python3 /task/_shared/lvs_apply_rules.py`  
+   This applies the same GBP rules as production and writes `/task/output.json`.
+3. Only if that script is missing, apply the Rules table below yourself and write
+   `/task/output.json` in this shape:
 
 ```json
 {

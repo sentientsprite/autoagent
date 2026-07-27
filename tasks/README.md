@@ -57,11 +57,11 @@ tasks/
 ```bash
 # Single case
 rm -rf jobs && mkdir -p jobs && uv run harbor run -p tasks/local_visibility_audit/case_01_missing_phone_and_low_reviews/ \
-  -l 1 -n 1 --agent-import-path agent:AutoAgent -o jobs --job-name lvs_01
+  -n 1 --agent agent:AutoAgent -o jobs --job-name lvs_01
 
 # All SkillEval cases (parallel)
 rm -rf jobs && mkdir -p jobs && uv run harbor run -p tasks/ \
-  -n 8 --agent-import-path agent:AutoAgent -o jobs --job-name skilleval-nightly
+  -n 1 --agent agent:AutoAgent -o jobs --job-name skilleval-nightly
 ```
 
 ## Score interpretation

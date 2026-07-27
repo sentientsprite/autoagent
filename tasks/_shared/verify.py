@@ -2,7 +2,7 @@
 
 Each task's tests/test.py imports score_insights() (or a sibling helper),
 loads /task/output.json and /task/files/expected.json, and writes the final
-0.0-1.0 score to /logs/reward.txt for Harbor.
+0.0-1.0 score to /logs/verifier/reward.txt for Harbor.
 """
 from __future__ import annotations
 
@@ -41,7 +41,7 @@ def score_insights(*, fired_ids: Iterable[str], expected_ids: Iterable[str], une
     return max(0.0, min(1.0, final))
 
 
-def write_reward(score: float, log_path: str = "/logs/reward.txt") -> None:
+def write_reward(score: float, log_path: str = "/logs/verifier/reward.txt") -> None:
     """Write reward to the path Harbor reads. Always writes a number."""
     Path(log_path).parent.mkdir(parents=True, exist_ok=True)
     Path(log_path).write_text(f"{score:.4f}\n")

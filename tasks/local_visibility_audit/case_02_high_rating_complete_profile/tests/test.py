@@ -4,8 +4,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-sys.path.insert(0, "/task")
-sys.path.insert(0, "/app")
+# Harbor uploads tests/ → /tests; agent may also stage /task/_shared.
+sys.path[:0] = ["/tests", "/task", "/app"]
 
 try:
     from _shared.verify import load_json, write_reward
