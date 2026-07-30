@@ -524,15 +524,6 @@ function TrustItem({ label }: { label: string }) {
   );
 }
 
-function Feature({ title, body }: { title: string; body: string }) {
-  return (
-    <div style={featureCard}>
-      <p style={{ fontSize: 15, fontWeight: 700, color: "#0f172a", margin: "0 0 6px" }}>{title}</p>
-      <p style={{ fontSize: 14, color: "#475569", margin: 0, lineHeight: 1.5 }}>{body}</p>
-    </div>
-  );
-}
-
 const mainStyle: React.CSSProperties = {
   fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
   position: "relative",
@@ -631,16 +622,6 @@ const errorBox: React.CSSProperties = {
   color: "#991b1b",
   fontSize: 14,
 };
-const sectionLabel: React.CSSProperties = {
-  fontSize: 12,
-  letterSpacing: 1.5,
-  textTransform: "uppercase",
-  color: "#94a3b8",
-  fontWeight: 700,
-  margin: "0 0 12px",
-};
-const featureGrid: React.CSSProperties = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 12 };
-const featureCard: React.CSSProperties = { padding: 16, background: "#f8fafc", border: "1px solid #eef2f7", borderRadius: 12 };
 const ringStyle: React.CSSProperties = {
   width: 72,
   height: 72,
