@@ -5,6 +5,7 @@ name: Report status to Prana trunk
 #
 # Secret: PRANA_TRUNK_TOKEN — fine-grained PAT, Issues read/write on NEMO-APP-v.1 only.
 # Setup: NEMO-APP-v.1/docs/TRUNK_LOOP_SETUP.md
+# If the secret is missing, this job skips (avoids scheduled red X from empty github-token).
 
 on:
   schedule:
@@ -16,6 +17,8 @@ permissions:
 
 jobs:
   report:
+    # secrets.* is empty string when unset — skip instead of failing github-script
+    if: ${{ secrets.PRANA_TRUNK_TOKEN != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
