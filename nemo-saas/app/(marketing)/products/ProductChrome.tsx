@@ -55,11 +55,11 @@ export function ProductChrome({
       <p style={price}>{priceLine}</p>
       <div style={{ marginBottom: 28 }}>{children}</div>
       <p style={{ fontSize: 14, color: "#555" }}>
-        Start with a{" "}
+        Start with the{" "}
         <Link href="/" style={{ color: "#111", fontWeight: 600 }}>
-          free Local Visibility Score
+          full Local Visibility Score
         </Link>{" "}
-        — then layer add-ons that match how you operate.
+        — live GBP lookup, scorecard + PDF — then layer add-ons that match how you operate.
       </p>
     </main>
   );
