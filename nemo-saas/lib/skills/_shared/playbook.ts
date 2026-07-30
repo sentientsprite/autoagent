@@ -48,6 +48,10 @@ ${cadence}
 3. Use the owner's first name only if provided; otherwise address as "team".
 4. Keep paragraphs short (2–4 sentences). One CTA per section.
 5. Prefer dollars-and-jobs framing over rankings ("a missed lead per week" beats "a position drop").
+6. Score delivery against the CLIENT.md **SEO/GEO Baseline (2026)** phases (technical entity → answer-first content → GBP/Map Pack → GEO/PR). Prefer next actions that close an open \`[ ]\` / \`[~]\` baseline item.
+
+## Delivery baseline (home-services)
+When CLIENT.md includes SEO/GEO Baseline, treat Phases 1–4 as the shared engagement checklist. LVS audits primarily inform **Phase 3**. Do not claim Phase 1/2/4 progress without evidence in the intelligence file.
 
 ## Memory (rolling)
 ${''}

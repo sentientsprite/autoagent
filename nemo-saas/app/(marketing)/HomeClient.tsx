@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
+import { LvsProcessSection } from "./LvsProcessSection";
 import { OwnedDemandPanel } from "./OwnedDemandPanel";
 
 type HomeTab = "visibility" | "lead-sources";
@@ -186,7 +187,7 @@ export default function HomeClient() {
         <span style={pillStyle}>
           {onLeadSources
             ? "Free · Lead-source scorecard · No login"
-            : "Free · 60-second audit · No credit card"}
+            : "Close-ready · Full LVS · Live Google Places"}
         </span>
         <h1 style={h1Style}>
           {onLeadSources ? (
@@ -196,15 +197,15 @@ export default function HomeClient() {
             </>
           ) : (
             <>
-              See exactly why local customers{" "}
-              <span style={{ color: "#0f766e" }}>can&apos;t find you</span> on Google.
+              The full Local Visibility Score —{" "}
+              <span style={{ color: "#0f766e" }}>proof that closes</span>.
             </>
           )}
         </h1>
         <p style={subStyle}>
           {onLeadSources
             ? "Score every lead source from 0–14. See rented vs mixed vs owned demand, run booked-job math, and follow the replacement checklist — one source at a time."
-            : "Enter your business name and ZIP. We grade your Google Business Profile, then give you a short checklist of fixes — expand each item for step-by-step instructions."}
+            : "For warmer leads and sales demos. Name + ZIP → live GBP lookup → graded scorecard + ranked checklist → PDF in your inbox. Built when someone asks to see the full score."}
         </p>
 
         <div style={tabRow} role="tablist" aria-label="Nemo Local tools">
@@ -250,9 +251,9 @@ export default function HomeClient() {
         ) : (
           <>
             <div style={trustRow}>
-              <TrustItem label="Built for home services" />
-              <TrustItem label="Plain-English action list" />
-              <TrustItem label="Expandable how-to steps" />
+              <TrustItem label="Live GBP via Places" />
+              <TrustItem label="Scorecard + PDF email" />
+              <TrustItem label="Ranked how-to checklist" />
             </div>
 
             {!result ? (
@@ -279,10 +280,11 @@ export default function HomeClient() {
                   disabled={pending}
                   style={{ ...btnStyle, opacity: pending ? 0.7 : 1 }}
                 >
-                  {pending ? "Auditing your profile…" : "Get my free score →"}
+                  {pending ? "Looking up your Google profile…" : "Get the full score →"}
                 </button>
                 <p style={fineprint}>
-                  We&apos;ll email your report and occasional local-marketing tips. Unsubscribe anytime.
+                  We email the PDF report and occasional local-marketing tips. Unsubscribe anytime.
+                  Nothing publishes without a human.
                 </p>
               </form>
             ) : (
@@ -296,25 +298,7 @@ export default function HomeClient() {
               </div>
             ) : null}
 
-            {!result ? (
-              <div style={{ marginTop: 40 }}>
-                <p style={sectionLabel}>What you get</p>
-                <div style={featureGrid}>
-                  <Feature
-                    title="A clear score"
-                    body="0–100 across the signals that move local rankings — not a 40-page dump."
-                  />
-                  <Feature
-                    title="Action items, ranked"
-                    body="Do first / this week / already good. Tap any item for a checklist."
-                  />
-                  <Feature
-                    title="A shareable PDF"
-                    body="One page you can hand to whoever runs your marketing — or do it yourself."
-                  />
-                </div>
-              </div>
-            ) : null}
+            {!result ? <LvsProcessSection /> : null}
           </>
         )}
       </section>

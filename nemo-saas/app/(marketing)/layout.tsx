@@ -40,7 +40,7 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
             Bloom
           </Link>
           <Link href="/" style={navLink}>
-            Free score
+            Full score
           </Link>
           <span style={{ color: "#ccc", userSelect: "none" }}>|</span>
           <Link href="/team" style={{ ...navLink, color: "#64748b", fontSize: 13 }}>

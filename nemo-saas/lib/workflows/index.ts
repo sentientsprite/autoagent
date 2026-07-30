@@ -25,6 +25,7 @@ import {
   getClientMd,
   recentClientIntelligenceEvents,
   renderWeeklyBrief,
+  syncSeoBaselineFromLvs,
   upsertWeeklyClientBrief,
 } from "@/lib/client-intelligence";
 import type { Connector, Job, Site } from "@/lib/db/types";
@@ -76,7 +77,21 @@ export const monthlySiteReport = inngest.createFunction(
         websiteUrl: site.website_url ?? undefined,
         expectedServiceAreaZipCount: site.service_area_zips?.length ?? 1,
       }, { withNarrative: true, site, clientMd });
-      await persistJob(db, { orgId, siteId, kind: "local_visibility_audit", input: { trigger: "monthly" }, result: r.deterministic });
+      const jobId = await persistJob(db, {
+        orgId,
+        siteId,
+        kind: "local_visibility_audit",
+        input: { trigger: "monthly" },
+        result: r.deterministic,
+      });
+      await syncSeoBaselineFromLvs(db, {
+        orgId,
+        siteId,
+        insightIds: r.deterministic.insights.map((i) => i.id),
+        jobId,
+        actor: "monthly-site-report",
+        primaryCategory: site.primary_category,
+      });
       return r;
     });
 
@@ -262,6 +277,14 @@ async function runSkillByKind(db: ReturnType<typeof dbAsService>, job: JobRow): 
         websiteUrl: site.website_url ?? undefined,
         expectedServiceAreaZipCount: site.service_area_zips?.length ?? 1,
       }, { withNarrative: true, site, clientMd });
+      await syncSeoBaselineFromLvs(db, {
+        orgId: job.org_id,
+        siteId: site.id,
+        insightIds: r.deterministic.insights.map((i) => i.id),
+        jobId: job.id,
+        actor: "job-requested",
+        primaryCategory: site.primary_category,
+      });
       return r.deterministic;
     }
     case "gsc_opportunity_finder": {
@@ -295,7 +318,7 @@ async function runSkillByKind(db: ReturnType<typeof dbAsService>, job: JobRow): 
 async function persistJob(
   db: ReturnType<typeof dbAsService>,
   args: { orgId: string; siteId: string; kind: string; input: Record<string, unknown>; result: unknown },
-): Promise<void> {
+): Promise<string | null> {
   const { data } = await db.from("jobs").insert({
     org_id: args.orgId,
     site_id: args.siteId,
@@ -316,6 +339,8 @@ async function persistJob(
     eventMd: `${args.kind} completed successfully.`,
     evidence: { jobId: data?.id ?? null, kind: args.kind },
   });
+
+  return (data?.id as string | undefined) ?? null;
 }
 
 function mondayIsoDate(d: Date): string {

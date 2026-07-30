@@ -17,7 +17,8 @@ import {
 
 export const metadata: Metadata = {
   title: "Customer portal | Nemo Local",
-  description: "Install the GrowthCoach extension and explore Nemo Local SKUs: Beacon, Echo, and Bloom.",
+  description:
+    "Install GrowthCoach, explore Beacon / Echo / Bloom, and run the close-ready Local Visibility Score with live Places.",
 };
 
 export default function CustomerPortalPage() {
@@ -79,14 +80,14 @@ export default function CustomerPortalPage() {
         </article>
 
         <article style={cardShell()}>
-          <p style={badge}>Free · Lead magnet</p>
+          <p style={badge}>Close-ready · Live Places</p>
           <h2 style={cardTitle}>Local Visibility Score</h2>
           <p style={cardBody}>
-            One-minute scorecard: GBP strength, reviews, and listing consistency — PDF by email when the wedge is fully
-            configured.
+            Full LVS for warmer leads and demos: live Google Business Profile lookup, graded scorecard, ranked
+            checklist, and PDF by email. Sales follow-up from the CRM as <code style={{ fontSize: 12 }}>lvs_wedge</code>.
           </p>
           <Link href="/" style={linkBtn}>
-            Get score →
+            Get the full score →
           </Link>
         </article>
       </section>

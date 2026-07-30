@@ -7,6 +7,13 @@ import type {
   Site,
   WeeklyClientBrief,
 } from "@/lib/db/types";
+import {
+  applyBaselineStatusesToClientMd,
+  phase3StatusesFromLvsInsights,
+  renderSeoGeoBaselineSection,
+  upsertSeoGeoBaselineSection,
+  type BaselineStatus,
+} from "@/lib/seo-geo-baseline";
 
 export const CLIENT_INTELLIGENCE_SECTIONS = [
   "who_they_are",
@@ -14,6 +21,7 @@ export const CLIENT_INTELLIGENCE_SECTIONS = [
   "hypotheses",
   "changes",
   "questions",
+  "seo_baseline",
 ] as const;
 
 export type ClientIntelligenceSection = (typeof CLIENT_INTELLIGENCE_SECTIONS)[number];
@@ -27,6 +35,8 @@ export function renderStarterClientMd(site: Site, opts: { goals?: string[]; cons
   const constraints = opts.constraints?.length
     ? opts.constraints.map((c) => `- ${c}`).join("\n")
     : "- Open question: confirm budget, seasonality, and approval preferences.";
+
+  const baseline = renderSeoGeoBaselineSection({ primaryCategory: site.primary_category });
 
   return `# ${site.business_name ?? site.name} Intelligence File
 
@@ -47,10 +57,44 @@ ${goals}
 
 ## What Changed
 - Starter file generated at onboarding.
+- SEO/GEO baseline seeded from home-services playbook (Phases 1–4).
 
+${baseline}
 ## Open Questions
 ${constraints}
 `;
+}
+
+/**
+ * Ensure an existing CLIENT.md has the SEO/GEO baseline section (idempotent upsert).
+ * Used when upgrading sites onboarded before the playbook was wired.
+ */
+export function ensureSeoGeoBaselineInClientMd(
+  clientMd: string,
+  site: Pick<Site, "primary_category">,
+): string {
+  if (clientMd.includes("## SEO/GEO Baseline (2026)")) return clientMd;
+  return upsertSeoGeoBaselineSection(
+    clientMd,
+    renderSeoGeoBaselineSection({ primaryCategory: site.primary_category }),
+  );
+}
+
+/**
+ * Patch Phase 3 checklist statuses from a Local Visibility audit insight id list.
+ */
+export function applyLvsInsightsToClientMd(
+  clientMd: string,
+  insightIds: string[],
+): { clientMd: string; statuses: Partial<Record<string, BaselineStatus>> } {
+  const withSection = clientMd.includes("## SEO/GEO Baseline (2026)")
+    ? clientMd
+    : clientMd; // caller should ensure section; apply is no-op-safe on missing ids
+  const statuses = phase3StatusesFromLvsInsights(insightIds);
+  return {
+    clientMd: applyBaselineStatusesToClientMd(withSection, statuses),
+    statuses,
+  };
 }
 
 export async function ensureClientIntelligenceFile(
@@ -59,7 +103,35 @@ export async function ensureClientIntelligenceFile(
   opts: { goals?: string[]; constraints?: string[]; actor?: string } = {},
 ): Promise<ClientIntelligenceFile> {
   const existing = await getClientIntelligenceFile(db, site.id);
-  if (existing) return existing;
+  if (existing) {
+    const upgraded = ensureSeoGeoBaselineInClientMd(existing.client_md, site);
+    if (upgraded !== existing.client_md) {
+      const { data, error } = await db
+        .from("client_intelligence_files")
+        .update({
+          client_md: upgraded,
+          version: existing.version + 1,
+          summary: {
+            ...(typeof existing.summary === "object" && existing.summary ? existing.summary : {}),
+            seoGeoBaseline: true,
+          },
+        })
+        .eq("site_id", site.id)
+        .select("*")
+        .single();
+      if (error || !data) throw new Error(error?.message ?? "client_intelligence_baseline_upgrade_failed");
+      await appendClientIntelligenceEvent(db, {
+        orgId: site.org_id,
+        siteId: site.id,
+        actor: opts.actor ?? "system",
+        section: "seo_baseline",
+        eventMd: "SEO/GEO baseline (Phases 1–4) added to existing CLIENT.md from home-services playbook.",
+        evidence: { source: "ensureSeoGeoBaselineInClientMd" },
+      });
+      return data as ClientIntelligenceFile;
+    }
+    return existing;
+  }
 
   const clientMd = renderStarterClientMd(site, opts);
   const { data, error } = await db
@@ -71,6 +143,7 @@ export async function ensureClientIntelligenceFile(
       summary: {
         generatedFrom: "site_profile",
         businessName: site.business_name ?? site.name,
+        seoGeoBaseline: true,
       },
     })
     .select("*")
@@ -83,8 +156,65 @@ export async function ensureClientIntelligenceFile(
     siteId: site.id,
     actor: opts.actor ?? "system",
     section: "changes",
-    eventMd: "Starter CLIENT.md generated from onboarding/site profile.",
+    eventMd: "Starter CLIENT.md generated from onboarding/site profile + SEO/GEO baseline.",
     evidence: { source: "ensureClientIntelligenceFile" },
+  });
+
+  return data as ClientIntelligenceFile;
+}
+
+/**
+ * After a Local Visibility audit, patch Phase 3 checklist statuses in CLIENT.md.
+ */
+export async function syncSeoBaselineFromLvs(
+  db: SupabaseClient,
+  args: {
+    orgId: string;
+    siteId: string;
+    insightIds: string[];
+    jobId?: string | null;
+    actor?: string;
+    primaryCategory?: string | null;
+  },
+): Promise<ClientIntelligenceFile | null> {
+  const file = await getClientIntelligenceFile(db, args.siteId);
+  if (!file) return null;
+
+  const withBaseline = ensureSeoGeoBaselineInClientMd(file.client_md, {
+    primary_category: args.primaryCategory ?? null,
+  });
+  const { clientMd, statuses } = applyLvsInsightsToClientMd(withBaseline, args.insightIds);
+  if (clientMd === file.client_md) return file;
+
+  const { data, error } = await db
+    .from("client_intelligence_files")
+    .update({
+      client_md: clientMd,
+      version: file.version + 1,
+      summary: {
+        ...(typeof file.summary === "object" && file.summary ? file.summary : {}),
+        lastLvsBaselineSync: new Date().toISOString(),
+        phase3Statuses: statuses,
+      },
+    })
+    .eq("site_id", args.siteId)
+    .select("*")
+    .single();
+
+  if (error || !data) throw new Error(error?.message ?? "client_intelligence_lvs_sync_failed");
+
+  const changed = Object.entries(statuses)
+    .map(([id, st]) => `${id}=${st}`)
+    .join(", ");
+
+  await appendClientIntelligenceEvent(db, {
+    orgId: args.orgId,
+    siteId: args.siteId,
+    jobId: args.jobId ?? null,
+    actor: args.actor ?? "local_visibility_audit",
+    section: "seo_baseline",
+    eventMd: `Phase 3 (GBP) baseline updated from LVS insights: ${changed || "no status changes"}.`,
+    evidence: { insightIds: args.insightIds, statuses },
   });
 
   return data as ClientIntelligenceFile;
@@ -165,6 +295,9 @@ function sectionToHeading(section: string): string {
       return "Current Beliefs We're Testing";
     case "questions":
       return "Open Questions";
+    case "seo_baseline":
+      // Checklist lives under this heading; narrative notes go to What Changed.
+      return "What Changed";
     case "changes":
     default:
       return "What Changed";

@@ -18,5 +18,7 @@ database and prompt contract.
 - Weekly customer updates are `weekly_client_briefs`: two paragraphs max,
   plain English, grounded in `CLIENT.md` plus recent job evidence.
 - Do not invent unknown business facts. Put them under **Open Questions**.
+- Delivery is scored against **SEO/GEO Baseline (2026)** in CLIENT.md
+  (Phases 1–4 from the home-services playbook). LVS insights update Phase 3.
 
 Reference: `nemo-saas/docs/CLIENT_INTELLIGENCE.md`.
