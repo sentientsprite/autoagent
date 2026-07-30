@@ -5,7 +5,8 @@ name: Report status to Prana trunk
 #
 # Secret: PRANA_TRUNK_TOKEN — fine-grained PAT, Issues read/write on NEMO-APP-v.1 only.
 # Setup: NEMO-APP-v.1/docs/TRUNK_LOOP_SETUP.md
-# If the secret is missing, this job skips (avoids scheduled red X from empty github-token).
+# If the secret is missing, the report step skips (avoids empty github-token failures).
+# Note: do not use `if: secrets.*` at job level — GitHub rejects that expression.
 
 on:
   schedule:
@@ -17,19 +18,32 @@ permissions:
 
 jobs:
   report:
-    # secrets.* is empty string when unset — skip instead of failing github-script
-    if: ${{ secrets.PRANA_TRUNK_TOKEN != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
+      - name: Detect PRANA_TRUNK_TOKEN
+        id: tok
+        env:
+          PRANA_TRUNK_TOKEN: ${{ secrets.PRANA_TRUNK_TOKEN }}
+        run: |
+          if [ -n "${PRANA_TRUNK_TOKEN}" ]; then
+            echo "has=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::PRANA_TRUNK_TOKEN unset — skipping trunk status report"
+          fi
+
       - uses: actions/setup-node@v4
+        if: steps.tok.outputs.has == 'true'
         with:
           node-version: "20"
 
-      - run: npm install --no-save js-yaml
+      - if: steps.tok.outputs.has == 'true'
+        run: npm install --no-save js-yaml
 
       - name: Open status issue on trunk
+        if: steps.tok.outputs.has == 'true'
         uses: actions/github-script@v7
         env:
           NODE_PATH: ${{ github.workspace }}/node_modules
