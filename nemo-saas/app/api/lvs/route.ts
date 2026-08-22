@@ -16,6 +16,7 @@ import { render } from "@react-email/render";
 import React from "react";
 
 import { dbAsService } from "@/lib/db/client";
+import { classifySupabaseError } from "@/lib/db/errors";
 import { run } from "@/lib/skills/local_visibility_audit";
 import { insightsToActionItems } from "@/lib/skills/local_visibility_audit/action-items";
 import { renderLvsReportPdf } from "@/lib/pdf/lvs-report";
@@ -54,7 +55,7 @@ export async function POST(req: Request) {
   }
 
   // 1. Persist the lead immediately so we never lose an email even if the audit fails.
-  const { data: lead, error: leadErr } = await db
+  const leadRes = await db
     .from("leads")
     .insert({
       email: parsed.email,
@@ -65,28 +66,33 @@ export async function POST(req: Request) {
     })
     .select("id")
     .single();
+  const { data: lead, error: leadErr } = leadRes;
   if (leadErr || !lead) {
-    console.error("lvs lead insert failed", leadErr);
-    const msg = leadErr?.message ?? "unknown";
-    const missingTable =
-      /relation .* does not exist|Could not find the table/i.test(msg) ||
-      /schema cache/i.test(msg);
+    // Classify by the layer that actually failed. "TypeError: fetch failed"
+    // (HTTP status 0) means the Supabase host is unreachable — migration and
+    // key hints are the wrong layer for that signature.
+    const classified = classifySupabaseError({ ...leadErr, status: leadRes.status });
+    console.error("lvs lead insert failed", {
+      category: classified.category,
+      status: leadRes.status,
+      message: leadErr?.message,
+      details: leadErr?.details,
+    });
     return NextResponse.json(
       {
         error: "lead_persist_failed",
-        detail: msg,
-        hint: missingTable
-          ? "Run hosted Supabase migrations in order (see nemo-saas/QUICKSTART.md § Hosted Supabase). Then wait ~1m and retry."
-          : "Confirm migrations are applied and SUPABASE_SERVICE_ROLE_KEY is the service_role JWT (not anon).",
+        category: classified.category,
+        detail: leadErr?.message ?? "unknown",
+        hint: classified.hint,
       },
-      { status: 500 },
+      { status: classified.category === "unreachable_host" ? 502 : 500 },
     );
   }
 
   // 2. Open an anonymous job row (org_id null is not allowed -> use the special wedge org).
   // For the wedge we attribute jobs to a system org; promotion later moves them.
   const wedgeOrgId = await ensureWedgeOrg(db);
-  const { data: job, error: jobErr } = await db
+  const jobRes = await db
     .from("jobs")
     .insert({
       org_id: wedgeOrgId,
@@ -97,15 +103,24 @@ export async function POST(req: Request) {
     })
     .select("id")
     .single();
+  const { data: job, error: jobErr } = jobRes;
 
   if (jobErr || !job) {
-    console.error("lvs job insert failed", jobErr);
+    const classified = classifySupabaseError({ ...jobErr, status: jobRes.status });
+    console.error("lvs job insert failed", {
+      category: classified.category,
+      status: jobRes.status,
+      message: jobErr?.message,
+      details: jobErr?.details,
+    });
     return NextResponse.json(
       {
         error: "job_persist_failed",
+        category: classified.category,
         detail: jobErr?.message ?? "unknown",
+        hint: classified.hint,
       },
-      { status: 500 },
+      { status: classified.category === "unreachable_host" ? 502 : 500 },
     );
   }
 
