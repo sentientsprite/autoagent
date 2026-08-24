@@ -55,6 +55,7 @@ function crmBaseUrl(): string {
 function buildCrmNotes(input: WedgeLeadFollowUpInput): string {
   const lines = [
     "LVS wedge lead — email-first (no phone on form).",
+    `LVS: ${input.grade}/${input.score}`,
     `Grade: ${input.grade} (${input.score}/100)`,
     `ZIP: ${input.zip}`,
     input.websiteUrl ? `Website: ${input.websiteUrl}` : null,
@@ -84,6 +85,17 @@ async function syncToOutboundCrm(input: WedgeLeadFollowUpInput): Promise<{ ok: b
       email: input.email,
       source: "lvs_wedge",
       notes: buildCrmNotes(input),
+      profile: {
+        lvs: {
+          grade: input.grade,
+          score: input.score,
+          reportUrl: input.reportUrl,
+          checked_at: new Date().toISOString(),
+          zip: input.zip,
+          topFixTitle: input.topFixTitle ?? null,
+          headline: null,
+        },
+      },
     }),
   });
 
