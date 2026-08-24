@@ -27,6 +27,12 @@ type Events = {
       topFixAction: string | null;
     };
   };
+  "nemo/content.drafts.weekly": {
+    data: {
+      orgId?: string;
+      weekStart?: string;
+    };
+  };
 };
 
 export const inngest = new Inngest({
