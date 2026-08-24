@@ -30,6 +30,7 @@ import {
 } from "@/lib/client-intelligence";
 import type { Connector, Job, Site } from "@/lib/db/types";
 import { LvsNurtureEmail } from "@/lib/email/lvs-nurture";
+import { buildWeeklyContentDrafts, mondayWeekStart } from "@/lib/content-drafts";
 import { Resend } from "resend";
 import { render } from "@react-email/render";
 import React from "react";
@@ -403,4 +404,74 @@ export const wedgeLeadFollowUp = inngest.createFunction(
   },
 );
 
-export const functions = [monthlySiteReport, jobRequested, weeklyClientBrief, wedgeLeadFollowUp];
+/**
+ * Weekly content/pSEO draft stubs → content_drafts (status=draft).
+ * Cron: Mondays 14:00 UTC. Human approves before any publish.
+ */
+export const weeklyContentDrafts = inngest.createFunction(
+  {
+    id: "weekly-content-drafts",
+    name: "Weekly pSEO content draft batch",
+    retries: 1,
+  },
+  [{ cron: "0 14 * * 1" }, { event: "nemo/content.drafts.weekly" }],
+  async ({ event, step, logger }) => {
+    const db = dbAsService();
+    const payload =
+      event && typeof event === "object" && "data" in event && event.data && typeof event.data === "object"
+        ? (event.data as { orgId?: string; weekStart?: string })
+        : {};
+    const weekStart = payload.weekStart || mondayWeekStart();
+
+    const orgId = await step.run("resolve-org", async () => {
+      if (payload.orgId) return payload.orgId;
+      const { data, error } = await db.from("orgs").select("id").order("created_at", { ascending: true }).limit(1).maybeSingle();
+      if (error || !data) throw new NonRetriableError("org_not_found");
+      return data.id as string;
+    });
+
+    const stubs = buildWeeklyContentDrafts(weekStart);
+
+    const inserted = await step.run("upsert-drafts", async () => {
+      let n = 0;
+      for (const stub of stubs) {
+        const { data: existing } = await db
+          .from("content_drafts")
+          .select("id")
+          .eq("org_id", orgId)
+          .eq("week_start", weekStart)
+          .eq("channel", stub.channel)
+          .eq("title", stub.title)
+          .maybeSingle();
+        if (existing) continue;
+
+        const { error } = await db.from("content_drafts").insert({
+          org_id: orgId,
+          site_id: null,
+          week_start: weekStart,
+          channel: stub.channel,
+          title: stub.title,
+          body_md: stub.body_md,
+          status: "draft",
+          meta: stub.meta,
+        });
+        if (error) {
+          logger.error("content_draft insert failed", { error: error.message, title: stub.title });
+          continue;
+        }
+        n += 1;
+      }
+      return n;
+    });
+
+    return { weekStart, orgId, inserted, totalStubs: stubs.length };
+  },
+);
+
+export const functions = [
+  monthlySiteReport,
+  jobRequested,
+  weeklyClientBrief,
+  wedgeLeadFollowUp,
+  weeklyContentDrafts,
+];
