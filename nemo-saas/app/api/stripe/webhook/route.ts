@@ -8,25 +8,15 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 
 import { dbAsService } from "@/lib/db/client";
+import { loadStripePriceMap } from "@/lib/billing/money-farm";
 import { stripe } from "@/lib/billing/stripe";
 import type { PlanTier } from "@/lib/db/types";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
-const PRICE_TO_PLAN: Record<string, PlanTier> = {};
-function loadPriceMap() {
-  if (Object.keys(PRICE_TO_PLAN).length > 0) return;
-  const local = process.env.STRIPE_PRICE_LOCAL_AUTOPILOT;
-  const growth = process.env.STRIPE_PRICE_GROWTH_OPERATOR;
-  const agency = process.env.STRIPE_PRICE_AGENCY;
-  if (local) PRICE_TO_PLAN[local] = "local_autopilot";
-  if (growth) PRICE_TO_PLAN[growth] = "growth_operator";
-  if (agency) PRICE_TO_PLAN[agency] = "agency";
-}
-
 export async function POST(req: Request) {
-  loadPriceMap();
+  const priceToPlan = loadStripePriceMap();
   const sig = req.headers.get("stripe-signature");
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   const body = await req.text();
@@ -47,8 +37,9 @@ export async function POST(req: Request) {
       const sub = event.data.object as Stripe.Subscription;
       const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer.id;
       const priceId = sub.items.data[0]?.price?.id ?? "";
+      // Founding $199 ≤5 locs → local_autopilot (Money Farm P0).
       const plan: PlanTier = sub.status === "active" || sub.status === "trialing"
-        ? PRICE_TO_PLAN[priceId] ?? "free"
+        ? priceToPlan[priceId] ?? "free"
         : "free";
       await db.from("orgs")
         .update({ plan, stripe_customer_id: customerId, stripe_subscription_id: sub.id })

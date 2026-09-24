@@ -1,0 +1,68 @@
+{
+  "$schema_note": "Money Farm P0 test fixture — one org + ≥2 sites (locations). Mirrors supabase/seed.sql ids.",
+  "org": {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "name": "Acme Landscaping",
+    "slug": "acme-landscaping",
+    "plan": "free",
+    "stripe_customer_id": null
+  },
+  "sites": [
+    {
+      "id": "00000000-0000-0000-0000-000000000010",
+      "org_id": "00000000-0000-0000-0000-000000000001",
+      "name": "Acme Landscaping — main",
+      "website_url": "https://acmelandscaping.example",
+      "business_name": "Acme Landscaping",
+      "city": "Boulder",
+      "region": "CO",
+      "postal_code": "80301",
+      "primary_category": "landscaper",
+      "service_area_zips": ["80301", "80302", "80303", "80304"],
+      "phone": "303-555-0100",
+      "street_address": "100 Pearl St, Boulder, CO 80301"
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000011",
+      "org_id": "00000000-0000-0000-0000-000000000001",
+      "name": "Acme Landscaping — Denver",
+      "website_url": "https://acmelandscaping.example/denver",
+      "business_name": "Acme Landscaping",
+      "city": "Denver",
+      "region": "CO",
+      "postal_code": "80202",
+      "primary_category": "landscaper",
+      "service_area_zips": ["80202", "80203", "80205", "80206"],
+      "phone": "303-555-0200",
+      "street_address": "1600 Blake St, Denver, CO 80202"
+    }
+  ],
+  "places_mock": {
+    "00000000-0000-0000-0000-000000000010": {
+      "placeId": "ChIJ_mock_boulder_acme",
+      "name": "Acme Landscaping",
+      "formattedAddress": "100 Pearl St, Boulder, CO 80301",
+      "phone": "303-555-0100",
+      "website": "https://acmelandscaping.example",
+      "rating": 4.6,
+      "userRatingsTotal": 42,
+      "primaryCategory": "landscaper",
+      "photoCount": 8,
+      "hours": true,
+      "location": { "lat": 40.015, "lng": -105.271 }
+    },
+    "00000000-0000-0000-0000-000000000011": {
+      "placeId": "ChIJ_mock_denver_acme",
+      "name": "Acme Landscaping",
+      "formattedAddress": "1600 Blake St, Denver, CO 80202",
+      "phone": "303-555-0200",
+      "website": "https://acmelandscaping.example/denver",
+      "rating": 4.4,
+      "userRatingsTotal": 18,
+      "primaryCategory": "landscaper",
+      "photoCount": 3,
+      "hours": true,
+      "location": { "lat": 39.753, "lng": -104.999 }
+    }
+  }
+}
