@@ -22,6 +22,10 @@ import { z } from "zod";
 
 import { gbpInsights, napInsights, type Insight } from "@/lib/skills/_shared/rule-engine";
 import { narrative, type Usage } from "@/lib/skills/_shared/llm";
+import {
+  GEO_GBP_ACTIVITY_NARRATIVE_TASK,
+  GEO_GBP_PLAYBOOK_ADDENDUM,
+} from "@/lib/skills/local_visibility_audit/geo-gbp-narrative";
 import { findPlace, placeToGbpProfile, fetchNapRecords, isPlacesConfigured } from "@/lib/connectors/places";
 import { renderBusinessContext, renderPlaybook } from "@/lib/skills/_shared/playbook";
 import type { Site } from "@/lib/db/types";
@@ -178,14 +182,13 @@ export async function runNarrative(args: {
       ? renderBusinessContext(args.site, { clientMd: args.clientMd })
       : renderPlaybook(SYNTHETIC_WEDGE_SITE));
 
+  const playbookWithGeo = `${playbook.trim()}\n\n${GEO_GBP_PLAYBOOK_ADDENDUM}`;
+
   return narrative({
-    playbook,
+    playbook: playbookWithGeo,
     structured: args.deterministic,
     schema: NarrativeOutput,
-    task:
-      "Write the headline + 1-paragraph summary + top 3 prioritized fixes for this " +
-      "Local Visibility audit. Each fix MUST cite an insight id from the structured " +
-      "input. Do not invent insights. Frame fixes in dollars-and-jobs terms.",
+    task: GEO_GBP_ACTIVITY_NARRATIVE_TASK,
   });
 }
 
