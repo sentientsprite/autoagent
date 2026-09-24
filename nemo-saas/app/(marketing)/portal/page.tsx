@@ -90,6 +90,21 @@ export default function CustomerPortalPage() {
             Get the full score →
           </Link>
         </article>
+
+        <article style={cardShell()}>
+          <p style={badge}>Money Farm · HQ</p>
+          <h2 style={cardTitle}>HQ locations (Money Farm)</h2>
+          <p style={cardBody}>
+            Thin HQ stub: plan location cap, site count, and locations for the seed org. Offline demo via{" "}
+            <code style={{ fontSize: 12 }}>?fixture=1</code> on the API when DB is down.
+          </p>
+          <Link
+            href="/hq/locations?orgId=00000000-0000-0000-0000-000000000001"
+            style={linkBtn}
+          >
+            Open HQ locations →
+          </Link>
+        </article>
       </section>
 
       <p style={mutedNote}>
