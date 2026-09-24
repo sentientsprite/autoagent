@@ -55,9 +55,13 @@ export async function POST(req: Request) {
     return NextResponse.json({
       ...result,
       offer: "founding",
+      /** Client should send users here after mock Checkout (mock.stripe.local is not a real redirect). */
+      activateHint: successUrl.includes("?")
+        ? `${successUrl}&session_id=${result.sessionId}&mock_checkout=1`
+        : `${successUrl}?session_id=${result.sessionId}&mock_checkout=1`,
       note:
         result.mode === "mock"
-          ? "Stripe live = Owner spend GATE. Set STRIPE_SECRET_KEY + STRIPE_PRICE_FOUNDING."
+          ? "Stripe live = Owner spend GATE. Set STRIPE_SECRET_KEY + STRIPE_PRICE_FOUNDING. Use activateHint to finish mock activation."
           : undefined,
     });
   } catch (e) {

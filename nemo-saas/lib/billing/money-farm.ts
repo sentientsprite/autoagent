@@ -137,3 +137,35 @@ export async function createBillingPortal(args: {
   }
   return { mode: "live", url: session.url };
 }
+
+/**
+ * After Checkout (or mock success), set org.plan → local_autopilot.
+ * Mock path: no Stripe SDK. Live path should be driven by webhook; this is a
+ * convenience for success-page UX + local pilots.
+ */
+export async function activateFoundingForOrg(args: {
+  orgId: string;
+  /** mock | live — live still only writes plan (webhook owns subscription ids) */
+  mode: "mock" | "live";
+  sessionId?: string | null;
+}): Promise<{ orgId: string; plan: PlanTier; locationCap: number; mode: "mock" | "live" }> {
+  const { dbAsService } = await import("@/lib/db/client");
+  const db = dbAsService();
+  const plan = FOUNDING.mapsToPlan;
+  const patch: Record<string, unknown> = {
+    plan,
+    updated_at: new Date().toISOString(),
+  };
+  if (args.mode === "mock" && args.sessionId) {
+    patch.stripe_subscription_id = `sub_mock_${args.sessionId.replace(/^cs_mock_|^mock_cs_/, "").slice(0, 24)}`;
+  }
+  const { error } = await db.from("orgs").update(patch).eq("id", args.orgId);
+  if (error) throw new Error(`activate_founding_failed:${error.message}`);
+  return {
+    orgId: args.orgId,
+    plan,
+    locationCap: FOUNDING.includedLocations,
+    mode: args.mode,
+  };
+}
+
