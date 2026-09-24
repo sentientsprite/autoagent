@@ -22,14 +22,24 @@ type LocationsPayload = {
   atCap: boolean;
   locations: LocationRow[];
   note?: string;
+  source?: string;
   error?: string;
   detail?: string;
 };
 
-export function LocationsClient(props: { orgId: string }) {
+export function LocationsClient(props: {
+  orgId: string;
+  /** Pass fixture=1 through to the API for offline demos. */
+  fixture?: boolean;
+  /** Optional plan override (e.g. local_autopilot) when serving fixture. */
+  plan?: string;
+}) {
   const [status, setStatus] = useState<"loading" | "ok" | "err">("loading");
   const [data, setData] = useState<LocationsPayload | null>(null);
   const [errorDetail, setErrorDetail] = useState("");
+
+  const wantFixture = Boolean(props.fixture);
+  const plan = props.plan?.trim() || "";
 
   useEffect(() => {
     let cancelled = false;
@@ -38,9 +48,11 @@ export function LocationsClient(props: { orgId: string }) {
     setErrorDetail("");
     void (async () => {
       try {
-        const res = await fetch(
-          `/api/money-farm/locations?orgId=${encodeURIComponent(props.orgId)}`,
-        );
+        const qs = new URLSearchParams();
+        qs.set("orgId", props.orgId);
+        if (wantFixture) qs.set("fixture", "1");
+        if (plan) qs.set("plan", plan);
+        const res = await fetch(`/api/money-farm/locations?${qs.toString()}`);
         const json = (await res.json()) as LocationsPayload;
         if (cancelled) return;
         if (!res.ok) {
@@ -61,10 +73,21 @@ export function LocationsClient(props: { orgId: string }) {
     return () => {
       cancelled = true;
     };
-  }, [props.orgId]);
+  }, [props.orgId, wantFixture, plan]);
 
   if (status === "loading") {
-    return <p style={{ marginTop: 8, color: "#64748b" }}>Loading locations…</p>;
+    return (
+      <section style={cardShell(true)}>
+        <h2 style={cardTitle}>Loading locations…</h2>
+        <p style={cardBody}>
+          Fetching plan cap and sites for this org
+          {wantFixture ? " (offline fixture mode)" : ""}.
+        </p>
+        <p style={mutedNote}>
+          orgId <code style={{ fontSize: 11 }}>{props.orgId}</code>
+        </p>
+      </section>
+    );
   }
 
   if (status === "err") {
@@ -72,8 +95,8 @@ export function LocationsClient(props: { orgId: string }) {
       <section style={cardShell(true)}>
         <h2 style={cardTitle}>Couldn't load locations</h2>
         <p style={cardBody}>
-          {errorDetail || "Unknown error"}. Check that the org id is seeded locally, or try the
-          fixture org from the instructions state.
+          {errorDetail || "Unknown error"}. Check that the org id is seeded locally, or open the
+          seed org with <code style={{ fontSize: 11 }}>fixture=1</code> for an offline demo.
         </p>
         <p style={mutedNote}>
           orgId <code style={{ fontSize: 11 }}>{props.orgId}</code>
@@ -83,13 +106,42 @@ export function LocationsClient(props: { orgId: string }) {
   }
 
   if (!data) {
-    return null;
+    return (
+      <section style={cardShell(true)}>
+        <h2 style={cardTitle}>No response</h2>
+        <p style={cardBody}>The locations API returned nothing. Try reload or fixture mode.</p>
+      </section>
+    );
   }
 
   const rows = data.locations ?? [];
+  const showFixtureBanner = data.source === "fixture" || wantFixture;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      {showFixtureBanner ? (
+        <div
+          role="status"
+          style={{
+            border: "1px solid #fde68a",
+            background: "#fffbeb",
+            borderRadius: 10,
+            padding: "12px 14px",
+            fontSize: 13,
+            color: "#92400e",
+            lineHeight: 1.45,
+          }}
+        >
+          <strong>Offline fixture — not live Supabase</strong>
+          {plan ? (
+            <span>
+              {" "}
+              · plan override <code style={{ fontSize: 11 }}>{plan}</code>
+            </span>
+          ) : null}
+        </div>
+      ) : null}
+
       <section style={cardShell()}>
         <p
           style={{
@@ -117,8 +169,9 @@ export function LocationsClient(props: { orgId: string }) {
         <section style={cardShell(true)}>
           <h2 style={cardTitle}>No locations yet</h2>
           <p style={cardBody}>
-            This org has zero sites under the location cap. Seed the Money Farm fixture or add sites
-            in the DB to see them here.
+            This org has zero sites under the location cap. Seed the Money Farm fixture, use{" "}
+            <code style={{ fontSize: 11 }}>fixture=1</code>, or add sites in the DB to see them
+            here.
           </p>
         </section>
       ) : (

@@ -13,15 +13,23 @@ export const metadata: Metadata = {
 const SEED_ORG_ID = "00000000-0000-0000-0000-000000000001";
 const UUID_RE = /^[0-9a-f-]{36}$/i;
 
+function firstString(v: string | string[] | undefined): string {
+  if (typeof v === "string") return v;
+  if (Array.isArray(v) && typeof v[0] === "string") return v[0];
+  return "";
+}
+
 export default async function HqLocationsPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const sp = await searchParams;
-  const raw = typeof sp.orgId === "string" ? sp.orgId : typeof sp.org === "string" ? sp.org : "";
+  const raw = firstString(sp.orgId) || firstString(sp.org);
   const orgId = raw.trim();
   const validOrgId = orgId && UUID_RE.test(orgId) ? orgId : "";
+  const wantFixture = firstString(sp.fixture) === "1";
+  const plan = firstString(sp.plan).trim();
 
   return (
     <main style={hubMain}>
@@ -33,7 +41,11 @@ export default async function HqLocationsPage({
       </p>
 
       {validOrgId ? (
-        <LocationsClient orgId={validOrgId} />
+        <LocationsClient
+          orgId={validOrgId}
+          fixture={wantFixture}
+          plan={plan || undefined}
+        />
       ) : (
         <section
           style={{
@@ -45,7 +57,9 @@ export default async function HqLocationsPage({
           }}
         >
           <p style={{ margin: "0 0 12px", fontSize: 14, color: "#334155", lineHeight: 1.5 }}>
-            Pass an org id to load locations. Example:
+            Pass an org id to load locations. Offline demos use{" "}
+            <code style={{ fontSize: 11 }}>fixture=1</code> (optional{" "}
+            <code style={{ fontSize: 11 }}>plan=</code> override).
           </p>
           <code
             style={{
@@ -59,16 +73,28 @@ export default async function HqLocationsPage({
               wordBreak: "break-all",
             }}
           >
-            /hq/locations?orgId={SEED_ORG_ID}
+            /hq/locations?orgId={SEED_ORG_ID}&fixture=1
           </code>
           <p style={{ margin: "0 0 16px", fontSize: 13, color: "#64748b", lineHeight: 1.45 }}>
             Seed fixture org (Acme Landscaping — two sites in{" "}
             <code style={{ fontSize: 11 }}>fixtures/money-farm/org-two-locations.json</code>
-            ). Needs a seeded local DB for live rows; empty/error states stay friendly either way.
+            ). Raw fixture plan stays <code style={{ fontSize: 11 }}>free</code>; use{" "}
+            <code style={{ fontSize: 11 }}>plan=local_autopilot</code> for a founding-cap demo.
           </p>
-          <Link href={`/hq/locations?orgId=${SEED_ORG_ID}`} style={linkBtn}>
-            Load seed fixture org →
-          </Link>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+            <Link
+              href={`/hq/locations?orgId=${SEED_ORG_ID}&fixture=1`}
+              style={linkBtn}
+            >
+              Seed org · fixture (free) →
+            </Link>
+            <Link
+              href={`/hq/locations?orgId=${SEED_ORG_ID}&fixture=1&plan=local_autopilot`}
+              style={linkBtn}
+            >
+              Seed org · founding demo →
+            </Link>
+          </div>
         </section>
       )}
 
@@ -77,7 +103,10 @@ export default async function HqLocationsPage({
           ← Back to portal
         </Link>
         {" · "}
-        API: <code style={{ fontSize: 11 }}>GET /api/money-farm/locations?orgId=</code>
+        API:{" "}
+        <code style={{ fontSize: 11 }}>
+          GET /api/money-farm/locations?orgId=&fixture=1&plan=
+        </code>
       </p>
     </main>
   );

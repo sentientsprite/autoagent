@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { locationCap } from "@/lib/billing/money-farm";
 import {
   MONEY_FARM_SEED_ORG_ID,
+  isKnownPlanTier,
   loadLocationsFixtureFile,
   mapLocationsFixtureToResponse,
   resolveFixtureLocationsResponse,
@@ -41,6 +42,32 @@ describe("locations fixture → API shape", () => {
     expect(body.note).toBeTruthy();
   });
 
+  it("planOverride local_autopilot raises cap so 2 sites are not atCap", () => {
+    const f = loadLocationsFixtureFile();
+    expect(f.org.plan).toBe("free");
+    const body = mapLocationsFixtureToResponse(f, { planOverride: "local_autopilot" });
+    expect(body.org.plan).toBe("local_autopilot");
+    expect(body.locationCap).toBe(locationCap("local_autopilot"));
+    expect(body.locationCap).toBe(5);
+    expect(body.locationCount).toBe(f.sites.length);
+    expect(body.locationCount).toBeGreaterThanOrEqual(2);
+    expect(body.atCap).toBe(false);
+    expect(body.source).toBe("fixture");
+    expect(body.note).toMatch(/planOverride=local_autopilot/);
+    // Raw fixture file plan must remain free (mapper does not mutate).
+    expect(f.org.plan).toBe("free");
+  });
+
+  it("isKnownPlanTier accepts locationCap tiers only", () => {
+    expect(isKnownPlanTier("free")).toBe(true);
+    expect(isKnownPlanTier("local_autopilot")).toBe(true);
+    expect(isKnownPlanTier("growth_operator")).toBe(true);
+    expect(isKnownPlanTier("agency")).toBe(true);
+    expect(isKnownPlanTier("founding")).toBe(false);
+    expect(isKnownPlanTier("pro")).toBe(false);
+    expect(isKnownPlanTier("")).toBe(false);
+  });
+
   it("allows custom note override", () => {
     const f = loadLocationsFixtureFile();
     const body = mapLocationsFixtureToResponse(f, { note: "fallback: db unavailable" });
@@ -56,6 +83,18 @@ describe("locations fixture → API shape", () => {
     expect(ok.ok).toBe(true);
     if (ok.ok) {
       expect(ok.body.locationCount).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it("resolveFixtureLocationsResponse passes planOverride", () => {
+    const f = loadLocationsFixtureFile();
+    const ok = resolveFixtureLocationsResponse(f.org.id, f, {
+      planOverride: "local_autopilot",
+    });
+    expect(ok.ok).toBe(true);
+    if (ok.ok) {
+      expect(ok.body.org.plan).toBe("local_autopilot");
+      expect(ok.body.atCap).toBe(false);
     }
   });
 

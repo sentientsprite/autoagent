@@ -5,11 +5,18 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
-import { locationCap } from "@/lib/billing/money-farm";
+import { LOCATION_CAPS, locationCap } from "@/lib/billing/money-farm";
 import type { PlanTier } from "@/lib/db/types";
 
 /** Seed org id from supabase/seed.sql + fixtures/money-farm/org-two-locations.json */
 export const MONEY_FARM_SEED_ORG_ID = "00000000-0000-0000-0000-000000000001";
+
+/** Plan tiers that locationCap / LOCATION_CAPS know. */
+export const KNOWN_PLAN_TIERS = Object.keys(LOCATION_CAPS) as PlanTier[];
+
+export function isKnownPlanTier(value: string): value is PlanTier {
+  return (KNOWN_PLAN_TIERS as string[]).includes(value);
+}
 
 export interface LocationsFixtureOrg {
   id: string;
@@ -57,6 +64,12 @@ export interface LocationsApiResponse {
   source?: "fixture";
 }
 
+export type MapLocationsFixtureOpts = {
+  /** Demo override — does not mutate raw fixture JSON. */
+  planOverride?: PlanTier;
+  note?: string;
+};
+
 export function defaultLocationsFixturePath(): string {
   return path.join(process.cwd(), "fixtures/money-farm/org-two-locations.json");
 }
@@ -68,18 +81,20 @@ export function loadLocationsFixtureFile(fixturePath?: string): LocationsFixture
 
 /**
  * Map fixture JSON → live locations API shape.
- * Uses fixture.org.plan as-is with locationCap (free + 2 sites → atCap true).
+ * Default: fixture.org.plan as-is (free + 2 sites → atCap true).
+ * With planOverride: org.plan + locationCap follow override (e.g. local_autopilot → cap 5 → atCap false).
  */
 export function mapLocationsFixtureToResponse(
   fixture: LocationsFixtureFile,
-  opts?: { note?: string },
+  opts?: MapLocationsFixtureOpts,
 ): LocationsApiResponse {
-  const plan = (fixture.org.plan ?? "free") as PlanTier;
+  const plan = (opts?.planOverride ?? fixture.org.plan ?? "free") as PlanTier;
   const cap = locationCap(plan);
   const list = fixture.sites ?? [];
-  const defaultNote =
-    "HQ locations fixture — plan as-is with locationCap " +
-    `(free+2 sites may show atCap). Mock-safe; no Stripe / Places.`;
+  const defaultNote = opts?.planOverride
+    ? `HQ locations fixture — planOverride=${opts.planOverride} (raw fixture plan left intact). Mock-safe; no Stripe / Places.`
+    : "HQ locations fixture — plan as-is with locationCap " +
+      `(free+2 sites may show atCap). Mock-safe; no Stripe / Places.`;
 
   return {
     org: {
@@ -123,7 +138,7 @@ export function isNonProductionEnv(): boolean {
 export function resolveFixtureLocationsResponse(
   orgId: string,
   fixture: LocationsFixtureFile,
-  opts?: { note?: string },
+  opts?: MapLocationsFixtureOpts,
 ):
   | { ok: true; body: LocationsApiResponse }
   | { ok: false; error: "fixture_org_mismatch" } {
