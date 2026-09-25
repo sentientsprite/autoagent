@@ -130,6 +130,13 @@ export async function createCheckoutSession(
     };
   }
 
+  const foundingMeta = {
+    org_id: args.orgId,
+    plan: FOUNDING_PLAN.name,
+    nemo_offer: "founding",
+    maps_to_plan: FOUNDING_PLAN.planTier,
+    location_cap: String(FOUNDING_PLAN.locationCap),
+  };
   const session = await client.checkout.sessions.create({
     mode: "subscription",
     line_items: [{ price: priceId, quantity: 1 }],
@@ -138,11 +145,8 @@ export async function createCheckoutSession(
     client_reference_id: args.orgId,
     customer: args.customerId || undefined,
     customer_email: args.customerId ? undefined : args.customerEmail,
-    metadata: {
-      org_id: args.orgId,
-      plan: FOUNDING_PLAN.name,
-      location_cap: String(FOUNDING_PLAN.locationCap),
-    },
+    metadata: foundingMeta,
+    subscription_data: { metadata: foundingMeta },
   });
 
   if (!session.url) throw new Error("stripe_checkout_missing_url");
