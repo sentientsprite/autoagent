@@ -15,6 +15,8 @@ import {
   mutedNote,
 } from "@/lib/portal-hub-styles";
 
+import { SalesPerksSection } from "../_components/SalesPerksSection";
+
 export const metadata: Metadata = {
   title: "Customer portal | Nemo Local",
   description:
@@ -99,13 +101,15 @@ export default function CustomerPortalPage() {
             <code style={{ fontSize: 12 }}>?fixture=1</code> on the API when DB is down.
           </p>
           <Link
-            href="/hq/locations?orgId=00000000-0000-0000-0000-000000000001"
+            href="/hq/locations?orgId=00000000-0000-0000-0000-000000000001&fixture=1&plan=local_autopilot"
             style={linkBtn}
           >
             Open HQ locations →
           </Link>
         </article>
       </section>
+
+      <SalesPerksSection />
 
       <p style={mutedNote}>
         <strong>Ops note:</strong> Extension install URL uses{" "}
@@ -114,7 +118,19 @@ export default function CustomerPortalPage() {
         <Link href="/team" style={{ color: "#334155" }}>
           /team
         </Link>{" "}
-        (not indexed).
+        (not indexed). Utah pSEO:{" "}
+        <Link href="/ut/salt-lake-city/plumber-google-maps-visibility" style={{ color: "#334155" }}>
+          plumber Maps
+        </Link>
+        {" · "}
+        <Link href="/ut/provo/hvac-ai-seo-vs-google-maps" style={{ color: "#334155" }}>
+          Provo HVAC GEO
+        </Link>
+        {" · "}
+        <Link href="/ut/salt-lake-city/roofer-google-review-velocity" style={{ color: "#334155" }}>
+          roofer reviews
+        </Link>
+        .
       </p>
     </main>
   );
