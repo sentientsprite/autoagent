@@ -8,7 +8,8 @@ import React from "react";
 export interface LvsInternalEmailProps {
   businessName: string;
   email: string;
-  zip: string;
+  city?: string | null;
+  zip?: string | null;
   websiteUrl?: string | null;
   grade: string;
   score: number;
@@ -22,6 +23,7 @@ export interface LvsInternalEmailProps {
 export function LvsInternalEmail({
   businessName,
   email,
+  city,
   zip,
   websiteUrl,
   grade,
@@ -32,6 +34,7 @@ export function LvsInternalEmail({
   leadId,
   crmLeadUrl,
 }: LvsInternalEmailProps) {
+  const place = [city, zip ? `ZIP ${zip}` : null].filter(Boolean).join(" · ") || "—";
   return (
     <Html>
       <Head />
@@ -45,7 +48,7 @@ export function LvsInternalEmail({
             {businessName} — {grade} ({score}/100)
           </Text>
           <Text style={{ color: "#475569", marginTop: 0 }}>
-            {email} · ZIP {zip}
+            {email} · {place}
             {websiteUrl ? (
               <>
                 {" "}

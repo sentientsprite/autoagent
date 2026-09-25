@@ -132,6 +132,8 @@ export interface GbpProfile {
   reviewCount: number;
   avgRating: number;                    // 0..5
   reviewsLast90d: number;
+  /** Service-area contractor — no storefront address in Places is normal. */
+  pureServiceAreaBusiness?: boolean;
 }
 
 export function gbpInsights(p: GbpProfile): Insight[] {
@@ -142,6 +144,7 @@ export function gbpInsights(p: GbpProfile): Insight[] {
   if (!p.hasWebsite) missing.push("website");
   if (!p.hasHours) missing.push("business hours");
   if (!p.hasPrimaryCategory) missing.push("primary category");
+  if (!p.pureServiceAreaBusiness && !p.hasAddress) missing.push("address");
   if (missing.length > 0) {
     out.push({
       id: "gbp.profile_incomplete",
@@ -150,6 +153,18 @@ export function gbpInsights(p: GbpProfile): Insight[] {
       message: `Missing: ${missing.join(", ")}.`,
       action: "Fill these in inside business.google.com — completed profiles get more calls.",
       evidence: { missing: missing.join(",") },
+    });
+  }
+
+  if (p.pureServiceAreaBusiness) {
+    out.push({
+      id: "gbp.service_area_listing",
+      severity: "info",
+      title: "Service-area Google listing (no storefront pin)",
+      message:
+        "This is a mobile / service-area contractor profile. Google may not show a street address — optimize service cities, categories, and reviews instead.",
+      action: "In GBP, confirm every city you serve is listed in the service area and match website + phone.",
+      evidence: { pureServiceAreaBusiness: true },
     });
   }
 
@@ -204,6 +219,116 @@ export function gbpInsights(p: GbpProfile): Insight[] {
 }
 
 // =============================================================================
+// Local city presence (25mi radius) — Places public data, no GBP OAuth
+// =============================================================================
+
+export interface LocalPresenceProfile {
+  city: string;
+  region?: string;
+  radiusMi: number;
+  distanceFromCityMi: number | null;
+  withinRadius: boolean | null;
+  competitorCount: number;
+  listingRating: number;
+  listingReviews: number;
+  medianCompetitorRating: number | null;
+  medianCompetitorReviews: number | null;
+  primaryCategory?: string;
+}
+
+export function localPresenceInsights(p: LocalPresenceProfile): Insight[] {
+  const out: Insight[] = [];
+  const cityLabel = p.region ? `${p.city}, ${p.region}` : p.city;
+
+  if (p.withinRadius === true) {
+    out.push({
+      id: "gbp.local_presence_ok",
+      severity: "win",
+      title: `Present in the ${p.radiusMi}-mile ${p.city} market`,
+      message: `Your Google listing sits about ${p.distanceFromCityMi ?? "?"} mi from ${cityLabel} — inside the local search radius buyers use.`,
+      action: "Keep NAP + photos fresh so Maps keeps showing you for nearby jobs.",
+      evidence: {
+        city: cityLabel,
+        radiusMi: p.radiusMi,
+        distanceMi: p.distanceFromCityMi ?? 0,
+      },
+    });
+  } else if (p.withinRadius === false) {
+    out.push({
+      id: "gbp.outside_local_radius",
+      severity: "critical",
+      title: `Listing is outside the ${p.radiusMi}-mile local market`,
+      message: `Pin is ~${p.distanceFromCityMi} mi from ${cityLabel}. Nearby searches in that city may skip you.`,
+      action: `Confirm the service-area / pin for ${p.city} in business.google.com, or run the audit with the city where the truck actually works.`,
+      evidence: {
+        city: cityLabel,
+        radiusMi: p.radiusMi,
+        distanceMi: p.distanceFromCityMi ?? 0,
+      },
+    });
+  }
+
+  if (p.competitorCount >= 3) {
+    out.push({
+      id: "gbp.local_competition",
+      severity: "info",
+      title: `Busy ${p.radiusMi}-mile competitive set`,
+      message: `We found ${p.competitorCount} similar ${p.primaryCategory?.replace(/_/g, " ") || "local"} listings near ${cityLabel}.`,
+      action: "Differentiate with category accuracy, job photos, and review replies — not more citation spam.",
+      evidence: { competitorCount: p.competitorCount, city: cityLabel },
+    });
+  } else if (p.competitorCount === 0 && p.withinRadius !== false) {
+    out.push({
+      id: "gbp.thin_local_category",
+      severity: "info",
+      title: "Few category peers in this city radius",
+      message: `Almost no same-category competitors showed up within ${p.radiusMi} mi of ${cityLabel}.`,
+      action: "Double-check primary category on GBP — wrong type hides you from the right searches.",
+      evidence: { competitorCount: 0, city: cityLabel },
+    });
+  }
+
+  if (
+    p.medianCompetitorRating != null &&
+    p.listingRating > 0 &&
+    p.listingRating + 0.15 < p.medianCompetitorRating &&
+    p.listingReviews >= 5
+  ) {
+    out.push({
+      id: "gbp.behind_local_ratings",
+      severity: "warning",
+      title: "Rating trails local peers",
+      message: `You average ${p.listingRating.toFixed(1)}; nearby peers median ~${p.medianCompetitorRating.toFixed(1)} within ${p.radiusMi} mi of ${cityLabel}.`,
+      action: "Prioritize review replies and ask happy customers for fresh 5-stars after completed jobs.",
+      evidence: {
+        listingRating: p.listingRating,
+        peerMedian: p.medianCompetitorRating,
+      },
+    });
+  }
+
+  if (
+    p.medianCompetitorReviews != null &&
+    p.listingReviews < p.medianCompetitorReviews * 0.5 &&
+    p.medianCompetitorReviews >= 10
+  ) {
+    out.push({
+      id: "gbp.behind_local_review_volume",
+      severity: "warning",
+      title: "Fewer reviews than local peers",
+      message: `You have ${p.listingReviews} reviews; peers near ${cityLabel} median ~${Math.round(p.medianCompetitorReviews)}.`,
+      action: "Install a post-job review ask (SMS/QR) until you clear the local median.",
+      evidence: {
+        listingReviews: p.listingReviews,
+        peerMedianReviews: p.medianCompetitorReviews,
+      },
+    });
+  }
+
+  return out;
+}
+
+// =============================================================================
 // NAP (name/address/phone) consistency
 // =============================================================================
 
@@ -239,6 +364,42 @@ export function napInsights(c: NapCheck): Insight[] {
       action: "Standardize name/address/phone across these directories: " +
         inconsistencies.map((r) => r.source).join(", "),
       evidence: { sources: inconsistencies.map((r) => r.source).join(",") },
+    },
+  ];
+}
+
+// =============================================================================
+// On-page LocalBusiness schema (GEO / AI citation adjacency)
+// =============================================================================
+
+export interface SchemaCheck {
+  hasSchemaLocalBusiness: boolean;
+  websiteUrl: string;
+}
+
+export function schemaInsights(c: SchemaCheck): Insight[] {
+  if (c.hasSchemaLocalBusiness) {
+    return [
+      {
+        id: "schema.localbusiness_ok",
+        severity: "win",
+        title: "Site has LocalBusiness-style structured data",
+        message: "JSON-LD on the website includes LocalBusiness / Organization / ProfessionalService.",
+        action: "Keep NAP in schema identical to Google Business Profile and the footer.",
+        evidence: { websiteUrl: c.websiteUrl },
+      },
+    ];
+  }
+  return [
+    {
+      id: "schema.localbusiness_missing",
+      severity: "warning",
+      title: "No LocalBusiness schema detected on the website",
+      message:
+        "We didn’t find JSON-LD for LocalBusiness / Organization / ProfessionalService — AI answers and rich results prefer clear entity markup that matches your GBP NAP.",
+      action:
+        "Add trade-specific LocalBusiness JSON-LD (name, phone, address or areaServed, url) matching Google Business Profile exactly.",
+      evidence: { websiteUrl: c.websiteUrl },
     },
   ];
 }

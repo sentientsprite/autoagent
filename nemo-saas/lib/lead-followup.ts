@@ -13,7 +13,8 @@ export interface WedgeLeadFollowUpInput {
   leadId: string;
   email: string;
   businessName: string;
-  zip: string;
+  zip?: string | null;
+  city?: string | null;
   websiteUrl?: string | null;
   grade: string;
   score: number;
@@ -56,7 +57,8 @@ function buildCrmNotes(input: WedgeLeadFollowUpInput): string {
   const lines = [
     "LVS wedge lead — email-first (no phone on form).",
     `Grade: ${input.grade} (${input.score}/100)`,
-    `ZIP: ${input.zip}`,
+    input.zip ? `ZIP: ${input.zip}` : null,
+    input.city ? `City: ${input.city}` : null,
     input.websiteUrl ? `Website: ${input.websiteUrl}` : null,
     `Report: ${input.reportUrl}`,
     input.topFixTitle ? `Top fix: ${input.topFixTitle}` : null,
@@ -112,6 +114,7 @@ async function notifyInternalTeam(
     React.createElement(LvsInternalEmail, {
       businessName: input.businessName,
       email: input.email,
+      city: input.city,
       zip: input.zip,
       websiteUrl: input.websiteUrl,
       grade: input.grade,

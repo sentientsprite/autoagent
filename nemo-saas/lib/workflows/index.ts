@@ -67,14 +67,14 @@ export const monthlySiteReport = inngest.createFunction(
 
     // 1. Always run the local visibility audit.
     const auditResult = await step.run("local_visibility_audit", async () => {
-      if (!site.business_name || !site.postal_code) {
+      if (!site.business_name || !(site.city || site.postal_code)) {
         throw new NonRetriableError("site_missing_local_fields");
       }
       const r = await runLvs({
         businessName: site.business_name,
-        zip: site.postal_code,
         city: site.city ?? undefined,
         region: site.region ?? undefined,
+        zip: site.postal_code ?? undefined,
         websiteUrl: site.website_url ?? undefined,
         expectedServiceAreaZipCount: site.service_area_zips?.length ?? 1,
       }, { withNarrative: true, site, clientMd });
@@ -269,12 +269,14 @@ async function runSkillByKind(db: ReturnType<typeof dbAsService>, job: JobRow): 
 
   switch (job.kind) {
     case "local_visibility_audit": {
-      if (!site?.business_name || !site?.postal_code) throw new NonRetriableError("site_missing_local_fields");
+      if (!site?.business_name || !(site?.city || site?.postal_code)) {
+        throw new NonRetriableError("site_missing_local_fields");
+      }
       const r = await runLvs({
         businessName: site.business_name,
-        zip: site.postal_code,
         city: site.city ?? undefined,
         region: site.region ?? undefined,
+        zip: site.postal_code ?? undefined,
         websiteUrl: site.website_url ?? undefined,
         expectedServiceAreaZipCount: site.service_area_zips?.length ?? 1,
       }, { withNarrative: true, site, clientMd });

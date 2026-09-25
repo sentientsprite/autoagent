@@ -20,13 +20,28 @@
  */
 import { z } from "zod";
 
-import { gbpInsights, napInsights, type Insight } from "@/lib/skills/_shared/rule-engine";
+import {
+  gbpInsights,
+  napInsights,
+  localPresenceInsights,
+  schemaInsights,
+  type Insight,
+} from "@/lib/skills/_shared/rule-engine";
+import { snapshot, summarizeOnPage } from "@/lib/crawler/client";
 import { narrative, type Usage } from "@/lib/skills/_shared/llm";
 import {
   GEO_GBP_ACTIVITY_NARRATIVE_TASK,
   GEO_GBP_PLAYBOOK_ADDENDUM,
 } from "@/lib/skills/local_visibility_audit/geo-gbp-narrative";
-import { findPlace, placeToGbpProfile, fetchNapRecords, isPlacesConfigured } from "@/lib/connectors/places";
+import {
+  findPlace,
+  placeToGbpProfile,
+  fetchNapRecords,
+  isPlacesConfigured,
+  scanLocalPresence,
+  LOCAL_RADIUS_MI,
+} from "@/lib/connectors/places";
+import { keywordPresenceInsights } from "@/lib/keywords/crm-importer";
 import { renderBusinessContext, renderPlaybook } from "@/lib/skills/_shared/playbook";
 import type { Site } from "@/lib/db/types";
 
@@ -34,17 +49,34 @@ import type { Site } from "@/lib/db/types";
 // schemas
 // =============================================================================
 
-export const Input = z.object({
-  businessName: z.string().min(2),
-  zip: z.string().regex(/^\d{5}(-\d{4})?$/),
-  city: z.string().optional(),
-  region: z.string().optional(),
-  websiteUrl: z.string().url().optional(),
-  /** From the Site row when running for an authed customer. */
-  expectedServiceAreaZipCount: z.number().int().min(0).default(1),
-  /** When known (paid tier), pass real review velocity; the wedge estimates. */
-  reviewsLast90d: z.number().int().optional(),
-});
+export const Input = z
+  .object({
+    businessName: z.string().min(2),
+    /** Primary geo for Places — city name (Google local is city-shaped). */
+    city: z.string().min(2).optional(),
+    region: z.string().optional(),
+    /** Optional legacy; not used for Places ranking. */
+    zip: z.string().optional(),
+    websiteUrl: z.string().url().optional(),
+    googleMapsUrl: z.string().url().optional(),
+    expectedServiceAreaZipCount: z.number().int().min(0).default(0),
+    reviewsLast90d: z.number().int().optional(),
+    /** Phase 2 — phrases from page keyword strategy Export sheet. */
+    targetKeywords: z
+      .array(
+        z.object({
+          phrase: z.string().min(2),
+          topic: z.string().optional(),
+          landingUrl: z.string().url().optional(),
+        }),
+      )
+      .max(60)
+      .optional(),
+  })
+  .refine((d) => Boolean(d.city?.trim() || d.zip?.trim()), {
+    message: "city is required (ZIP alone is not enough for Google local)",
+    path: ["city"],
+  });
 // Use z.input so callers can omit fields that have .default() — runtime
 // Input.parse() fills them in. z.infer/z.output is for what the parser returns.
 export type Input = z.input<typeof Input>;
@@ -69,6 +101,12 @@ const GradedOutput = z.object({
     reviewCount: z.number().optional(),
     photoCount: z.number().optional(),
     napDirectoriesChecked: z.number().int(),
+    /** City-radius local market scan (25mi). */
+    localRadiusMi: z.number().optional(),
+    localCity: z.string().optional(),
+    distanceFromCityMi: z.number().optional(),
+    withinLocalRadius: z.boolean().optional(),
+    localCompetitorCount: z.number().int().optional(),
   }),
 });
 export type DeterministicOutput = z.infer<typeof GradedOutput>;
@@ -103,6 +141,8 @@ export async function runDeterministic(input: Input): Promise<DeterministicOutpu
     zip: parsed.zip,
     city: parsed.city,
     region: parsed.region,
+    websiteUrl: parsed.websiteUrl,
+    googleMapsUrl: parsed.googleMapsUrl,
   });
 
   const napRecords = await fetchNapRecords({
@@ -110,13 +150,39 @@ export async function runDeterministic(input: Input): Promise<DeterministicOutpu
     zip: parsed.zip,
     city: parsed.city,
     region: parsed.region,
+    websiteUrl: parsed.websiteUrl,
   });
 
   const insights: Insight[] = [];
+  let localScan: Awaited<ReturnType<typeof scanLocalPresence>> | null = null;
 
   if (place) {
     const gbp = placeToGbpProfile(place, parsed.expectedServiceAreaZipCount, parsed.reviewsLast90d);
     insights.push(...gbpInsights(gbp));
+
+    if (parsed.city?.trim()) {
+      localScan = await scanLocalPresence(place, {
+        businessName: parsed.businessName,
+        city: parsed.city,
+        region: parsed.region,
+        websiteUrl: parsed.websiteUrl,
+      });
+      insights.push(
+        ...localPresenceInsights({
+          city: localScan.city,
+          region: localScan.region,
+          radiusMi: localScan.radiusMi,
+          distanceFromCityMi: localScan.distanceFromCityMi,
+          withinRadius: localScan.withinRadius,
+          competitorCount: localScan.competitorCount,
+          listingRating: place.rating ?? 0,
+          listingReviews: place.userRatingsTotal ?? 0,
+          medianCompetitorRating: localScan.medianCompetitorRating,
+          medianCompetitorReviews: localScan.medianCompetitorReviews,
+          primaryCategory: place.primaryCategory,
+        }),
+      );
+    }
 
     if (parsed.websiteUrl) {
       insights.push(...napInsights({
@@ -127,6 +193,46 @@ export async function runDeterministic(input: Input): Promise<DeterministicOutpu
         },
         records: napRecords,
       }));
+
+      // GEO adjacency: LocalBusiness JSON-LD on the site (NAP must still match GBP).
+      try {
+        const snap = await snapshot(parsed.websiteUrl);
+        if (snap.status < 400 && snap.html) {
+          const onPage = summarizeOnPage(snap.html, snap.finalUrl || parsed.websiteUrl);
+          insights.push(
+            ...schemaInsights({
+              hasSchemaLocalBusiness: onPage.hasSchemaLocalBusiness,
+              websiteUrl: parsed.websiteUrl,
+            }),
+          );
+          // Phase 2 — on-page keyword presence vs CRM import (reuse fetch).
+          if (parsed.targetKeywords?.length) {
+            const text = snap.html
+              .replace(/<script[\s\S]*?<\/script>/gi, " ")
+              .replace(/<style[\s\S]*?<\/style>/gi, " ")
+              .replace(/<[^>]+>/g, " ");
+            insights.push(...keywordPresenceInsights(text, parsed.targetKeywords));
+          }
+        } else if (parsed.targetKeywords?.length) {
+          insights.push({
+            id: "kw.site_fetch_failed",
+            severity: "info",
+            title: "Could not fetch site for keyword check",
+            message: "Phase-2 keyword presence skipped — site fetch returned an error status.",
+            action: "Re-run with a reachable website URL, or paste CRM phrases after deploy.",
+          });
+        }
+      } catch {
+        if (parsed.targetKeywords?.length) {
+          insights.push({
+            id: "kw.site_fetch_failed",
+            severity: "info",
+            title: "Could not fetch site for keyword check",
+            message: "Phase-2 keyword presence skipped — site fetch timed out or failed.",
+            action: "Re-run with a reachable website URL, or paste CRM phrases after deploy.",
+          });
+        }
+      }
     }
   } else if (!isPlacesConfigured()) {
     insights.push({
@@ -139,12 +245,16 @@ export async function runDeterministic(input: Input): Promise<DeterministicOutpu
         "Re-run after Google Places is enabled, or claim/verify your profile at business.google.com if you don’t have one yet.",
     });
   } else {
+    const hint = parsed.websiteUrl
+      ? ` We had website ${parsed.websiteUrl} — if the Maps listing uses a shorter name, try that name or paste the Google Maps link on a re-run.`
+      : "";
     insights.push({
       id: "gbp.not_found",
       severity: "critical",
       title: "We couldn't find your Google Business Profile",
-      message: `No Google listing matched "${parsed.businessName}" near ${parsed.zip}.`,
-      action: "Claim your free GBP at business.google.com — this is the #1 lead source for home services.",
+      message: `No Google listing matched "${parsed.businessName}" in ${parsed.city}${parsed.region ? `, ${parsed.region}` : ""}.${hint}`,
+      action:
+        "Confirm the exact Maps listing name + city (and state). If the profile exists, re-run with the website URL — we rank Places hits by site host.",
     });
   }
 
@@ -161,6 +271,11 @@ export async function runDeterministic(input: Input): Promise<DeterministicOutpu
       reviewCount: place?.userRatingsTotal,
       photoCount: place?.photoCount,
       napDirectoriesChecked: napRecords.length,
+      localRadiusMi: LOCAL_RADIUS_MI,
+      localCity: localScan?.city ?? parsed.city,
+      distanceFromCityMi: localScan?.distanceFromCityMi ?? undefined,
+      withinLocalRadius: localScan?.withinRadius ?? undefined,
+      localCompetitorCount: localScan?.competitorCount,
     },
   });
 }

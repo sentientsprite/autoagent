@@ -1,0 +1,133 @@
+{
+  "template": "keyword-page-strategy-v1",
+  "description": "Two-sheet strategy from BG layout only: Input Data \u2192 CRM Export. Not a multi-brand registry.",
+  "sheets": {
+    "inputData": {
+      "purpose": "Authoring \u2014 base URL, cities, topics/paths, keyphrase buckets",
+      "baseUrl": "https://example.com/",
+      "cities": [
+        "City A ST",
+        "City B ST"
+      ],
+      "cityExamplesFromBg": [
+        "East Palo Alto CA",
+        "Half Moon Bay CA",
+        "Millbrae CA",
+        "Woodside CA"
+      ],
+      "topics": [
+        {
+          "topic": "Gutter Installation",
+          "urlPath": "gutter-services/installation/"
+        },
+        {
+          "topic": "Gutter Cleaning Services",
+          "urlPath": "gutter-services/cleaning/"
+        },
+        {
+          "topic": "Gutter Repair",
+          "urlPath": "gutter-services/repair/"
+        },
+        {
+          "topic": "Gutter Guard",
+          "urlPath": "gutter-services/guards/"
+        },
+        {
+          "topic": "Seamless Gutters",
+          "urlPath": "gutter-services/seamless/"
+        },
+        {
+          "topic": "Fascia",
+          "urlPath": "gutter-services/fascia/"
+        }
+      ],
+      "keyphraseBuckets": {
+        "gutter installation": [
+          "gutter installation services",
+          "gutter replacement",
+          "gutter replacement services",
+          "gutter installers",
+          "gutter company",
+          "gutter services",
+          "rain gutter installation"
+        ],
+        "gutter cleaning services": [
+          "gutter cleaner",
+          "gutter cleaning",
+          "rain gutter cleaning",
+          "gutter cleaning service"
+        ],
+        "gutter repair": [
+          "rain gutter repair",
+          "gutter repair company",
+          "gutter repair services",
+          "best gutter repair company",
+          "gutter repair experts",
+          "Gutter Snow Guard",
+          "Affordable Heated Gutters"
+        ],
+        "gutter guard": [
+          "gutter guards",
+          "gutter cover",
+          "gutter screen",
+          "gutter leaf guard",
+          "mesh gutter guards",
+          "best gutter guard",
+          "leaf filter",
+          "gutter guard installation"
+        ],
+        "seamless gutters": [
+          "seamless gutter",
+          "seamless gutter installation",
+          "seamless gutter repair",
+          "seamless gutter contractor",
+          "seamless gutter contractors",
+          "seamless gutter company",
+          "seamless gutter services",
+          "seamless gutter installation companies"
+        ],
+        "fascia": [
+          "fascia board",
+          "fascia installation",
+          "fascia repair",
+          "fascia roof repair",
+          "fascia board installation",
+          "fascia board repair"
+        ]
+      }
+    },
+    "crmExport": {
+      "purpose": "Build + LVS targetKeywords",
+      "columns": [
+        "topic",
+        "needle/landingUrl",
+        "key_phrase (pipe-separated)"
+      ],
+      "exampleRows": [
+        {
+          "topic": "Service Topic City A ST",
+          "landingUrl": "https://example.com/city-a-st/service/",
+          "keyPhrases": [
+            "service topic City A ST",
+            "service near me City A ST"
+          ]
+        },
+        {
+          "topic": "Gutter Installation East Palo Alto CA",
+          "landingUrl": "https://sunnyvale.brothersgutters.com/ca/east-palo-alto/gutter-services/installation/",
+          "keyPhrases": [
+            "gutter installation East Palo Alto CA",
+            "gutter installation services East Palo Alto CA",
+            "gutter replacement East Palo Alto CA",
+            "gutter replacement services East Palo Alto CA",
+            "gutter installers East Palo Alto CA",
+            "gutter company East Palo Alto CA",
+            "gutter services East Palo Alto CA",
+            "rain gutter installation East Palo Alto CA"
+          ]
+        }
+      ]
+    }
+  },
+  "expansionRule": "For each (city \u00d7 topic): landing = baseUrl + citySlug + urlPath; key_phrases = each bucket phrase + ' ' + city"
+}

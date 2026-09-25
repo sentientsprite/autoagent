@@ -22,6 +22,10 @@ import { insightsToActionItems } from "@/lib/skills/local_visibility_audit/actio
 import { renderLvsReportPdf } from "@/lib/pdf/lvs-report";
 import { LvsEmail } from "@/lib/email/lvs";
 import { runLeadFollowUp } from "@/lib/lead-followup";
+import {
+  TargetKeyword,
+  targetKeywordsFromStrategyExport,
+} from "@/lib/keywords/crm-importer";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -29,11 +33,29 @@ export const maxDuration = 30;
 const Body = z.object({
   email: z.string().email(),
   businessName: z.string().min(2),
-  zip: z.string().regex(/^\d{5}(-\d{4})?$/),
-  city: z.string().optional(),
+  city: z.string().min(2),
   region: z.string().optional(),
+  /** Optional — not used for Google Places ranking. */
+  zip: z.string().optional(),
   websiteUrl: z.string().url().optional(),
+  googleMapsUrl: z.string().url().optional(),
+  /** Phase 2 — explicit strategy phrases for on-page presence (kw.*). */
+  targetKeywords: z.array(TargetKeyword).max(60).optional(),
+  /**
+   * Non-prod only: when true and targetKeywords omitted, load
+   * fixtures/keywords/page-keyword-strategy.export.json.
+   * Ignored in production unless ALLOW_LVS_KEYWORD_FIXTURES=1.
+   * (No multi-brand brandCode — Owner 2026-09-21.)
+   */
+  useKeywordFixture: z.boolean().optional(),
 });
+
+function allowKeywordFixtures(): boolean {
+  return (
+    process.env.NODE_ENV !== "production" ||
+    process.env.ALLOW_LVS_KEYWORD_FIXTURES === "1"
+  );
+}
 
 export async function POST(req: Request) {
   let parsed;
@@ -42,6 +64,37 @@ export async function POST(req: Request) {
   } catch (e) {
     return NextResponse.json({ error: "invalid_input", detail: String(e) }, { status: 400 });
   }
+
+  let targetKeywords = parsed.targetKeywords;
+  if ((!targetKeywords || targetKeywords.length === 0) && parsed.useKeywordFixture) {
+    if (!allowKeywordFixtures()) {
+      return NextResponse.json(
+        {
+          error: "keyword_fixture_not_allowed",
+          detail: "useKeywordFixture is disabled in production",
+        },
+        { status: 400 },
+      );
+    }
+    try {
+      targetKeywords = targetKeywordsFromStrategyExport({ max: 40 });
+    } catch (e) {
+      return NextResponse.json(
+        { error: "keyword_fixture_load_failed", detail: String(e) },
+        { status: 400 },
+      );
+    }
+  }
+
+  const auditInput = {
+    businessName: parsed.businessName,
+    city: parsed.city,
+    region: parsed.region,
+    zip: parsed.zip,
+    websiteUrl: parsed.websiteUrl,
+    googleMapsUrl: parsed.googleMapsUrl,
+    targetKeywords,
+  };
 
   let db;
   try {
@@ -60,7 +113,7 @@ export async function POST(req: Request) {
     .insert({
       email: parsed.email,
       business_name: parsed.businessName,
-      zip: parsed.zip,
+      zip: parsed.zip?.trim() || null,
       website_url: parsed.websiteUrl ?? null,
       source: "lvs_wedge",
     })
@@ -98,7 +151,7 @@ export async function POST(req: Request) {
       org_id: wedgeOrgId,
       kind: "local_visibility_audit",
       status: "running",
-      input: parsed,
+      input: { ...parsed, targetKeywords },
       started_at: new Date().toISOString(),
     })
     .select("id")
@@ -128,7 +181,7 @@ export async function POST(req: Request) {
   const startedAt = Date.now();
   let result;
   try {
-    result = await run(parsed, { withNarrative: true });
+    result = await run(auditInput, { withNarrative: true });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("lvs audit failed", err);
@@ -152,7 +205,8 @@ export async function POST(req: Request) {
   // 4. Render PDF.
   const pdf = await renderLvsReportPdf({
     businessName: parsed.businessName,
-    zip: parsed.zip,
+    location: [parsed.city, parsed.region].filter(Boolean).join(", "),
+    zip: parsed.zip || undefined,
     deterministic: result.deterministic,
     narrative: result.narrative,
     generatedAt: new Date(),
@@ -237,7 +291,8 @@ export async function POST(req: Request) {
     leadId: lead.id,
     email: parsed.email,
     businessName: parsed.businessName,
-    zip: parsed.zip,
+    zip: parsed.zip || null,
+    city: parsed.city,
     websiteUrl: parsed.websiteUrl,
     grade: result.deterministic.grade,
     score: result.deterministic.score,
