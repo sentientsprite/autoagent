@@ -58,6 +58,16 @@ async function applyOrgBilling(args: {
   }
 }
 
+export async function GET() {
+  // Browser / health checks hit GET; Stripe delivers events via POST only.
+  return NextResponse.json({
+    ok: true,
+    method: "GET",
+    accepts: "POST",
+    hint: "Stripe webhooks must POST here. Opening this URL in a browser returns 405 without this handler — expected for GET before; now returns this JSON.",
+  });
+}
+
 export async function POST(req: Request) {
   const priceToPlan = loadStripePriceMap();
   const sig = req.headers.get("stripe-signature");
