@@ -79,3 +79,26 @@ export function PseoFaq({ q, a }: { q: string; a: string }) {
     </div>
   );
 }
+
+/** FAQPage JSON-LD from the same Q/A already rendered on the page — no invented questions. */
+export function PseoFaqJsonLd({ faqs }: { faqs: { q: string; a: string }[] }) {
+  if (!faqs.length) return null;
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: f.a,
+      },
+    })),
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
