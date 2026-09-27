@@ -98,14 +98,20 @@ export default function CustomerPortalPage() {
           <h2 style={cardTitle}>HQ locations (Money Farm)</h2>
           <p style={cardBody}>
             Thin HQ stub: plan location cap, site count, and locations for the seed org. Offline demo via{" "}
-            <code style={{ fontSize: 12 }}>?fixture=1</code> on the API when DB is down.
+            <code style={{ fontSize: 12 }}>?fixture=1</code> when DB is down. Live Founding billing is paused until
+            entity/LLC setup — use the free Local Visibility Score for demos today.
           </p>
-          <Link
-            href="/hq/locations?orgId=00000000-0000-0000-0000-000000000001&fixture=1&plan=local_autopilot"
-            style={linkBtn}
-          >
-            Open HQ locations →
-          </Link>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 12 }}>
+            <Link
+              href="/hq/locations?orgId=00000000-0000-0000-0000-000000000001&fixture=1&plan=local_autopilot"
+              style={linkBtn}
+            >
+              Open HQ locations →
+            </Link>
+            <Link href="/" style={linkBtn}>
+              Run free LVS →
+            </Link>
+          </div>
         </article>
       </section>
 

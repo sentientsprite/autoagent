@@ -139,6 +139,10 @@ export function LocationsClient(props: {
               · plan override <code style={{ fontSize: 11 }}>{plan}</code>
             </span>
           ) : null}
+          <div style={{ marginTop: 8, color: "#78350f" }}>
+            Demo only. Founding Checkout on Production stays mock/TEST until Owner finishes LLC and drops Live keys.
+            Free LVS wedge still works on the marketing home.
+          </div>
         </div>
       ) : null}
 
