@@ -16,7 +16,7 @@ export default function HvacAiSeoPage() {
     <PseoArticle
       eyebrow="Utah · HVAC · Provo"
       title="Is AI SEO a second website for Provo HVAC shops — or clearer answers?"
-      lead="AI SEO is not a second website. For Provo HVAC it is clearer answers on the pages and Google Business Profile you already need for Maps."
+      lead="AI SEO is not a second website. For Provo HVAC it is clearer answers on the pages and Google Business Profile you already need for Maps. Finish Maps first; then make those pages easy for an AI to cite without inventing."
       ctaHref={CTA}
     >
       <PseoH2>Maps first</PseoH2>
@@ -34,7 +34,9 @@ export default function HvacAiSeoPage() {
       <PseoH2>Why Provo HVAC pages cite better in-season</PseoH2>
       <PseoP>
         In Utah, both heating and cooling carry real demand, so a seasonal HVAC page that answers before-summer or
-        before-winter questions is more citable than a static generic HVAC page.
+        before-winter questions is more citable than a static generic HVAC page. Provo / Utah County owners ask
+        about AC before June heat and furnaces before inversion-season cold — answer those timing questions with
+        real service names.
       </PseoP>
 
       <PseoH2>GEO checklist after Maps</PseoH2>
@@ -49,7 +51,7 @@ export default function HvacAiSeoPage() {
       <PseoH2>Evidence</PseoH2>
       <PseoP>
         A named Utah job with a real neighborhood and a real before/after is more citable than another paragraph
-        saying you are great. Skip unsourced “X% more calls from AI” claims.
+        saying you are great. Skip unsourced &quot;X% more calls from AI&quot; claims.
       </PseoP>
 
       <PseoH2>FAQ</PseoH2>

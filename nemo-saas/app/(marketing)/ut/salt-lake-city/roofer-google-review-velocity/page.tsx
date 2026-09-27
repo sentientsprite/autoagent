@@ -16,21 +16,23 @@ export default function RooferReviewVelocityPage() {
     <PseoArticle
       eyebrow="Utah · Roofing · Salt Lake City"
       title="Does one Google review a week beat a big burst for Salt Lake roofers?"
-      lead="A steady drip of fresh Google reviews usually beats a one-time burst that goes quiet. Recency is the signal."
+      lead="A steady drip of fresh Google reviews usually beats a one-time burst that goes quiet. Recency is the signal. Pair that with a complete profile — not a review campaign into an empty listing."
       ctaHref={CTA}
     >
       <PseoH2>Why review velocity matters</PseoH2>
       <PseoP>
         In 2026 a complete Google Business Profile — right category, full services, fresh photos, recent reviews —
         is one of the inputs Google can draw on for AI Overviews, not only the map pack. Reviews are one layer of
-        that completeness.
+        that completeness. Freshness compounds with category, services, and photos.
       </PseoP>
 
       <PseoH2>Freshness vs historic star pile</PseoH2>
       <PseoP>
         A shop getting a few new reviews most months usually outlasts a competitor with a big stack of reviews from
-        years ago. One review a week is a useful operating target — not a magic number. The point is consistency,
-        not a burst that never repeats.
+        years ago — recency is the signal. Salt Lake roofing example: a high-star profile with silence since 2019
+        looks abandoned next to a slightly lower star shop with monthly new reviews and owner replies after
+        hail-season jobs. One review a week is a useful operating target — not a magic number. The point is
+        consistency, not a burst that never repeats.
       </PseoP>
 
       <PseoH2>How to run velocity without faking it</PseoH2>
@@ -43,9 +45,9 @@ export default function RooferReviewVelocityPage() {
 
       <PseoH2>NAP / citations</PseoH2>
       <PseoP>
-        NAP consistency gets you in the game; profile fields, photos, reviews, and local content move you once you
-        are there. Citations that disagree with your Google phone fight the trust story your new reviews are
-        building.
+        NAP consistency gets you in the game; the profile fields, photos, reviews, and local content are what move
+        you once you are there. Citations that disagree with your Google phone fight the trust story your new
+        reviews are building.
       </PseoP>
 
       <PseoH2>FAQ</PseoH2>

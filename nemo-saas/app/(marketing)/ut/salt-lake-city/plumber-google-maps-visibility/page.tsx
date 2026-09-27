@@ -16,7 +16,7 @@ export default function PlumberMapsVisibilityPage() {
     <PseoArticle
       eyebrow="Utah · Plumbing · Salt Lake City"
       title="Why bigger plumbing companies beat you on Salt Lake Google Maps"
-      lead="Bigger Salt Lake plumbing companies do not own the map pack because of brand mythology. They win because the listing is finished."
+      lead="Bigger Salt Lake plumbing companies do not own the map pack because of brand mythology. They win because the listing is finished: right category, a phone that matches the truck, services named the way people search, photos from real jobs, and reviews that got a human reply."
       ctaHref={CTA}
     >
       <PseoH2>How it works</PseoH2>
@@ -29,32 +29,36 @@ export default function PlumberMapsVisibilityPage() {
 
       <PseoH2>Five reasons you disappear</PseoH2>
       <PseoP>
-        Wrong primary category. Pick the most specific honest category first — Emergency plumber beats Plumber —
-        because the wrong primary category can suppress you for the queries that actually pay.
+        Wrong primary category. Pick the most specific honest category first — &quot;Emergency plumber&quot; beats
+        &quot;Plumber,&quot; and &quot;HVAC contractor&quot; beats &quot;Contractor&quot; — because the wrong primary
+        category can suppress you for the queries that actually pay. Salt Lake example: a shop left on generic
+        &quot;Contractor&quot; while a competitor uses &quot;Plumber&quot; will lose relevance on clogged-drain
+        searches even with a nicer van wrap.
       </PseoP>
       <PseoP>
-        NAP mismatch. Consistency gets you in the game; profile fields, photos, reviews, and local content move
-        you once you are there. Match phone character for character across truck, site, and Google.
+        NAP mismatch. NAP consistency gets you in the game; the profile fields, photos, reviews, and local content
+        are what move you once you are there. One digit off between the truck, the website footer, and Google, and
+        every directory that scraped the old number keeps leaking trust.
       </PseoP>
       <PseoP>
         Empty or vague services. Competitors list drain cleaning, water heater install, slab leak, hydro jetting.
-        You list plumbing solutions. Name the jobs people type.
+        You list &quot;plumbing solutions.&quot; Name the jobs people type.
       </PseoP>
       <PseoP>
-        Stale reviews and silence. Same-day ask after finished jobs plus replies within a day beat a 2019 review
-        pile.
+        Stale reviews and silence. Old stars with no owner replies read like abandonment. Same-day ask after
+        finished jobs plus replies within a day beat a 2019 review pile.
       </PseoP>
       <PseoP>
         GBP website button to homepage. Homepage sells brand. The button should land on a Salt Lake service page
-        that matches the search.
+        that matches the search (drain cleaning, not a slider).
       </PseoP>
 
       <PseoH2>Fix first</PseoH2>
       <PseoUl>
         <li>Confirm primary category is the most specific honest fit</li>
         <li>Match phone on truck / site / Google</li>
-        <li>Add real service names and reply to open reviews</li>
-        <li>Add real job photos; point GBP to the strongest service URL</li>
+        <li>Add or expand real service names; reply to every open review</li>
+        <li>Add real job photos; point GBP website to the strongest service URL</li>
       </PseoUl>
 
       <PseoH2>FAQ</PseoH2>
@@ -64,11 +68,11 @@ export default function PlumberMapsVisibilityPage() {
       />
       <PseoFaq
         q="Do citations fix a weak listing?"
-        a="NAP consistency gets you in the game. Completeness moves you. Citations alone will not rescue a wrong category and empty services."
+        a="NAP consistency gets you in the game; profile fields, photos, reviews, and local content move you once you are there. Citations alone will not rescue a wrong category and empty services."
       />
       <PseoFaq
         q="Do bigger plumbers automatically rank higher?"
-        a="They look inevitable when listings are finished. You can out-complete a regional competitor on category, photos, and replies without matching ad spend."
+        a="They look inevitable when listings are finished. You can out-complete a regional competitor on category accuracy, photo freshness, and review replies without matching their ad spend."
       />
     </PseoArticle>
   );
