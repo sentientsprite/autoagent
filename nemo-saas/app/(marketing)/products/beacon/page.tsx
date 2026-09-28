@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 
+import { hubMetadata } from "@/lib/seo/pseo-metadata";
+
 import { BulletList, ProductChrome } from "../ProductChrome";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = hubMetadata({
   title: "Beacon — GBP Autopilot | Nemo Local",
   description:
     "Weekly GBP monitoring, posts, review replies, and citation fixes — scoped add-on for multi-location home services.",
-};
+  path: "/products/beacon",
+});
 
 export default function BeaconProductPage() {
   return (

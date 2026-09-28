@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 
+import { hubMetadata } from "@/lib/seo/pseo-metadata";
+
 import { BulletList, ProductChrome } from "../ProductChrome";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = hubMetadata({
   title: "Echo — Review Flywheel | Nemo Local",
   description:
     "Job-completion triggered review requests, tailored replies, and testimonial amplification — Echo add-on.",
-};
+  path: "/products/echo",
+});
 
 export default function EchoProductPage() {
   return (

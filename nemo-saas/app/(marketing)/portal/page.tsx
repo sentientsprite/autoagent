@@ -20,7 +20,7 @@ import {
 import { SalesPerksSection } from "../_components/SalesPerksSection";
 
 export const metadata: Metadata = hubMetadata({
-  title: "Customer portal | Nemo Local",
+  title: "Customer portal & tools | Nemo Local",
   description:
     "Install GrowthCoach, explore Beacon / Echo / Bloom, and run the close-ready Local Visibility Score with live Places.",
   path: "/portal",
