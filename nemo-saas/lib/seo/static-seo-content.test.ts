@@ -36,6 +36,7 @@ describe("static SEO content files", () => {
     expect(j.theme_color).toBeTruthy();
     expect(j.display || j.icons).toBeTruthy();
     expect(j.lang).toMatch(/en/i);
+    expect(String(j.description || "").length).toBeGreaterThan(10);
   });
 
   it("llms.txt lists every PUBLIC_ARTICLE_PATH", () => {

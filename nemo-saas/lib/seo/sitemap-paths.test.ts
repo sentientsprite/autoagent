@@ -97,4 +97,14 @@ describe("sitemap article paths", () => {
     expect(slc.length).toBeGreaterThanOrEqual(5);
   });
 
+
+  it("exactly one Idaho article overnight", () => {
+    expect(PUBLIC_ARTICLE_PATHS.filter((p) => p.startsWith("/id/")).length).toBe(1);
+  });
+
+
+  it("exactly nine Utah articles overnight", () => {
+    expect(PUBLIC_ARTICLE_PATHS.filter((p) => p.startsWith("/ut/")).length).toBe(9);
+  });
+
 });
