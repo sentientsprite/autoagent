@@ -292,6 +292,12 @@ try {
   } else {
     console.log(`OK\tsecurity-ctype\ttext/plain + Contact/Expires`);
   }
+  if (!/Expires:\s*202[6-9]/.test(body) && !/Expires:\s*20[3-9]\d/.test(body)) {
+    console.log(`WARN\tsecurity-expires-year\t${body.slice(0, 120)}`);
+    fail = 1;
+  } else {
+    console.log(`OK\tsecurity-expires-year\tpresent`);
+  }
 } catch (e) {
   fail = 1;
   console.log(`ERR\tsecurity-ctype\t${e.message}`);
