@@ -210,7 +210,12 @@ try {
       robotsOk = false;
     }
   }
-  if (robotsOk) console.log(`OK\trobots-disallow\tapi/team/hq/billing present`);
+  if (!/Sitemap:\s*https?:\/\//i.test(txt)) {
+    console.log(`WARN\trobots-sitemap\tmissing Sitemap line`);
+    fail = 1;
+    robotsOk = false;
+  }
+  if (robotsOk) console.log(`OK\trobots-disallow\tapi/team/hq/billing + Sitemap`);
 } catch (e) {
   fail = 1;
   console.log(`ERR\trobots-disallow\t${e.message}`);
@@ -327,6 +332,24 @@ try {
 } catch (e) {
   fail = 1;
   console.log(`ERR\tportal-cta\t${e.message}`);
+}
+
+
+// state hubs should expose an h1
+for (const r of ["/ut", "/id"]) {
+  try {
+    const res = await fetch(BASE + r, { redirect: "follow" });
+    const text = await res.text();
+    if (res.status !== 200 || !/<h1[\s>]/i.test(text)) {
+      console.log(`WARN\thub-h1\t${res.status}\t${r}`);
+      fail = 1;
+    } else {
+      console.log(`OK\thub-h1\t${r}`);
+    }
+  } catch (e) {
+    fail = 1;
+    console.log(`ERR\thub-h1\t${r}\t${e.message}`);
+  }
 }
 
 // Private routes must stay noindex (belt-and-suspenders with robots.txt)
