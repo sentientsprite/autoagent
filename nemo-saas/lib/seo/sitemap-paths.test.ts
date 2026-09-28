@@ -85,4 +85,10 @@ describe("sitemap article paths", () => {
     expect(new Set(PUBLIC_HUB_PATHS).size).toBe(PUBLIC_HUB_PATHS.length);
   });
 
+
+  it("includes Provo and Orem articles", () => {
+    expect(PUBLIC_ARTICLE_PATHS.some((p) => p.includes("/provo/"))).toBe(true);
+    expect(PUBLIC_ARTICLE_PATHS.some((p) => p.includes("/orem/"))).toBe(true);
+  });
+
 });

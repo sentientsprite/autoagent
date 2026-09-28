@@ -29,4 +29,9 @@ describe("marketing primary nav", () => {
     expect(layout.includes('href="/team"')).toBe(true);
   });
 
+
+  it("labels Full score CTA", () => {
+    expect(layout.includes("Full score")).toBe(true);
+  });
+
 });
