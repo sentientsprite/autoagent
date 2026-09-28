@@ -99,6 +99,14 @@ try {
   } else {
     console.log(`OK\thome-twitter\tpresent`);
   }
+  const homeNoindex = /<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(homeHtml)
+    || /<meta[^>]+content=["'][^"']*noindex[^"']*["'][^>]+name=["']robots["']/i.test(homeHtml);
+  if (homeNoindex) {
+    console.log(`WARN\thome-noindex\tunexpected`);
+    fail = 1;
+  } else {
+    console.log(`OK\thome-indexable\tno noindex`);
+  }
 
   }
 
@@ -125,7 +133,7 @@ for (const r of ROUTES) {
       faq = text.includes("FAQPage") ? "yes" : "NO";
       if (faq === "NO") fail = 1;
       const faqQs = (text.match(/"@type":\s*"Question"/g) || []).length;
-      if (faqQs < 2) {
+      if (faqQs < 3) {
         console.log(`WARN\tfaq-count\t${faqQs}\t${r}`);
         fail = 1;
       }
@@ -488,6 +496,14 @@ try {
     fail = 1;
   } else {
     console.log(`OK\tportal-twitter\tpresent`);
+  }
+  const portalNoindex = /<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(text)
+    || /<meta[^>]+content=["'][^"']*noindex[^"']*["'][^>]+name=["']robots["']/i.test(text);
+  if (portalNoindex) {
+    console.log(`WARN\tportal-noindex\tunexpected`);
+    fail = 1;
+  } else {
+    console.log(`OK\tportal-indexable\tno noindex`);
   }
 } catch (e) {
   fail = 1;
