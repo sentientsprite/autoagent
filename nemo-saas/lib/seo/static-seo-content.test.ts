@@ -45,4 +45,9 @@ describe("static SEO content files", () => {
   it("llms.txt mentions product path prefix", () => {
     expect(llms.includes("/products/")).toBe(true);
   });
+
+  it("llms.txt has Product section", () => {
+    expect(llms.includes("## Product")).toBe(true);
+  });
+
 });

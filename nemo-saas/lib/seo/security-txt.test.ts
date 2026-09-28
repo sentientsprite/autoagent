@@ -24,4 +24,10 @@ describe("security.txt route", () => {
     // must be after 2026-09-28 06:00 MDT (= 12:00Z)
     expect(expires).toBeGreaterThan(Date.parse("2026-09-28T12:00:00.000Z"));
   });
+
+  it("Expires year is at least 2026", () => {
+    const src = readFileSync(join(__dirname, "../../app/.well-known/security.txt/route.ts"), "utf8");
+    expect(/Expires:\s*202[6-9]/.test(src) || /Expires:\s*20[3-9]/.test(src)).toBe(true);
+  });
+
 });

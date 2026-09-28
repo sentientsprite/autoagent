@@ -417,6 +417,12 @@ for (const r of ["/ut", "/id"]) {
     } else {
       console.log(`OK\thub-og\t${r}`);
     }
+    if (!/<meta[^>]+name=["']description["']/i.test(text)) {
+      console.log(`WARN\thub-meta-desc\t${r}`);
+      fail = 1;
+    } else {
+      console.log(`OK\thub-meta-desc\t${r}`);
+    }
   } catch (e) {
     fail = 1;
     console.log(`ERR\thub-h1\t${r}\t${e.message}`);
