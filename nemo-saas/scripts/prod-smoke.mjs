@@ -8,6 +8,7 @@ const ROUTES = [
   "/", "/portal", "/ut", "/id",
   "/robots.txt", "/sitemap.xml", "/llms.txt", "/humans.txt",
   "/site.webmanifest", "/.well-known/security.txt",
+  "/products/beacon", "/products/bloom", "/products/echo",
   "/ut/provo/hvac-ai-seo-vs-google-maps",
   "/id/boise/concrete-sealing-google-maps",
   "/ut/salt-lake-city/plumber-google-maps-visibility",
@@ -45,6 +46,16 @@ try {
     fail = 1;
   } else {
     console.log(`OK\theaders\tnosniff/DENY/referrer/permissions on /ut`);
+  // Homepage should declare lang=en
+  const home = await fetch(BASE + "/", { redirect: "follow" });
+  const homeHtml = await home.text();
+  if (!/html[^>]+lang=["']en["']/i.test(homeHtml)) {
+    console.log(`WARN\thtml-lang\tmissing lang=en on /`);
+    fail = 1;
+  } else {
+    console.log(`OK\thtml-lang\tlang=en on /`);
+  }
+
   }
 } catch (e) {
   fail = 1;
