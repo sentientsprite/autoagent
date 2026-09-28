@@ -242,8 +242,10 @@ for (const r of ["/products/beacon", "/products/bloom", "/products/echo"]) {
   try {
     const res = await fetch(BASE + r, { redirect: "follow" });
     const text = await res.text();
-    if (res.status !== 200 || !text.includes("og:title")) {
-      console.log(`WARN\tproduct-og\t${res.status}\tog=${text.includes("og:title")}\t${r}`);
+    const robotsNoindex = /<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(text)
+      || /<meta[^>]+content=["'][^"']*noindex[^"']*["'][^>]+name=["']robots["']/i.test(text);
+    if (res.status !== 200 || !text.includes("og:title") || robotsNoindex) {
+      console.log(`WARN\tproduct-og\t${res.status}\tog=${text.includes("og:title")}\tnoindex=${robotsNoindex}\t${r}`);
       fail = 1;
     } else {
       console.log(`OK\tproduct-og\t${r}`);
@@ -293,6 +295,22 @@ try {
 } catch (e) {
   fail = 1;
   console.log(`ERR\tsitemap-urlset\t${e.message}`);
+}
+
+
+// llms.txt should index Guides
+try {
+  const res = await fetch(BASE + "/llms.txt", { redirect: "follow" });
+  const txt = await res.text();
+  if (!txt.includes("## Guides") || !txt.includes("/ut/salt-lake-city/plumber-google-maps-visibility")) {
+    console.log(`WARN\tllms-guides\tmissing Guides index`);
+    fail = 1;
+  } else {
+    console.log(`OK\tllms-guides\tGuides section present`);
+  }
+} catch (e) {
+  fail = 1;
+  console.log(`ERR\tllms-guides\t${e.message}`);
 }
 
 // Private routes must stay noindex (belt-and-suspenders with robots.txt)
