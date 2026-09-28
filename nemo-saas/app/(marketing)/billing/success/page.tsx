@@ -6,6 +6,7 @@ import { ActivateFoundingClient } from "./ActivateFoundingClient";
 export const metadata: Metadata = {
   title: "Billing success | Nemo Local",
   description: "Founding plan activation after Checkout (mock-safe).",
+  robots: { index: false, follow: false },
 };
 
 export default async function BillingSuccessPage({

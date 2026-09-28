@@ -85,6 +85,14 @@ for (const r of ROUTES) {
         console.log(`WARN\tmissing-twitter-card\t${r}`);
         fail = 1;
       }
+      if (!text.includes("BreadcrumbList")) {
+        console.log(`WARN\tmissing-breadcrumb\t${r}`);
+        fail = 1;
+      }
+      if (!text.includes('"@type":"Article"') && !text.includes("'@type':'Article'") && !text.includes('"@type": "Article"')) {
+        console.log(`WARN\tmissing-article-jsonld\t${r}`);
+        fail = 1;
+      }
     }
     console.log(`${res.status}\tFAQ=${faq}\tOG=${og}\t${r}`);
   } catch (e) {

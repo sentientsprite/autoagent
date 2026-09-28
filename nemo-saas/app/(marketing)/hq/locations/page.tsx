@@ -8,6 +8,7 @@ import { LocationsClient } from "./LocationsClient";
 export const metadata: Metadata = {
   title: "HQ locations | Nemo Local",
   description: "Mock-safe HQ view of org locations under the plan location cap.",
+  robots: { index: false, follow: false },
 };
 
 const SEED_ORG_ID = "00000000-0000-0000-0000-000000000001";
