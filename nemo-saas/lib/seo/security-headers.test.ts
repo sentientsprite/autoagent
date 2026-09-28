@@ -15,4 +15,9 @@ describe("next.config security headers", () => {
     expect(cfg.includes("Permissions-Policy")).toBe(true);
     expect(cfg.includes("camera=()")).toBe(true);
   });
+
+  it("registers headers() for all paths", () => {
+    expect(cfg.includes("async headers()")).toBe(true);
+    expect(cfg.includes("/:path*")).toBe(true);
+  });
 });
