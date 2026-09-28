@@ -51,4 +51,9 @@ describe("static SEO content files", () => {
     expect(llms.includes("## Product")).toBe(true);
   });
 
+
+  it("humans.txt names a Builder", () => {
+    expect(/Builder:/i.test(humans)).toBe(true);
+  });
+
 });

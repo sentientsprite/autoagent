@@ -40,6 +40,15 @@ describe("pseoMetadata", () => {
     });
     expect((m.openGraph as { siteName?: string }).siteName).toBe("Nemo Local");
   });
+
+  it("openGraph locale is en_US", () => {
+    const m = pseoMetadata({
+      title: "T | Nemo Local",
+      description: "D".repeat(80),
+      path: "/ut/demo",
+    });
+    expect((m.openGraph as { locale?: string }).locale).toBe("en_US");
+  });
 });
 
 describe("hubMetadata", () => {
