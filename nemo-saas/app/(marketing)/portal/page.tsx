@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { hubMetadata } from "@/lib/seo/pseo-metadata";
 import Link from "next/link";
 
 import { growthCoachInstallLabel, growthCoachInstallUrl } from "@/lib/access-directory";
@@ -17,11 +19,12 @@ import {
 
 import { SalesPerksSection } from "../_components/SalesPerksSection";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = hubMetadata({
   title: "Customer portal | Nemo Local",
   description:
     "Install GrowthCoach, explore Beacon / Echo / Bloom, and run the close-ready Local Visibility Score with live Places.",
-};
+  path: "/portal",
+});
 
 export default function CustomerPortalPage() {
   const installUrl = growthCoachInstallUrl();

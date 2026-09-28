@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pseoMetadata } from "@/lib/seo/pseo-metadata";
+
 import {
   PseoArticle,
   PseoFaq,
@@ -9,11 +11,12 @@ import {
   PseoUl,
 } from "../../../_components/PseoArticle";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pseoMetadata({
   title: "Why bigger plumbers beat you on Salt Lake Google Maps | Nemo Local",
   description:
     "Completeness beats brand size on Salt Lake Maps. Category, NAP, services, photos, reviews — then GEO citation eligibility.",
-};
+  path: "/ut/salt-lake-city/plumber-google-maps-visibility",
+});
 
 const CTA =
   "/?utm_source=pseo&utm_medium=web&utm_campaign=plumber-google-maps-visibility&utm_content=google-maps-visibility";

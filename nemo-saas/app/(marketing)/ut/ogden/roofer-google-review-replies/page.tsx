@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pseoMetadata } from "@/lib/seo/pseo-metadata";
+
 import {
   PseoArticle,
   PseoFaq,
@@ -9,11 +11,12 @@ import {
   PseoUl,
 } from "../../../_components/PseoArticle";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pseoMetadata({
   title: "Ogden roofers: do ignored Google reviews hurt Maps? | Nemo Local",
   description:
     "Weber County roofing: reply to Google reviews. Stars without answers look abandoned — same-day ask, reply within about two days.",
-};
+  path: "/ut/ogden/roofer-google-review-replies",
+});
 
 const CTA =
   "/?utm_source=pseo&utm_medium=web&utm_campaign=roofer-google-review-replies&utm_content=google-maps-visibility";

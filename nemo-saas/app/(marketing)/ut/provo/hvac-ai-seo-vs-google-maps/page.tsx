@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pseoMetadata } from "@/lib/seo/pseo-metadata";
+
 import {
   PseoArticle,
   PseoFaq,
@@ -9,11 +11,12 @@ import {
   PseoUl,
 } from "../../../_components/PseoArticle";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pseoMetadata({
   title: "Is AI SEO a second website for Provo HVAC? | Nemo Local",
   description:
     "GEO for Provo HVAC is clearer answers on Maps-ready pages — not a second website. Seasonal Utah demand, proof, FAQ.",
-};
+  path: "/ut/provo/hvac-ai-seo-vs-google-maps",
+});
 
 const CTA =
   "/?utm_source=pseo&utm_medium=web&utm_campaign=hvac-ai-seo-vs-google-maps&utm_content=google-maps-visibility";

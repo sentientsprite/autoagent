@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pseoMetadata } from "@/lib/seo/pseo-metadata";
+
 import {
   PseoArticle,
   PseoFaq,
@@ -9,11 +11,12 @@ import {
   PseoUl,
 } from "../../../_components/PseoArticle";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pseoMetadata({
   title: "Should PPC and SEO share the same Salt Lake electrician landing? | Nemo Local",
   description:
     "Yes for intent match — one URL per search intent, same phone as GBP, fix the listing before raising bids. No invented ROAS.",
-};
+  path: "/ut/salt-lake-city/electrician-ppc-seo-same-landing",
+});
 
 const CTA =
   "/?utm_source=pseo&utm_medium=web&utm_campaign=electrician-ppc-seo-same-landing&utm_content=google-maps-visibility";

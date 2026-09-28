@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pseoMetadata } from "@/lib/seo/pseo-metadata";
+
 import {
   PseoArticle,
   PseoFaq,
@@ -9,11 +11,12 @@ import {
   PseoUl,
 } from "../../../_components/PseoArticle";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pseoMetadata({
   title: "Vague Google profile? Why Salt Lake service-area shops lose Maps | Nemo Local",
   description:
     "Mobile and service-area businesses: honest cities served, real services, real photos — not a whole-state claim with no proof.",
-};
+  path: "/ut/salt-lake-city/service-area-gbp-too-vague",
+});
 
 const CTA =
   "/?utm_source=pseo&utm_medium=web&utm_campaign=service-area-gbp-too-vague&utm_content=google-maps-visibility";

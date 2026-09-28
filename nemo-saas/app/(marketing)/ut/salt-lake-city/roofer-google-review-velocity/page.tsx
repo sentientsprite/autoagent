@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pseoMetadata } from "@/lib/seo/pseo-metadata";
+
 import {
   PseoArticle,
   PseoFaq,
@@ -9,11 +11,12 @@ import {
   PseoUl,
 } from "../../../_components/PseoArticle";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pseoMetadata({
   title: "Does one Google review a week beat a burst? Salt Lake roofers | Nemo Local",
   description:
     "Review velocity vs historic star piles for Salt Lake roofers. Steady drip, replies, complete GBP — then GEO.",
-};
+  path: "/ut/salt-lake-city/roofer-google-review-velocity",
+});
 
 const CTA =
   "/?utm_source=pseo&utm_medium=web&utm_campaign=roofer-google-review-velocity&utm_content=google-maps-visibility";

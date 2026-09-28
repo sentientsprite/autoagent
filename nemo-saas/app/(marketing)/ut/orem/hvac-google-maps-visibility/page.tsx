@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pseoMetadata } from "@/lib/seo/pseo-metadata";
+
 import {
   PseoArticle,
   PseoFaq,
@@ -9,11 +11,12 @@ import {
   PseoUl,
 } from "../../../_components/PseoArticle";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pseoMetadata({
   title: "Why isn’t my Orem HVAC shop on Google Maps? | Nemo Local",
   description:
     "Utah County heating and air: right category, services named how people search, photos, review replies — then AI citation readiness.",
-};
+  path: "/ut/orem/hvac-google-maps-visibility",
+});
 
 const CTA =
   "/?utm_source=pseo&utm_medium=web&utm_campaign=hvac-google-maps-visibility&utm_content=google-maps-visibility";

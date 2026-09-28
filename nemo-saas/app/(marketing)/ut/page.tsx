@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
+
+import { hubMetadata } from "@/lib/seo/pseo-metadata";
 import Link from "next/link";
 
 import { hubH1, hubLead, hubMain, linkBtn, mutedNote } from "@/lib/portal-hub-styles";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = hubMetadata({
   title: "Utah local SEO & GEO guides | Nemo Local",
   description:
     "Utah pSEO guides for plumbing, HVAC, roofing, electrical, and service-area shops — Maps first, then GEO.",
-};
+  path: "/ut",
+});
 
 const PAGES = [
   {

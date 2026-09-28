@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pseoMetadata } from "@/lib/seo/pseo-metadata";
+
 import {
   PseoArticle,
   PseoFaq,
@@ -9,11 +11,12 @@ import {
   PseoUl,
 } from "../../../_components/PseoArticle";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pseoMetadata({
   title: "Why mismatched name, address, and phone kill Salt Lake listings | Nemo Local",
   description:
     "Match Name, Address, and Phone on your truck, website, and Google Business Profile before buying more directory listings.",
-};
+  path: "/ut/salt-lake-city/contractor-nap-mismatch-citations",
+});
 
 const CTA =
   "/?utm_source=pseo&utm_medium=web&utm_campaign=contractor-nap-mismatch-citations&utm_content=google-maps-visibility";

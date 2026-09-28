@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { pseoMetadata } from "@/lib/seo/pseo-metadata";
+
 import {
   PseoArticle,
   PseoFaq,
@@ -9,11 +11,12 @@ import {
   PseoUl,
 } from "../../../_components/PseoArticle";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pseoMetadata({
   title: "Should my Salt Lake electrician GBP link to homepage or a service page? | Nemo Local",
   description:
     "Service page. Homepage sells brand; the Google profile website button should land on the job people searched.",
-};
+  path: "/ut/salt-lake-city/electrician-gbp-website-link",
+});
 
 const CTA =
   "/?utm_source=pseo&utm_medium=web&utm_campaign=electrician-gbp-website-link&utm_content=google-maps-visibility";
