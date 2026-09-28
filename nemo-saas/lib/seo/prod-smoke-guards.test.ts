@@ -47,6 +47,8 @@ describe("prod-smoke guard inventory", () => {
       "missing-twitter-title",
       "home-meta-desc",
       "hub-meta-desc",
+      "home-canonical",
+      "llms-product",
       "missing-og-locale",
     ]) {
       expect(smoke.includes(needle), needle).toBe(true);

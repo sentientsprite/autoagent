@@ -81,6 +81,12 @@ try {
   } else {
     console.log(`OK\thome-meta-desc\tpresent`);
   }
+  if (!homeHtml.includes('rel="canonical"') && !homeHtml.includes("rel='canonical'")) {
+    console.log(`WARN\thome-canonical\tmissing`);
+    fail = 1;
+  } else {
+    console.log(`OK\thome-canonical\tpresent`);
+  }
 
   }
 
@@ -371,6 +377,12 @@ try {
     fail = 1;
   } else {
     console.log(`OK\tllms-guides\tGuides section present`);
+  }
+  if (!txt.includes("## Product") || !txt.includes("/products/")) {
+    console.log(`WARN\tllms-product\tmissing Product section`);
+    fail = 1;
+  } else {
+    console.log(`OK\tllms-product\tProduct section present`);
   }
 } catch (e) {
   fail = 1;
