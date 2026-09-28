@@ -411,6 +411,12 @@ try {
   } else {
     console.log(`OK\tllms-product\tProduct section present`);
   }
+  if (!txt.includes("Nemo Local")) {
+    console.log(`WARN\tllms-nemo\tmissing brand`);
+    fail = 1;
+  } else {
+    console.log(`OK\tllms-nemo\tbrand present`);
+  }
 } catch (e) {
   fail = 1;
   console.log(`ERR\tllms-guides\t${e.message}`);
@@ -473,6 +479,12 @@ for (const r of ["/ut", "/id"]) {
       fail = 1;
     } else {
       console.log(`OK\thub-meta-desc\t${r}`);
+    }
+    if (!text.includes('rel="canonical"') && !text.includes("rel='canonical'")) {
+      console.log(`WARN\thub-canonical\t${r}`);
+      fail = 1;
+    } else {
+      console.log(`OK\thub-canonical\t${r}`);
     }
   } catch (e) {
     fail = 1;

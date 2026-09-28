@@ -55,6 +55,8 @@ describe("prod-smoke guard inventory", () => {
       "security-expires-year",
       "home-og",
       "portal-meta-desc",
+      "llms-nemo",
+      "hub-canonical",
       "product-canonical",
       "llms-product",
       "missing-og-locale",
