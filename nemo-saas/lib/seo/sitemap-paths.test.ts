@@ -75,4 +75,9 @@ describe("sitemap article paths", () => {
     expect(PUBLIC_ARTICLE_PATHS.some((p) => p.includes("/ogden/"))).toBe(true);
   });
 
+
+  it("article paths are unique", () => {
+    expect(new Set(PUBLIC_ARTICLE_PATHS).size).toBe(PUBLIC_ARTICLE_PATHS.length);
+  });
+
 });

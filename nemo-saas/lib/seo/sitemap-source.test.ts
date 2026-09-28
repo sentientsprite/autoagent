@@ -8,5 +8,7 @@ describe("sitemap.ts", () => {
   it("builds locs from PUBLIC_BASE and PUBLIC_SITEMAP_PATHS", () => {
     expect(src.includes("PUBLIC_BASE")).toBe(true);
     expect(src.includes("PUBLIC_SITEMAP_PATHS")).toBe(true);
+    expect(src.includes("changeFrequency")).toBe(true);
+    expect(src.includes("priority")).toBe(true);
   });
 });
