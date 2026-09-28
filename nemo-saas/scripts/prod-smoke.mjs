@@ -64,6 +64,13 @@ try {
     fail = 1;
   } else {
     console.log(`OK\tcharset\tpresent on /`);
+  if (!homeHtml.includes("Organization") || !homeHtml.includes("WebSite")) {
+    console.log(`WARN\thome-jsonld\tmissing Organization/WebSite`);
+    fail = 1;
+  } else {
+    console.log(`OK\thome-jsonld\tOrganization+WebSite`);
+  }
+
   }
 
   }
@@ -107,10 +114,14 @@ for (const r of ROUTES) {
         console.log(`WARN\tmissing-related\t${r}`);
         fail = 1;
       }
-      // related section should not only self-link
+      // related section should not only self-link; need >=2 sibling guides
       const relSec = text.match(/More guides[\s\S]*?<\/ul>/i);
       if (relSec) {
         const hrefs = [...relSec[0].matchAll(/href=["']([^"']+)["']/g)].map((x) => x[1]);
+        if (hrefs.length < 2) {
+          console.log(`WARN\trelated-count\t${hrefs.length}\t${r}`);
+          fail = 1;
+        }
         if (hrefs.length > 0 && hrefs.every((h) => h === r)) {
           console.log(`WARN\trelated-self\t${r}`);
           fail = 1;
