@@ -20,7 +20,37 @@ const ROUTES = [
   "/ut/ogden/roofer-google-review-replies",
 ];
 
+const REQUIRED_HEADERS = [
+  ["x-content-type-options", "nosniff"],
+  ["x-frame-options", "DENY"],
+  ["referrer-policy", "strict-origin-when-cross-origin"],
+];
+
 let fail = 0;
+
+// Security header check on marketing hub (once)
+try {
+  const href = BASE + "/ut";
+  const headRes = await fetch(href, { method: "GET", redirect: "follow" });
+  for (const [name, expected] of REQUIRED_HEADERS) {
+    const got = (headRes.headers.get(name) || "").toLowerCase();
+    if (!got.includes(expected.toLowerCase())) {
+      console.log(`WARN\tmissing-header\t${name}=${got || "(absent)"}\texpected~${expected}`);
+      fail = 1;
+    }
+  }
+  const pp = headRes.headers.get("permissions-policy") || "";
+  if (!pp.includes("camera=") || !pp.includes("microphone=")) {
+    console.log(`WARN\tmissing-header\tpermissions-policy=${pp || "(absent)"}`);
+    fail = 1;
+  } else {
+    console.log(`OK\theaders\tnosniff/DENY/referrer/permissions on /ut`);
+  }
+} catch (e) {
+  fail = 1;
+  console.log(`ERR\theaders\t${e.message}`);
+}
+
 for (const r of ROUTES) {
   const url = BASE + r;
   try {
@@ -31,10 +61,6 @@ for (const r of ROUTES) {
     if (depth >= 3 && (r.startsWith("/ut/") || r.startsWith("/id/"))) {
       faq = text.includes("FAQPage") ? "yes" : "NO";
       if (faq === "NO") fail = 1;
-      // indexable articles must not carry robots noindex
-      if (text.includes("name=\"robots\"") && text.includes("noindex") && !text.includes("name=\"robots\" content=\"index")) {
-        // Next may emit noindex on error pages only; flag if FAQ present AND noindex in head meta robots
-      }
       const robotsNoindex = /<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(text)
         || /<meta[^>]+content=["'][^"']*noindex[^"']*["'][^>]+name=["']robots["']/i.test(text);
       if (robotsNoindex) {
@@ -49,6 +75,14 @@ for (const r of ROUTES) {
       if (og === "NO") fail = 1;
       if (!text.includes("More guides")) {
         console.log(`WARN\tmissing-related\t${r}`);
+        fail = 1;
+      }
+      if (!text.includes('rel="canonical"') && !text.includes("rel='canonical'")) {
+        console.log(`WARN\tmissing-canonical\t${r}`);
+        fail = 1;
+      }
+      if (!text.includes("twitter:card")) {
+        console.log(`WARN\tmissing-twitter-card\t${r}`);
         fail = 1;
       }
     }
