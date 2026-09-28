@@ -35,4 +35,9 @@ describe("security.txt route", () => {
     expect(src.includes(".well-known/security.txt")).toBe(true);
   });
 
+
+  it("declares Preferred-Languages", () => {
+    expect(src.includes("Preferred-Languages")).toBe(true);
+  });
+
 });
