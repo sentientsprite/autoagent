@@ -57,4 +57,16 @@ describe("sitemap article paths", () => {
     }
   });
 
+  it("PUBLIC_HUB_PATHS exact set", () => {
+    expect([...PUBLIC_HUB_PATHS]).toEqual([
+      "/",
+      "/portal",
+      "/products/beacon",
+      "/products/bloom",
+      "/products/echo",
+      "/ut",
+      "/id",
+    ]);
+  });
+
 });

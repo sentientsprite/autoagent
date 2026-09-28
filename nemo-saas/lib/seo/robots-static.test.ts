@@ -18,4 +18,10 @@ describe("public SEO static assets", () => {
     }
     expect(src.includes("sitemap")).toBe(true);
   });
+
+  it("robots declares a userAgent rule", () => {
+    const src = readFileSync(join(root, "app/robots.ts"), "utf8");
+    expect(src.includes("userAgent") || src.includes("User-agent")).toBe(true);
+  });
+
 });
