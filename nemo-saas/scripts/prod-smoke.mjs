@@ -59,6 +59,13 @@ try {
     fail = 1;
   } else {
     console.log(`OK\tviewport\tpresent on /`);
+  if (!/charset/i.test(homeHtml)) {
+    console.log(`WARN\tmissing-charset\t/`);
+    fail = 1;
+  } else {
+    console.log(`OK\tcharset\tpresent on /`);
+  }
+
   }
 
   }
@@ -123,6 +130,10 @@ for (const r of ROUTES) {
       }
       if (!/<h1[\s>]/i.test(text)) {
         console.log(`WARN\tmissing-h1\t${r}`);
+        fail = 1;
+      }
+      if (!/application\/ld\+json/i.test(text)) {
+        console.log(`WARN\tmissing-ldjson\t${r}`);
         fail = 1;
       }
       if (!text.includes("BreadcrumbList")) {

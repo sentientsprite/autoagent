@@ -21,6 +21,8 @@ describe("prod-smoke guard inventory", () => {
       "html-lang",
       "viewport",
       "product-og",
+      "charset",
+      "missing-ldjson",
       "security-ctype",
       "missing-h1",
       "sitemap-urlset",
