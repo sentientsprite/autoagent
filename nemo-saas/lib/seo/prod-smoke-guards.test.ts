@@ -48,6 +48,7 @@ describe("prod-smoke guard inventory", () => {
       "home-meta-desc",
       "hub-meta-desc",
       "home-canonical",
+      "webmanifest-theme",
       "llms-product",
       "missing-og-locale",
     ]) {

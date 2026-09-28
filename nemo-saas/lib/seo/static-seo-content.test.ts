@@ -34,6 +34,7 @@ describe("static SEO content files", () => {
     expect(j.name).toMatch(/Nemo/i);
     expect(j.start_url).toBe("/");
     expect(j.theme_color).toBeTruthy();
+    expect(j.display || j.icons).toBeTruthy();
   });
 
   it("llms.txt lists every PUBLIC_ARTICLE_PATH", () => {

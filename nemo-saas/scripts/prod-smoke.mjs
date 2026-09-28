@@ -453,6 +453,12 @@ try {
   } else {
     console.log(`OK\twebmanifest-json\t${j.name}`);
   }
+  if (!j.theme_color) {
+    console.log(`WARN\twebmanifest-theme\tmissing theme_color`);
+    fail = 1;
+  } else {
+    console.log(`OK\twebmanifest-theme\t${j.theme_color}`);
+  }
 } catch (e) {
   fail = 1;
   console.log(`ERR\twebmanifest-json\t${e.message}`);
