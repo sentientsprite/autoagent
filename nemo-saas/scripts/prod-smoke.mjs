@@ -369,6 +369,22 @@ try {
   console.log(`ERR\twebmanifest-json\t${e.message}`);
 }
 
+
+// humans.txt should declare TEAM
+try {
+  const res = await fetch(BASE + "/humans.txt", { redirect: "follow" });
+  const txt = await res.text();
+  if (!txt.includes("TEAM") || !/nemo-app-v-1\.vercel\.app/i.test(txt)) {
+    console.log(`WARN\thumans-team\tmissing TEAM/site`);
+    fail = 1;
+  } else {
+    console.log(`OK\thumans-team\tTEAM + site present`);
+  }
+} catch (e) {
+  fail = 1;
+  console.log(`ERR\thumans-team\t${e.message}`);
+}
+
 // Private routes must stay noindex (belt-and-suspenders with robots.txt)
 const PRIVATE = ["/team", "/billing/success", "/hq/locations"];
 for (const r of PRIVATE) {
