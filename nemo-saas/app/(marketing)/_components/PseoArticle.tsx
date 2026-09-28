@@ -45,6 +45,7 @@ export function PseoArticle(props: {
   return (
     <main style={hubMain}>
       {props.path ? <PseoBreadcrumbJsonLd path={props.path} title={props.title} hubPath={hubPath} hubLabel={hubLabel} /> : null}
+      {props.path ? <PseoArticleJsonLd path={props.path} title={props.title} lead={props.lead} /> : null}
       <p style={{ fontSize: 12, letterSpacing: "0.06em", textTransform: "uppercase", color: "#64748b", margin: "0 0 8px" }}>
         {props.eyebrow}
       </p>
@@ -154,3 +155,23 @@ export function PseoBreadcrumbJsonLd(props: {
     />
   );
 }
+
+/** Article JSON-LD for pSEO guides */
+export function PseoArticleJsonLd(props: { path: string; title: string; lead: string }) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: props.title,
+    description: props.lead,
+    mainEntityOfPage: PUBLIC_BASE + props.path,
+    author: { "@type": "Organization", name: "Nemo Local" },
+    publisher: { "@type": "Organization", name: "Nemo Local" },
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
