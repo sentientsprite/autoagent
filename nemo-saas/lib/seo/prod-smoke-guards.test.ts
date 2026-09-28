@@ -10,6 +10,7 @@ describe("prod-smoke guard inventory", () => {
       "x-content-type-options",
       "FAQPage",
       "og:title",
+      "og:url",
       "twitter:card",
       "BreadcrumbList",
       "More guides",
