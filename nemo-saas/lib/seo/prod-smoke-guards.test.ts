@@ -20,6 +20,10 @@ describe("prod-smoke guard inventory", () => {
       "/products/beacon",
       "html-lang",
       "viewport",
+      "product-og",
+      "security-ctype",
+      "missing-h1",
+      "sitemap-urlset",
     ]) {
       expect(smoke.includes(needle), needle).toBe(true);
     }

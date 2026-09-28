@@ -121,6 +121,10 @@ for (const r of ROUTES) {
         console.log(`WARN\tmissing-og-type\t${r}`);
         fail = 1;
       }
+      if (!/<h1[\s>]/i.test(text)) {
+        console.log(`WARN\tmissing-h1\t${r}`);
+        fail = 1;
+      }
       if (!text.includes("BreadcrumbList")) {
         console.log(`WARN\tmissing-breadcrumb\t${r}`);
         fail = 1;
@@ -226,6 +230,47 @@ for (const r of ["/products/beacon", "/products/bloom", "/products/echo"]) {
     fail = 1;
     console.log(`ERR\tproduct-og\t${r}\t${e.message}`);
   }
+}
+
+
+// sitemap must list all public marketing paths
+try {
+  const res = await fetch(BASE + "/sitemap.xml", { redirect: "follow" });
+  const xml = await res.text();
+  if (!xml.includes("<urlset") && !xml.includes("<urlset ")) {
+    console.log(`WARN\tsitemap-urlset\tmissing urlset`);
+    fail = 1;
+  }
+  const required = [
+    "/", "/portal", "/ut", "/id",
+    "/products/beacon", "/products/bloom", "/products/echo",
+    "/ut/provo/hvac-ai-seo-vs-google-maps",
+    "/id/boise/concrete-sealing-google-maps",
+    "/ut/salt-lake-city/plumber-google-maps-visibility",
+    "/ut/ogden/roofer-google-review-replies",
+  ];
+  let miss = 0;
+  for (const path of required) {
+    const needle = path === "/" ? `${BASE}/</loc>` : `${BASE}${path}</loc>`;
+    // also accept without trailing issues
+    if (!xml.includes(`${BASE}${path}</loc>`) && !(path === "/" && xml.includes(`${BASE}/</loc>`))) {
+      // homepage loc may be BASE or BASE/
+      if (path === "/") {
+        if (!(xml.includes(`<loc>${BASE}</loc>`) || xml.includes(`<loc>${BASE}/</loc>`))) {
+          console.log(`WARN\tsitemap-missing\t/`);
+          miss++;
+        }
+      } else {
+        console.log(`WARN\tsitemap-missing\t${path}`);
+        miss++;
+      }
+    }
+  }
+  if (miss) fail = 1;
+  else console.log(`OK\tsitemap-urlset\trequired locs present`);
+} catch (e) {
+  fail = 1;
+  console.log(`ERR\tsitemap-urlset\t${e.message}`);
 }
 
 // Private routes must stay noindex (belt-and-suspenders with robots.txt)
