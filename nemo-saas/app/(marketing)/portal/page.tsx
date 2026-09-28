@@ -121,6 +121,22 @@ export default function CustomerPortalPage() {
       <SalesPerksSection />
 
       <p style={mutedNote}>
+        Public SEO:{" "}
+        <Link href="/sitemap.xml" style={{ color: "#334155" }}>
+          sitemap.xml
+        </Link>
+        {" · "}
+        <Link href="/robots.txt" style={{ color: "#334155" }}>
+          robots.txt
+        </Link>
+        {" · "}
+        <Link href="/llms.txt" style={{ color: "#334155" }}>
+          llms.txt
+        </Link>
+        .
+      </p>
+
+      <p style={mutedNote}>
         <strong>Ops note:</strong> Extension install URL uses{" "}
         <code style={{ fontSize: 11 }}>NEXT_PUBLIC_GROWTHCOACH_PLAY_STORE_URL</code> first, then{" "}
         <code style={{ fontSize: 11 }}>NEXT_PUBLIC_GROWTHCOACH_STORE_URL</code> (Chrome Web Store). Staff resources live on{" "}
