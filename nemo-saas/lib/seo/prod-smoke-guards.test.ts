@@ -64,6 +64,8 @@ describe("prod-smoke guard inventory", () => {
       "hub-twitter",
       "webmanifest-lang",
       "home-indexable",
+      "llms-states",
+      "product-indexable",
       "portal-indexable",
       "home-noindex",
       "portal-noindex",

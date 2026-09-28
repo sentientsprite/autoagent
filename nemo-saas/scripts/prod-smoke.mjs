@@ -350,6 +350,7 @@ for (const r of ["/products/beacon", "/products/bloom", "/products/echo"]) {
       fail = 1;
     } else {
       console.log(`OK\tproduct-og\t${r}`);
+      console.log(`OK\tproduct-indexable\t${r}`);
     }
     if (!/<h1[\s>]/i.test(text)) {
       console.log(`WARN\tproduct-h1\t${r}`);
@@ -450,6 +451,12 @@ try {
     fail = 1;
   } else {
     console.log(`OK\tllms-nemo\tbrand present`);
+  }
+  if (!txt.includes("/ut") || !txt.includes("/id")) {
+    console.log(`WARN\tllms-states\tmissing /ut or /id`);
+    fail = 1;
+  } else {
+    console.log(`OK\tllms-states\t/ut+/id present`);
   }
 } catch (e) {
   fail = 1;
