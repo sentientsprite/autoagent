@@ -28,4 +28,15 @@ describe("product pages metadata", () => {
     expect(bloom.includes("Bloom") || bloom.includes("bloom")).toBe(true);
   });
 
+
+  it("Bloom Seasonal Content Engine title", () => {
+    const src = readFileSync(join(root, "bloom", "page.tsx"), "utf8");
+    expect(src.includes("Seasonal Content Engine")).toBe(true);
+  });
+
+  it("Echo page titles mention Echo", () => {
+    const src = readFileSync(join(root, "echo", "page.tsx"), "utf8");
+    expect(/Echo/i.test(src)).toBe(true);
+  });
+
 });

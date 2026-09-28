@@ -23,4 +23,17 @@ describe("next.config security headers", () => {
     expect(cfg.includes("async headers()")).toBe(true);
     expect(cfg.includes("/:path*")).toBe(true);
   });
+
+  it("exact Referrer-Policy value", () => {
+    expect(cfg.includes('value: "strict-origin-when-cross-origin"')).toBe(true);
+  });
+
+  it("exact X-Content-Type-Options nosniff value", () => {
+    expect(cfg.includes('value: "nosniff"')).toBe(true);
+  });
+
+  it("exact X-Frame-Options DENY value", () => {
+    expect(cfg.includes('value: "DENY"')).toBe(true);
+  });
+
 });

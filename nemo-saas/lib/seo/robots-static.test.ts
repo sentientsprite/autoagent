@@ -31,4 +31,13 @@ describe("public SEO static assets", () => {
     expect(src.includes("host")).toBe(true);
   });
 
+
+  it("disallows api team hq billing exactly", () => {
+    const src = readFileSync(join(root, "app/robots.ts"), "utf8");
+    expect(src.includes('"/api/"')).toBe(true);
+    expect(src.includes('"/team"')).toBe(true);
+    expect(src.includes('"/hq/"')).toBe(true);
+    expect(src.includes('"/billing/"')).toBe(true);
+  });
+
 });

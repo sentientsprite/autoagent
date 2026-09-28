@@ -11,4 +11,9 @@ describe("PUBLIC_BASE", () => {
   it("sitemap path count stays 17 overnight", () => {
     expect(PUBLIC_SITEMAP_PATHS.length).toBe(17);
   });
+
+  it("exact PUBLIC_BASE string", () => {
+    expect(PUBLIC_BASE).toBe("https://nemo-app-v-1.vercel.app");
+  });
+
 });

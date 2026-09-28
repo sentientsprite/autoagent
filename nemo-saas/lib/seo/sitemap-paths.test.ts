@@ -127,4 +127,33 @@ describe("sitemap article paths", () => {
     expect(PUBLIC_ARTICLE_PATHS).toContain("/ut/ogden/roofer-google-review-replies");
   });
 
+
+  it("locks provo hvac guide path", () => {
+    expect(PUBLIC_ARTICLE_PATHS).toContain("/ut/provo/hvac-ai-seo-vs-google-maps");
+  });
+
+  it("locks orem hvac guide path", () => {
+    expect(PUBLIC_ARTICLE_PATHS).toContain("/ut/orem/hvac-google-maps-visibility");
+  });
+
+  it("locks electrician gbp guide path", () => {
+    expect(PUBLIC_ARTICLE_PATHS).toContain("/ut/salt-lake-city/electrician-gbp-website-link");
+  });
+
+  it("locks roofer velocity guide path", () => {
+    expect(PUBLIC_ARTICLE_PATHS).toContain("/ut/salt-lake-city/roofer-google-review-velocity");
+  });
+
+  it("locks electrician ppc guide path", () => {
+    expect(PUBLIC_ARTICLE_PATHS).toContain("/ut/salt-lake-city/electrician-ppc-seo-same-landing");
+  });
+
+  it("locks contractor nap guide path", () => {
+    expect(PUBLIC_ARTICLE_PATHS).toContain("/ut/salt-lake-city/contractor-nap-mismatch-citations");
+  });
+
+  it("locks service-area gbp guide path", () => {
+    expect(PUBLIC_ARTICLE_PATHS).toContain("/ut/salt-lake-city/service-area-gbp-too-vague");
+  });
+
 });

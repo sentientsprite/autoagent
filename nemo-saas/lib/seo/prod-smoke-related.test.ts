@@ -11,4 +11,12 @@ describe("prod-smoke related samples", () => {
     expect(smoke.includes("/id/boise/concrete-sealing-google-maps")).toBe(true);
     expect(smoke.includes("/ut/ogden/roofer-google-review-replies")).toBe(true);
   });
+
+  it("RELATED_SAMPLES length is three", () => {
+    const m = smoke.match(/const RELATED_SAMPLES = \[([\s\S]*?)\];/);
+    expect(m).toBeTruthy();
+    const count = (m![1].match(/"[^"]+"/g) || []).length;
+    expect(count).toBe(3);
+  });
+
 });
