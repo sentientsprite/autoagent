@@ -147,6 +147,10 @@ for (const r of ROUTES) {
         console.log(`WARN\tmissing-ldjson\t${r}`);
         fail = 1;
       }
+      if (!/"headline"\s*:/.test(text) && !/"headline":/.test(text)) {
+        console.log(`WARN\tmissing-headline\t${r}`);
+        fail = 1;
+      }
       if (!text.includes("BreadcrumbList")) {
         console.log(`WARN\tmissing-breadcrumb\t${r}`);
         fail = 1;
