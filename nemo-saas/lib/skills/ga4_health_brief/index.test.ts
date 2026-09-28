@@ -28,3 +28,29 @@ describe("ga4_health_brief runDeterministic", () => {
     expect(out.current.sessions).toBe(4200);
   });
 });
+
+const adWasteFixture = {
+  current: {
+    sessions: 6000,
+    users: 4800,
+    bounceRate: 0.62,
+    avgSessionDurationSec: 48,
+    channels: { organic: 800, paid: 2700, direct: 1500, social: 700, referral: 300 },
+  },
+  prior: {
+    sessions: 5700,
+    users: 4500,
+    bounceRate: 0.61,
+    avgSessionDurationSec: 50,
+    channels: { organic: 750, paid: 2500, direct: 1500, social: 650, referral: 300 },
+  },
+};
+
+describe("ga4_health_brief ad_waste fixture", () => {
+  it("flags ga.ad_waste when paid share high and bounce elevated", async () => {
+    const out = await runDeterministic({ fixture: adWasteFixture, windowDays: 28 });
+    const ids = out.insights.map((i) => i.id);
+    expect(ids).toContain("ga.ad_waste");
+    expect(ids).toContain("ga.high_bounce");
+  });
+});
