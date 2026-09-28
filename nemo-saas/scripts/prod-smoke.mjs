@@ -150,6 +150,25 @@ for (const r of RELATED_SAMPLES) {
   }
 }
 
+
+// robots.txt must disallow private prefixes
+try {
+  const res = await fetch(BASE + "/robots.txt", { redirect: "follow" });
+  const txt = await res.text();
+  let robotsOk = true;
+  for (const d of ["Disallow: /api/", "Disallow: /team", "Disallow: /hq/", "Disallow: /billing/"]) {
+    if (!txt.includes(d)) {
+      console.log(`WARN\trobots-disallow\tmissing ${d}`);
+      fail = 1;
+      robotsOk = false;
+    }
+  }
+  if (robotsOk) console.log(`OK\trobots-disallow\tapi/team/hq/billing present`);
+} catch (e) {
+  fail = 1;
+  console.log(`ERR\trobots-disallow\t${e.message}`);
+}
+
 // Private routes must stay noindex (belt-and-suspenders with robots.txt)
 const PRIVATE = ["/team", "/billing/success", "/hq/locations"];
 for (const r of PRIVATE) {
