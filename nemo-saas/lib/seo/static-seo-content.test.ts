@@ -14,6 +14,8 @@ describe("static SEO content files", () => {
     expect(llms.includes("/id")).toBe(true);
     expect(llms.includes("sitemap.xml")).toBe(true);
     expect(llms.includes("Nemo Local")).toBe(true);
+    expect(llms.includes("## Guides")).toBe(true);
+    expect(llms.includes("/ut/salt-lake-city/plumber-google-maps-visibility")).toBe(true);
   });
 
   it("humans.txt names Nemo Local site", () => {
