@@ -47,6 +47,10 @@ for (const r of ROUTES) {
     if (depth >= 3 && (r.startsWith("/ut/") || r.startsWith("/id/"))) {
       og = text.includes("og:title") ? "yes" : "NO";
       if (og === "NO") fail = 1;
+      if (!text.includes("More guides")) {
+        console.log(`WARN\tmissing-related\t${r}`);
+        fail = 1;
+      }
     }
     console.log(`${res.status}\tFAQ=${faq}\tOG=${og}\t${r}`);
   } catch (e) {
