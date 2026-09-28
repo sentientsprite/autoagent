@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
-import { PUBLIC_ARTICLE_PATHS } from "./public-paths";
+import { PUBLIC_ARTICLE_PATHS, PUBLIC_SITEMAP_PATHS } from "./public-paths";
 
 const marketingRoot = join(__dirname, "../../app/(marketing)");
 
@@ -39,6 +39,11 @@ describe("sitemap article paths", () => {
 
   it("stays at exactly ten articles overnight (pSEO #11 out of scope)", () => {
     expect(PUBLIC_ARTICLE_PATHS.length).toBe(10);
+  });
+
+
+  it("PUBLIC_SITEMAP_PATHS is hubs+articles (17)", () => {
+    expect(PUBLIC_SITEMAP_PATHS.length).toBe(17);
   });
 
 });
