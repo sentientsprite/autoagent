@@ -380,5 +380,5 @@ Overnight smoke guards (2026-09-28):
 - Articles must NOT be noindex
 - Private routes (/team, /billing/success, /hq/locations) should be noindex (robots.txt also disallows /api/ /team /hq/ /billing/)
 
-Tip at doc update: 095047d — expects HTTP 200 + FAQPage on all ten articles; expanded overnight guards.
+Tip at doc update: 128389d — expects HTTP 200 + FAQPage on all ten articles; expanded overnight guards.
 
