@@ -69,6 +69,13 @@ try {
     fail = 1;
   } else {
     console.log(`OK\thome-jsonld\tOrganization+WebSite`);
+  if (!/<title>[^<]*Nemo/i.test(homeHtml)) {
+    console.log(`WARN\thome-title\tmissing Nemo in <title>`);
+    fail = 1;
+  } else {
+    console.log(`OK\thome-title\tNemo in title`);
+  }
+
   }
 
   }

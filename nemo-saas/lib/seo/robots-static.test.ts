@@ -16,5 +16,6 @@ describe("public SEO static assets", () => {
     for (const d of ["/api/", "/team", "/hq/", "/billing/"]) {
       expect(src.includes(d), d).toBe(true);
     }
+    expect(src.includes("sitemap")).toBe(true);
   });
 });
