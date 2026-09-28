@@ -388,5 +388,5 @@ Overnight smoke guards (2026-09-28):
 - Articles must NOT be noindex
 - Private routes (/team, /billing/success, /hq/locations) should be noindex (robots.txt also disallows /api/ /team /hq/ /billing/)
 
-Tip at doc update: ab36cb2 — dayshift H91 money-farm scripts; tests 302.
+Tip at doc update: a45c3bd — dayshift H92 keyword fixtures; tests 303.
 
