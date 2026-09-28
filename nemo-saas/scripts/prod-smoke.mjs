@@ -352,6 +352,23 @@ for (const r of ["/ut", "/id"]) {
   }
 }
 
+
+// site.webmanifest must be valid JSON with name
+try {
+  const res = await fetch(BASE + "/site.webmanifest", { redirect: "follow" });
+  const txt = await res.text();
+  const j = JSON.parse(txt);
+  if (!j.name || !j.start_url) {
+    console.log(`WARN\twebmanifest-json\tmissing name/start_url`);
+    fail = 1;
+  } else {
+    console.log(`OK\twebmanifest-json\t${j.name}`);
+  }
+} catch (e) {
+  fail = 1;
+  console.log(`ERR\twebmanifest-json\t${e.message}`);
+}
+
 // Private routes must stay noindex (belt-and-suspenders with robots.txt)
 const PRIVATE = ["/team", "/billing/success", "/hq/locations"];
 for (const r of PRIVATE) {
