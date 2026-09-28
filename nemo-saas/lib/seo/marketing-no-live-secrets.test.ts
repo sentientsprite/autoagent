@@ -14,11 +14,13 @@ function walk(dir: string, out: string[] = []): string[] {
 }
 
 describe("marketing sources avoid live secret material", () => {
-  it("has no sk_live or rk_live literals", () => {
+  it("has no sk_live rk_live pk_live or whsec_ literals", () => {
     for (const file of walk(marketing)) {
       const src = readFileSync(file, "utf8");
       expect(src.includes("sk_live"), file).toBe(false);
       expect(src.includes("rk_live"), file).toBe(false);
+      expect(src.includes("pk_live"), file).toBe(false);
+      expect(src.includes("whsec_"), file).toBe(false);
     }
   });
 });
