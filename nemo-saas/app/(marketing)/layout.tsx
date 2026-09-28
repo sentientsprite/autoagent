@@ -46,7 +46,7 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
         <Link href="/" style={{ fontWeight: 700, fontSize: 14, color: "#111", textDecoration: "none" }}>
           NEMO LOCAL
         </Link>
-        <nav style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center" }}>
+        <nav aria-label="Primary" style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center" }}>
           <Link href="/portal" style={navLink}>
             Customer portal
           </Link>
@@ -75,6 +75,17 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
         </nav>
       </header>
       {children}
+      <footer
+        style={{
+          fontFamily: "system-ui, sans-serif",
+          borderTop: "1px solid #eaeaea",
+          padding: "16px 24px",
+          fontSize: 12,
+          color: "#64748b",
+        }}
+      >
+        © {new Date().getFullYear()} Nemo Local — Maps-first guides for Utah & Idaho home services.
+      </footer>
     </>
   );
 }
