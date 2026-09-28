@@ -483,6 +483,12 @@ try {
   } else {
     console.log(`OK\tportal-canonical\tpresent`);
   }
+  if (!text.includes("twitter:card")) {
+    console.log(`WARN\tportal-twitter\tmissing`);
+    fail = 1;
+  } else {
+    console.log(`OK\tportal-twitter\tpresent`);
+  }
 } catch (e) {
   fail = 1;
   console.log(`ERR\tportal-cta\t${e.message}`);
@@ -559,6 +565,12 @@ try {
     fail = 1;
   } else {
     console.log(`OK\twebmanifest-short\t${j.short_name}`);
+  }
+  if (!j.lang || !/en/i.test(j.lang)) {
+    console.log(`WARN\twebmanifest-lang\t${j.lang}`);
+    fail = 1;
+  } else {
+    console.log(`OK\twebmanifest-lang\t${j.lang}`);
   }
 } catch (e) {
   fail = 1;
