@@ -363,9 +363,17 @@ See `~/Projects/build-assistant/workflows/nemo-skilleval-overnight-summary-2026-
 |------|-------------------|
 | LVS case_02 | 1.000 |
 | LVS case_03 | 1.000 |
-| GSC case_01 | 0.000 (one run; no thrash) |
+| GSC case_01 | **1.000** (dayshift; was 0.000 overnight — `gsc_apply_rules.py`) |
 | GA4 case_01 | 1.000 |
 | LVS case_01 | skipped (ACK; prior hill-climb 1.000) |
+
+## SkillEval dayshift (2026-09-28)
+
+See `~/Projects/build-assistant/workflows/nemo-skilleval-gsc01-dayshift-2026-09-28.md`.
+
+- ONE fix: `tasks/_shared/gsc_apply_rules.py` + SYSTEM_PROMPT nudge (above FIXED ADAPTER BOUNDARY)
+- ONE Harbor retry `gsc_01_dayshift` @ `qwen3.5:9b` → mean **1.000**
+- Vitest: `lib/skills/gsc_opportunity_finder/index.test.ts`
 
 ## Production smoke (overnight helper)
 
@@ -380,5 +388,5 @@ Overnight smoke guards (2026-09-28):
 - Articles must NOT be noindex
 - Private routes (/team, /billing/success, /hq/locations) should be noindex (robots.txt also disallows /api/ /team /hq/ /billing/)
 
-Tip at doc update: 9af5e29 — Beacon From $129/mo + SLC=6 + REQUIRED_HEADERS=3; tests 179.
+Tip at doc update: (pending) — dayshift GSC PASS_GATE mean 1.000 + gsc_opportunity_finder vitest; tests 180.
 
