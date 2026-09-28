@@ -51,4 +51,10 @@ describe("sitemap article paths", () => {
     expect(PUBLIC_HUB_PATHS.length).toBe(7);
   });
 
+  it("articles live only under /ut or /id", () => {
+    for (const path of PUBLIC_ARTICLE_PATHS) {
+      expect(path.startsWith("/ut/") || path.startsWith("/id/"), path).toBe(true);
+    }
+  });
+
 });

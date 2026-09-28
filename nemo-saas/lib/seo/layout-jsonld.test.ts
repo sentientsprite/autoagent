@@ -13,4 +13,9 @@ describe("marketing layout JSON-LD", () => {
   it("labels primary nav for a11y", () => {
     expect(layout.includes("aria-label=\"Primary\"")).toBe(true);
   });
+
+  it("uses PUBLIC_BASE for Organization/WebSite url", () => {
+    expect(layout.includes("PUBLIC_BASE")).toBe(true);
+    expect(layout.includes("url: PUBLIC_BASE")).toBe(true);
+  });
 });
