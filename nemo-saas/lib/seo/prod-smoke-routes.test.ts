@@ -32,4 +32,12 @@ describe("prod-smoke ROUTES coverage", () => {
     }
   });
 
+
+  it("ROUTES has at least twenty entries", () => {
+    const m = smoke.match(/const ROUTES = \[([\s\S]*?)\];/);
+    expect(m).toBeTruthy();
+    const count = (m![1].match(/"[^"]+"/g) || []).length;
+    expect(count).toBeGreaterThanOrEqual(20);
+  });
+
 });

@@ -18,6 +18,7 @@ describe("PseoArticle JSON-LD builders", () => {
     expect(src.includes("Local Visibility Score")).toBe(true);
     expect(/author/i.test(src)).toBe(true);
     expect(src.includes("Question")).toBe(true);
+    expect(src.includes("publisher")).toBe(true);
   });
 });
 
