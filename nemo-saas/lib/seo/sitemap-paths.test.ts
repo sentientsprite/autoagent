@@ -112,4 +112,9 @@ describe("sitemap article paths", () => {
     expect(new Set(PUBLIC_SITEMAP_PATHS).size).toBe(PUBLIC_SITEMAP_PATHS.length);
   });
 
+
+  it("locks plumber guide path", () => {
+    expect(PUBLIC_ARTICLE_PATHS).toContain("/ut/salt-lake-city/plumber-google-maps-visibility");
+  });
+
 });

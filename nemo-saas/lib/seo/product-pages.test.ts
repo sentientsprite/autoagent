@@ -14,4 +14,10 @@ describe("product pages metadata", () => {
       expect(src.includes("priceLine"), sku).toBe(true);
     }
   });
+
+  it("Beacon page titles GBP Autopilot", () => {
+    const src = readFileSync(join(root, "beacon", "page.tsx"), "utf8");
+    expect(src.includes("GBP Autopilot") || src.includes("Beacon")).toBe(true);
+  });
+
 });

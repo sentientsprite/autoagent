@@ -39,4 +39,9 @@ describe("marketing primary nav", () => {
     expect(layout.includes("NEMO LOCAL")).toBe(true);
   });
 
+
+  it("labels Customer portal nav item", () => {
+    expect(layout.includes("Customer portal")).toBe(true);
+  });
+
 });
