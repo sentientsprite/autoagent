@@ -48,6 +48,10 @@ export default function PlumberMapsVisibilityPage() {
       
         path="/ut/salt-lake-city/plumber-google-maps-visibility"
         hubPath="/ut"
+        related={[
+          { href: "/ut/salt-lake-city/electrician-ppc-seo-same-landing", title: "Electrician paid+SEO landing" },
+          { href: "/ut/salt-lake-city/service-area-gbp-too-vague", title: "Vague service-area profile" }
+        ]}
       >
         <PseoH2>How it works</PseoH2>
         <PseoP>

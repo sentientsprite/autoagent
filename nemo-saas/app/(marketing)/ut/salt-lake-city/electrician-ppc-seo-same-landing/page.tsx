@@ -48,6 +48,10 @@ export default function ElectricianPpcSeoSameLandingPage() {
       
         path="/ut/salt-lake-city/electrician-ppc-seo-same-landing"
         hubPath="/ut"
+        related={[
+          { href: "/ut/orem/hvac-google-maps-visibility", title: "Orem HVAC Maps" },
+          { href: "/ut/provo/hvac-ai-seo-vs-google-maps", title: "Provo HVAC GEO vs Maps" }
+        ]}
       >
         <PseoH2>Ads into a weak GBP = paid waste</PseoH2>
         <PseoP>

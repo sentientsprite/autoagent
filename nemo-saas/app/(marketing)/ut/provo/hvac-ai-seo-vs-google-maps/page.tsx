@@ -48,6 +48,10 @@ export default function HvacAiSeoPage() {
       
         path="/ut/provo/hvac-ai-seo-vs-google-maps"
         hubPath="/ut"
+        related={[
+          { href: "/ut/salt-lake-city/electrician-gbp-website-link", title: "Electrician GBP website link" },
+          { href: "/ut/salt-lake-city/electrician-ppc-seo-same-landing", title: "Electrician paid+SEO landing" }
+        ]}
       >
         <PseoH2>Maps first</PseoH2>
         <PseoP>

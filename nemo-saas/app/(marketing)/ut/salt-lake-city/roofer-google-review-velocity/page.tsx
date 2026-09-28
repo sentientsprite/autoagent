@@ -48,6 +48,10 @@ export default function RooferReviewVelocityPage() {
       
         path="/ut/salt-lake-city/roofer-google-review-velocity"
         hubPath="/ut"
+        related={[
+          { href: "/ut/salt-lake-city/contractor-nap-mismatch-citations", title: "Name/address/phone match" },
+          { href: "/ut/ogden/roofer-google-review-replies", title: "Ogden review replies" }
+        ]}
       >
         <PseoH2>Why review velocity matters</PseoH2>
         <PseoP>

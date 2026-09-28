@@ -48,6 +48,10 @@ export default function OremHvacMapsVisibilityPage() {
       
         path="/ut/orem/hvac-google-maps-visibility"
         hubPath="/ut"
+        related={[
+          { href: "/ut/ogden/roofer-google-review-replies", title: "Ogden review replies" },
+          { href: "/ut/salt-lake-city/plumber-google-maps-visibility", title: "Salt Lake plumber Maps" }
+        ]}
       >
         <PseoH2>How it works</PseoH2>
         <PseoP>

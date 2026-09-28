@@ -48,6 +48,10 @@ export default function ContractorNapMismatchCitationsPage() {
       
         path="/ut/salt-lake-city/contractor-nap-mismatch-citations"
         hubPath="/ut"
+        related={[
+          { href: "/ut/salt-lake-city/service-area-gbp-too-vague", title: "Vague service-area profile" },
+          { href: "/ut/salt-lake-city/electrician-gbp-website-link", title: "Electrician GBP website link" }
+        ]}
       >
         <PseoH2>Plain words first</PseoH2>
         <PseoP>

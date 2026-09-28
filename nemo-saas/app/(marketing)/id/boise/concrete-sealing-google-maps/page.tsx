@@ -48,6 +48,10 @@ export default function BoiseConcreteSealingMapsPage() {
       
         path="/id/boise/concrete-sealing-google-maps"
         hubPath="/id"
+        related={[
+          { href: "/ut/salt-lake-city/electrician-gbp-website-link", title: "Electrician GBP website link" },
+          { href: "/ut/salt-lake-city/contractor-nap-mismatch-citations", title: "Name/address/phone match" }
+        ]}
       >
         <PseoH2>How it works</PseoH2>
         <PseoP>

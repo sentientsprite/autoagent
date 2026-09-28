@@ -48,6 +48,10 @@ export default function OgdenRooferReviewRepliesPage() {
       
         path="/ut/ogden/roofer-google-review-replies"
         hubPath="/ut"
+        related={[
+          { href: "/ut/salt-lake-city/electrician-gbp-website-link", title: "Electrician GBP website link" },
+          { href: "/ut/salt-lake-city/electrician-ppc-seo-same-landing", title: "Electrician paid+SEO landing" }
+        ]}
       >
         <PseoH2>Why replies matter</PseoH2>
         <PseoP>

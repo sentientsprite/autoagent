@@ -48,6 +48,10 @@ export default function ServiceAreaGbpTooVaguePage() {
       
         path="/ut/salt-lake-city/service-area-gbp-too-vague"
         hubPath="/ut"
+        related={[
+          { href: "/ut/provo/hvac-ai-seo-vs-google-maps", title: "Provo HVAC GEO vs Maps" },
+          { href: "/ut/salt-lake-city/roofer-google-review-velocity", title: "Roofer review velocity" }
+        ]}
       >
         <PseoH2>Storefront pin vs service-area</PseoH2>
         <PseoP>

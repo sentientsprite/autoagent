@@ -48,6 +48,10 @@ export default function ElectricianGbpWebsiteLinkPage() {
       
         path="/ut/salt-lake-city/electrician-gbp-website-link"
         hubPath="/ut"
+        related={[
+          { href: "/ut/salt-lake-city/roofer-google-review-velocity", title: "Roofer review velocity" },
+          { href: "/ut/orem/hvac-google-maps-visibility", title: "Orem HVAC Maps" }
+        ]}
       >
         <PseoH2>Answer first</PseoH2>
         <PseoP>

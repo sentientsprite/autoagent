@@ -38,6 +38,7 @@ export function PseoArticle(props: {
   hubLabel?: string;
   /** Canonical article path for BreadcrumbList JSON-LD */
   path?: string;
+  related?: { href: string; title: string }[];
 }) {
   const hubPath = props.hubPath ?? "/ut";
   const hubLabel = props.hubLabel ?? (hubPath === "/id" ? "Idaho guides" : "Utah guides");
@@ -59,6 +60,20 @@ export function PseoArticle(props: {
           {props.ctaLabel ?? "Get the free Local Visibility Score →"}
         </Link>
       </div>
+      {props.related && props.related.length > 0 ? (
+        <div style={{ marginTop: 28, maxWidth: 680 }}>
+          <p style={{ fontSize: 13, fontWeight: 650, color: "#0f172a", margin: "0 0 8px" }}>More guides</p>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 6 }}>
+            {props.related.map((r) => (
+              <li key={r.href}>
+                <Link href={r.href} style={{ color: "#334155", fontSize: 14, textDecoration: "none" }}>
+                  {r.title} →
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
       <p style={{ ...mutedNote, marginTop: 24 }}>
         <Link href={hubPath} style={{ color: "#64748b" }}>
           ← {hubLabel}
