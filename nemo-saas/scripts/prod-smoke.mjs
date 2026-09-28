@@ -43,7 +43,12 @@ for (const r of ROUTES) {
       }
     }
     if (res.status !== 200) fail = 1;
-    console.log(`${res.status}\tFAQ=${faq}\t${r}`);
+    let og = "n/a";
+    if (depth >= 3 && (r.startsWith("/ut/") || r.startsWith("/id/"))) {
+      og = text.includes("og:title") ? "yes" : "NO";
+      if (og === "NO") fail = 1;
+    }
+    console.log(`${res.status}\tFAQ=${faq}\tOG=${og}\t${r}`);
   } catch (e) {
     fail = 1;
     console.log(`ERR\tFAQ=n/a\t${r}\t${e.message}`);
