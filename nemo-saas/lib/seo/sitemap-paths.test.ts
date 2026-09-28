@@ -91,4 +91,10 @@ describe("sitemap article paths", () => {
     expect(PUBLIC_ARTICLE_PATHS.some((p) => p.includes("/orem/"))).toBe(true);
   });
 
+
+  it("Salt Lake City article count is at least five", () => {
+    const slc = PUBLIC_ARTICLE_PATHS.filter((p) => p.includes("/salt-lake-city/"));
+    expect(slc.length).toBeGreaterThanOrEqual(5);
+  });
+
 });
