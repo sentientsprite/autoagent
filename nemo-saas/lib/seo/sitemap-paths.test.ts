@@ -117,4 +117,9 @@ describe("sitemap article paths", () => {
     expect(PUBLIC_ARTICLE_PATHS).toContain("/ut/salt-lake-city/plumber-google-maps-visibility");
   });
 
+
+  it("locks boise concrete guide path", () => {
+    expect(PUBLIC_ARTICLE_PATHS).toContain("/id/boise/concrete-sealing-google-maps");
+  });
+
 });
