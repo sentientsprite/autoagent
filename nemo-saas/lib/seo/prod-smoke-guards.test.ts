@@ -40,6 +40,7 @@ describe("prod-smoke guard inventory", () => {
       "product-h1",
       "product-lvs-cta",
       "missing-meta-description",
+      "hub-og",
     ]) {
       expect(smoke.includes(needle), needle).toBe(true);
     }

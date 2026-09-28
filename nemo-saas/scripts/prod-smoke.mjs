@@ -381,6 +381,12 @@ for (const r of ["/ut", "/id"]) {
     } else {
       console.log(`OK\thub-h1\t${r}`);
     }
+    if (!text.includes("og:title")) {
+      console.log(`WARN\thub-og\t${r}`);
+      fail = 1;
+    } else {
+      console.log(`OK\thub-og\t${r}`);
+    }
   } catch (e) {
     fail = 1;
     console.log(`ERR\thub-h1\t${r}\t${e.message}`);
