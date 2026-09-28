@@ -13,3 +13,8 @@ describe("agent editable harness defaults", () => {
     expect(editable.includes("ollama")).toBe(true);
   });
 });
+
+  it("keeps FIXED ADAPTER BOUNDARY marker text exact", () => {
+    const full = readFileSync(join(__dirname, "../../../agent.py"), "utf8");
+    expect(full.includes("# FIXED ADAPTER BOUNDARY: do not modify unless the human explicitly asks.")).toBe(true);
+  });
