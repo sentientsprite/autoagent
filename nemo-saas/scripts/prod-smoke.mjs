@@ -54,6 +54,13 @@ try {
     fail = 1;
   } else {
     console.log(`OK\thtml-lang\tlang=en on /`);
+  if (!homeHtml.includes("viewport")) {
+    console.log(`WARN\tmissing-viewport\t/`);
+    fail = 1;
+  } else {
+    console.log(`OK\tviewport\tpresent on /`);
+  }
+
   }
 
   }
