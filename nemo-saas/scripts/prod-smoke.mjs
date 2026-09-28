@@ -262,6 +262,11 @@ try {
     fail = 1;
     robotsOk = false;
   }
+  if (!/Sitemap:\s*https:\/\//i.test(txt)) {
+    console.log(`WARN\trobots-https-sitemap\tSitemap not https`);
+    fail = 1;
+    robotsOk = false;
+  }
   if (robotsOk) console.log(`OK\trobots-disallow\tapi/team/hq/billing + Sitemap`);
 } catch (e) {
   fail = 1;
@@ -405,6 +410,12 @@ try {
     fail = 1;
   } else {
     console.log(`OK\tportal-h1\tpresent`);
+  }
+  if (!text.includes("og:title")) {
+    console.log(`WARN\tportal-og\tmissing og:title`);
+    fail = 1;
+  } else {
+    console.log(`OK\tportal-og\tpresent`);
   }
 } catch (e) {
   fail = 1;
