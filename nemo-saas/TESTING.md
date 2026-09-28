@@ -354,3 +354,15 @@ jobs:
 
 Run `lint-typecheck` and `unit` on every push. Run `workflow-smoke` on PRs.
 Run `skilleval` nightly + on release branches.
+
+## SkillEval overnight (2026-09-28)
+
+See `~/Projects/build-assistant/workflows/nemo-skilleval-overnight-summary-2026-09-28.md`.
+
+| Case | Mean (qwen3.5:9b) |
+|------|-------------------|
+| LVS case_02 | 1.000 |
+| LVS case_03 | 1.000 |
+| GSC case_01 | 0.000 (one run; no thrash) |
+| GA4 case_01 | 1.000 |
+| LVS case_01 | skipped (ACK; prior hill-climb 1.000) |
