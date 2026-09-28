@@ -6,7 +6,7 @@ const root = join(__dirname, "../..");
 
 describe("public SEO static assets", () => {
   it("ships llms.txt humans.txt and webmanifest", () => {
-    for (const f of ["public/llms.txt", "public/humans.txt", "public/site.webmanifest"]) {
+    for (const f of ["public/llms.txt", "public/humans.txt", "public/site.webmanifest", "app/.well-known/security.txt/route.ts"]) {
       expect(existsSync(join(root, f)), f).toBe(true);
     }
   });
