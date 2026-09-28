@@ -380,5 +380,5 @@ Overnight smoke guards (2026-09-28):
 - Articles must NOT be noindex
 - Private routes (/team, /billing/success, /hq/locations) should be noindex (robots.txt also disallows /api/ /team /hq/ /billing/)
 
-Tip at doc update: 9339157 — security-canonical-host + humans-site; tests 150.
+Tip at doc update: cb41153 — Ogden lock + Permissions-Policy string + smoke BASE; tests 152.
 
