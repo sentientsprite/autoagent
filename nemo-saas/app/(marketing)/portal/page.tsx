@@ -141,6 +141,10 @@ export default function CustomerPortalPage() {
           electrician GBP link
         </Link>
         {" · "}
+        <Link href="/ut/orem/hvac-google-maps-visibility" style={{ color: "#334155" }}>
+          Orem HVAC Maps
+        </Link>
+        {" · "}
         <Link href="/id/boise/concrete-sealing-google-maps" style={{ color: "#334155" }}>
           Boise concrete
         </Link>

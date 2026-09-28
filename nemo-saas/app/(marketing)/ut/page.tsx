@@ -6,7 +6,7 @@ import { hubH1, hubLead, hubMain, linkBtn, mutedNote } from "@/lib/portal-hub-st
 export const metadata: Metadata = {
   title: "Utah local SEO & GEO guides | Nemo Local",
   description:
-    "Utah pSEO guides for plumbing, HVAC, roofing, and electrical — Maps first, then GEO citation readiness.",
+    "Utah pSEO guides for plumbing, HVAC, roofing, electrical, and service-area shops — Maps first, then GEO.",
 };
 
 const PAGES = [
@@ -27,13 +27,28 @@ const PAGES = [
   },
   {
     href: "/ut/salt-lake-city/electrician-gbp-website-link",
-    title: "GBP website: homepage or Salt Lake service page?",
+    title: "Google profile website: homepage or service page?",
     niche: "Electrical · Salt Lake City",
   },
   {
     href: "/ut/salt-lake-city/electrician-ppc-seo-same-landing",
-    title: "Should PPC and SEO share the same electrician landing?",
+    title: "Should paid ads and SEO share the same landing?",
     niche: "Electrical · Salt Lake City",
+  },
+  {
+    href: "/ut/orem/hvac-google-maps-visibility",
+    title: "Why isn’t my Orem heating and air shop on Maps?",
+    niche: "HVAC · Orem / Utah County",
+  },
+  {
+    href: "/ut/salt-lake-city/service-area-gbp-too-vague",
+    title: "Vague service-area Google profile? You lose the map pack",
+    niche: "Service-area · Salt Lake City",
+  },
+  {
+    href: "/ut/ogden/roofer-google-review-replies",
+    title: "Ogden roofers: do ignored reviews hurt Maps?",
+    niche: "Roofing · Ogden / Weber",
   },
 ] as const;
 
