@@ -57,6 +57,8 @@ describe("prod-smoke guard inventory", () => {
       "portal-meta-desc",
       "llms-nemo",
       "humans-next",
+      "webmanifest-start",
+      "portal-canonical",
       "hub-canonical",
       "product-canonical",
       "llms-product",

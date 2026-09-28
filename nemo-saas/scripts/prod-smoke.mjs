@@ -451,6 +451,12 @@ try {
   } else {
     console.log(`OK\tportal-meta-desc\tpresent`);
   }
+  if (!text.includes('rel="canonical"') && !text.includes("rel='canonical'")) {
+    console.log(`WARN\tportal-canonical\tmissing`);
+    fail = 1;
+  } else {
+    console.log(`OK\tportal-canonical\tpresent`);
+  }
 } catch (e) {
   fail = 1;
   console.log(`ERR\tportal-cta\t${e.message}`);
@@ -509,6 +515,12 @@ try {
     fail = 1;
   } else {
     console.log(`OK\twebmanifest-theme\t${j.theme_color}`);
+  }
+  if (j.start_url !== "/") {
+    console.log(`WARN\twebmanifest-start\t${j.start_url}`);
+    fail = 1;
+  } else {
+    console.log(`OK\twebmanifest-start\t/`);
   }
 } catch (e) {
   fail = 1;
