@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { PUBLIC_ARTICLE_PATHS } from "./public-paths";
 
 const root = join(__dirname, "../..");
 const llms = readFileSync(join(root, "public/llms.txt"), "utf8");
@@ -28,5 +29,11 @@ describe("static SEO content files", () => {
     expect(j.name).toMatch(/Nemo/i);
     expect(j.start_url).toBe("/");
     expect(j.theme_color).toBeTruthy();
+  });
+
+  it("llms.txt lists every PUBLIC_ARTICLE_PATH", () => {
+    for (const path of PUBLIC_ARTICLE_PATHS) {
+      expect(llms.includes(path), path).toBe(true);
+    }
   });
 });
