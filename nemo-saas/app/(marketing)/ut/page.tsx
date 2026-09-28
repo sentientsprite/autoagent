@@ -36,6 +36,11 @@ const PAGES = [
     niche: "Electrical · Salt Lake City",
   },
   {
+    href: "/ut/salt-lake-city/contractor-nap-mismatch-citations",
+    title: "Why mismatched name, address, and phone kill listings",
+    niche: "Contractors · Salt Lake City",
+  },
+  {
     href: "/ut/orem/hvac-google-maps-visibility",
     title: "Why isn’t my Orem heating and air shop on Maps?",
     niche: "HVAC · Orem / Utah County",

@@ -141,6 +141,10 @@ export default function CustomerPortalPage() {
           electrician GBP link
         </Link>
         {" · "}
+        <Link href="/ut/salt-lake-city/contractor-nap-mismatch-citations" style={{ color: "#334155" }}>
+          name/address/phone match
+        </Link>
+        {" · "}
         <Link href="/ut/orem/hvac-google-maps-visibility" style={{ color: "#334155" }}>
           Orem HVAC Maps
         </Link>
