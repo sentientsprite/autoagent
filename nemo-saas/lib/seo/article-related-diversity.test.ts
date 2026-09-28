@@ -21,7 +21,7 @@ const pages = [
 
 describe("article related-guides diversity", () => {
   it("every article declares a related prop with ≥2 hrefs into PUBLIC_ARTICLE_PATHS", () => {
-    const publicSet = new Set(PUBLIC_ARTICLE_PATHS);
+    const publicSet = new Set<string>(PUBLIC_ARTICLE_PATHS);
     for (const p of pages) {
       const src = readFileSync(p, "utf8");
       expect(src.includes("related={"), p).toBe(true);
