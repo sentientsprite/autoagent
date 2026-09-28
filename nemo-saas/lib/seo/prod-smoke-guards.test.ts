@@ -53,6 +53,7 @@ describe("prod-smoke guard inventory", () => {
       "portal-og",
       "missing-twitter-description",
       "security-expires-year",
+      "home-og",
       "llms-product",
       "missing-og-locale",
     ]) {

@@ -87,6 +87,12 @@ try {
   } else {
     console.log(`OK\thome-canonical\tpresent`);
   }
+  if (!homeHtml.includes("og:title")) {
+    console.log(`WARN\thome-og\tmissing`);
+    fail = 1;
+  } else {
+    console.log(`OK\thome-og\tpresent`);
+  }
 
   }
 
