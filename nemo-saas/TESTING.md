@@ -373,4 +373,12 @@ Run: npm run smoke:prod
 
 Or: node scripts/prod-smoke.mjs https://nemo-app-v-1.vercel.app
 
-Tip at doc update: f26b07f — expects HTTP 200 + FAQPage on all ten articles.
+Overnight smoke guards (2026-09-28):
+- HTTP 200 on hubs, all 10 pSEO articles, robots/sitemap, llms/humans/webmanifest, security.txt
+- Security headers on /ut: X-Content-Type-Options nosniff, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy
+- Articles: FAQPage, og:title, canonical, twitter:card, BreadcrumbList, Article JSON-LD, related-guide footer ("More guides")
+- Articles must NOT be noindex
+- Private routes (/team, /billing/success, /hq/locations) should be noindex (robots.txt also disallows /api/ /team /hq/ /billing/)
+
+Tip at doc update: 5d34c6b — expects HTTP 200 + FAQPage on all ten articles.
+

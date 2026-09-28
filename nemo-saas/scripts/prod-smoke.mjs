@@ -100,4 +100,29 @@ for (const r of ROUTES) {
     console.log(`ERR\tFAQ=n/a\t${r}\t${e.message}`);
   }
 }
+
+// Private routes must stay noindex (belt-and-suspenders with robots.txt)
+const PRIVATE = ["/team", "/billing/success", "/hq/locations"];
+for (const r of PRIVATE) {
+  try {
+    const res = await fetch(BASE + r, { redirect: "follow" });
+    const text = await res.text();
+    if (res.status !== 200) {
+      console.log(`WARN\tprivate-status\t${res.status}\t${r}`);
+      fail = 1;
+    }
+    const robotsNoindex = /<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(text)
+      || /<meta[^>]+content=["'][^"']*noindex[^"']*["'][^>]+name=["']robots["']/i.test(text);
+    if (!robotsNoindex) {
+      console.log(`WARN\tprivate-missing-noindex\t${r}`);
+      fail = 1;
+    } else {
+      console.log(`${res.status}\tnoindex=yes\t${r}`);
+    }
+  } catch (e) {
+    fail = 1;
+    console.log(`ERR\tprivate\t${r}\t${e.message}`);
+  }
+}
+
 process.exit(fail ? 1 : 0);
