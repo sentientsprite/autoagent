@@ -11,6 +11,7 @@ describe("product pages metadata", () => {
       expect(src.includes("hubMetadata"), sku).toBe(true);
       expect(src.includes(`path: "/products/${sku}"`), sku).toBe(true);
       expect(src.includes("ProductChrome"), sku).toBe(true);
+      expect(src.includes("priceLine"), sku).toBe(true);
     }
   });
 });
