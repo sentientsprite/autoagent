@@ -380,5 +380,5 @@ Overnight smoke guards (2026-09-28):
 - Articles must NOT be noindex
 - Private routes (/team, /billing/success, /hq/locations) should be noindex (robots.txt also disallows /api/ /team /hq/ /billing/)
 
-Tip at doc update: b3316b4 — FAQ>=3 + indexable portal/home; tests 137.
+Tip at doc update: d8cff77 — home sections + Preferred-Languages + package scripts; tests 141.
 
