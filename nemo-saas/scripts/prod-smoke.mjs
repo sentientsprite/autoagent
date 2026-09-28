@@ -522,6 +522,12 @@ try {
   } else {
     console.log(`OK\twebmanifest-start\t/`);
   }
+  if (!j.short_name) {
+    console.log(`WARN\twebmanifest-short\tmissing short_name`);
+    fail = 1;
+  } else {
+    console.log(`OK\twebmanifest-short\t${j.short_name}`);
+  }
 } catch (e) {
   fail = 1;
   console.log(`ERR\twebmanifest-json\t${e.message}`);
