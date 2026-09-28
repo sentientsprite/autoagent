@@ -26,4 +26,11 @@ describe("hub/portal link coverage for public articles", () => {
       expect(portal.includes(p), p).toBe(true);
     }
   });
+
+  it("portal links product pages", () => {
+    for (const p of ["/products/beacon", "/products/bloom", "/products/echo"]) {
+      expect(portal.includes(p), p).toBe(true);
+    }
+  });
+
 });

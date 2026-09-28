@@ -146,6 +146,10 @@ for (const r of ROUTES) {
         console.log(`WARN\tmissing-og-type\t${r}`);
         fail = 1;
       }
+      if (!text.includes("og:url")) {
+        console.log(`WARN\tmissing-og-url\t${r}`);
+        fail = 1;
+      }
       if (!/<h1[\s>]/i.test(text)) {
         console.log(`WARN\tmissing-h1\t${r}`);
         fail = 1;
