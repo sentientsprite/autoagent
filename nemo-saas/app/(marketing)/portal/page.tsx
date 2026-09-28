@@ -152,6 +152,18 @@ export default function CustomerPortalPage() {
         <Link href="/id/boise/concrete-sealing-google-maps" style={{ color: "#334155" }}>
           Boise concrete
         </Link>
+        {" · "}
+        <Link href="/ut/salt-lake-city/electrician-ppc-seo-same-landing" style={{ color: "#334155" }}>
+          electrician paid+SEO landing
+        </Link>
+        {" · "}
+        <Link href="/ut/salt-lake-city/service-area-gbp-too-vague" style={{ color: "#334155" }}>
+          vague service-area profile
+        </Link>
+        {" · "}
+        <Link href="/ut/ogden/roofer-google-review-replies" style={{ color: "#334155" }}>
+          Ogden review replies
+        </Link>
         .
       </p>
     </main>
