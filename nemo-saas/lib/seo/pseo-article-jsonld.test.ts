@@ -13,5 +13,7 @@ describe("PseoArticle JSON-LD builders", () => {
     expect(src.includes("headline:")).toBe(true);
     expect(src.includes("FAQPage")).toBe(true);
     expect(src.includes("BreadcrumbList")).toBe(true);
+    expect(src.includes("Nemo Local")).toBe(true);
   });
 });
+

@@ -158,6 +158,10 @@ for (const r of ROUTES) {
         console.log(`WARN\tmissing-headline\t${r}`);
         fail = 1;
       }
+      if (!/Local Visibility Score/i.test(text)) {
+        console.log(`WARN\tarticle-lvs-cta\t${r}`);
+        fail = 1;
+      }
       if (!text.includes("BreadcrumbList")) {
         console.log(`WARN\tmissing-breadcrumb\t${r}`);
         fail = 1;
