@@ -190,6 +190,44 @@ try {
   console.log(`ERR\trobots-disallow\t${e.message}`);
 }
 
+
+// security.txt must be plain text
+try {
+  const res = await fetch(BASE + "/.well-known/security.txt", { redirect: "follow" });
+  const ct = (res.headers.get("content-type") || "").toLowerCase();
+  const body = await res.text();
+  if (!ct.includes("text/plain")) {
+    console.log(`WARN\tsecurity-ctype\t${ct || "(absent)"}`);
+    fail = 1;
+  } else if (!body.includes("Contact:") || !body.includes("Expires:")) {
+    console.log(`WARN\tsecurity-body\tmissing Contact/Expires`);
+    fail = 1;
+  } else {
+    console.log(`OK\tsecurity-ctype\ttext/plain + Contact/Expires`);
+  }
+} catch (e) {
+  fail = 1;
+  console.log(`ERR\tsecurity-ctype\t${e.message}`);
+}
+
+
+// product pages should carry og:title
+for (const r of ["/products/beacon", "/products/bloom", "/products/echo"]) {
+  try {
+    const res = await fetch(BASE + r, { redirect: "follow" });
+    const text = await res.text();
+    if (res.status !== 200 || !text.includes("og:title")) {
+      console.log(`WARN\tproduct-og\t${res.status}\tog=${text.includes("og:title")}\t${r}`);
+      fail = 1;
+    } else {
+      console.log(`OK\tproduct-og\t${r}`);
+    }
+  } catch (e) {
+    fail = 1;
+    console.log(`ERR\tproduct-og\t${r}\t${e.message}`);
+  }
+}
+
 // Private routes must stay noindex (belt-and-suspenders with robots.txt)
 const PRIVATE = ["/team", "/billing/success", "/hq/locations"];
 for (const r of PRIVATE) {
