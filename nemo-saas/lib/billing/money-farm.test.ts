@@ -13,6 +13,7 @@ import {
 afterEach(() => {
   delete process.env.STRIPE_SECRET_KEY;
   delete process.env.STRIPE_PRICE_FOUNDING;
+  delete process.env.ALLOW_STRIPE_LIVE;
 });
 
 describe("money-farm founding helpers", () => {
@@ -53,5 +54,22 @@ describe("money-farm founding helpers", () => {
     process.env.STRIPE_PRICE_FOUNDING = "price_test_founding";
     const map = loadStripePriceMap();
     expect(map.price_test_founding).toBe("local_autopilot");
+  });
+});
+
+describe("money-farm LIVE refuse via stripe gate", () => {
+  it("createFoundingCheckout stays mock when sk_live without ALLOW_STRIPE_LIVE", async () => {
+    process.env.STRIPE_SECRET_KEY = "sk_live_dayshift_refuse_example";
+    delete process.env.ALLOW_STRIPE_LIVE;
+    delete process.env.STRIPE_PRICE_FOUNDING;
+    const { createFoundingCheckout } = await import("@/lib/billing/money-farm");
+    const result = await createFoundingCheckout({
+      orgId: "00000000-0000-0000-0000-000000000099",
+      customerEmail: "dayshift@example.com",
+      successUrl: "http://localhost:3000/ok",
+      cancelUrl: "http://localhost:3000/cancel",
+    });
+    expect(result.mode).toBe("mock");
+    expect(result.url).toMatch(/mock\.stripe\.local/);
   });
 });
