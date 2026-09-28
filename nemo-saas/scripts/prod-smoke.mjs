@@ -283,6 +283,14 @@ try {
     fail = 1;
     robotsOk = false;
   }
+  if (!/Allow:\s*\//.test(txt) && !/allow:\s*["']?\//.test(txt)) {
+    // Next may render Allow: /
+    if (!txt.includes("Allow:")) {
+      console.log(`WARN\trobots-allow\tmissing Allow`);
+      fail = 1;
+      robotsOk = false;
+    }
+  }
   if (robotsOk) console.log(`OK\trobots-disallow\tapi/team/hq/billing + Sitemap`);
 } catch (e) {
   fail = 1;
@@ -309,6 +317,12 @@ try {
     fail = 1;
   } else {
     console.log(`OK\tsecurity-expires-year\tpresent`);
+  }
+  if (!/Contact:\s*(mailto:|https:\/\/)/i.test(body)) {
+    console.log(`WARN\tsecurity-contact-scheme\tbad Contact`);
+    fail = 1;
+  } else {
+    console.log(`OK\tsecurity-contact-scheme\tmailto/https`);
   }
 } catch (e) {
   fail = 1;
