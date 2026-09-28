@@ -388,5 +388,5 @@ Overnight smoke guards (2026-09-28):
 - Articles must NOT be noindex
 - Private routes (/team, /billing/success, /hq/locations) should be noindex (robots.txt also disallows /api/ /team /hq/ /billing/)
 
-Tip at doc update: 180b9a2 — dayshift H39–H43 Stripe LIVE refuse + engines/docker/dirty; tests 248.
+Tip at doc update: 4cbbbee — dayshift H44–H45 public-paths/hubs indexable; tests 252.
 
