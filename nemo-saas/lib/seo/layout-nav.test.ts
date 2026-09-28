@@ -1,0 +1,21 @@
+import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+const layout = readFileSync(join(__dirname, "../../app/(marketing)/layout.tsx"), "utf8");
+
+describe("marketing primary nav", () => {
+  it("links portal ut id products and home score", () => {
+    for (const href of [
+      "/portal",
+      "/ut",
+      "/id",
+      "/products/beacon",
+      "/products/echo",
+      "/products/bloom",
+      "/",
+    ]) {
+      expect(layout.includes(`href="${href}"`) || layout.includes(`href={'${href}'}`), href).toBe(true);
+    }
+  });
+});

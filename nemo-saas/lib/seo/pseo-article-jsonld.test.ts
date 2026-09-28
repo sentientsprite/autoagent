@@ -14,6 +14,8 @@ describe("PseoArticle JSON-LD builders", () => {
     expect(src.includes("FAQPage")).toBe(true);
     expect(src.includes("BreadcrumbList")).toBe(true);
     expect(src.includes("Nemo Local")).toBe(true);
+    expect(src.includes("More guides")).toBe(true);
+    expect(src.includes("Local Visibility Score")).toBe(true);
   });
 });
 
