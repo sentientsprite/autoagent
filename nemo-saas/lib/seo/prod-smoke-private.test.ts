@@ -10,4 +10,12 @@ describe("prod-smoke private noindex routes", () => {
       expect(smoke.includes(`"${path}"`), path).toBe(true);
     }
   });
+
+  it("PRIVATE array mentions exactly three route strings", () => {
+    const m = smoke.match(/const PRIVATE = \[([\s\S]*?)\];/);
+    expect(m).toBeTruthy();
+    const count = (m![1].match(/"[^"]+"/g) || []).length;
+    expect(count).toBe(3);
+  });
+
 });

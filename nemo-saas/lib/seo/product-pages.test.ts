@@ -20,4 +20,12 @@ describe("product pages metadata", () => {
     expect(src.includes("GBP Autopilot") || src.includes("Beacon")).toBe(true);
   });
 
+
+  it("Echo and Bloom pages name their SKUs", () => {
+    const echo = readFileSync(join(root, "echo", "page.tsx"), "utf8");
+    const bloom = readFileSync(join(root, "bloom", "page.tsx"), "utf8");
+    expect(echo.includes("Echo") || echo.includes("echo")).toBe(true);
+    expect(bloom.includes("Bloom") || bloom.includes("bloom")).toBe(true);
+  });
+
 });
