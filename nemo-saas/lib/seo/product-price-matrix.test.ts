@@ -16,8 +16,8 @@ describe("product price/SKU matrix", () => {
     expect(echo.includes("$89/mo")).toBe(true);
     expect(echo.includes("Echo")).toBe(true);
   });
-  it("Bloom page is present with Bloom SKU (price may vary)", () => {
+  it("Bloom advertises $249/mo and Bloom SKU", () => {
+    expect(bloom.includes("$249/mo")).toBe(true);
     expect(bloom.includes("Bloom")).toBe(true);
-    expect(bloom.includes("priceLine=")).toBe(true);
   });
 });
