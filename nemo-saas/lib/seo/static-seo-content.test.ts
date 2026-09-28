@@ -24,6 +24,11 @@ describe("static SEO content files", () => {
     expect(humans.includes("Next.js")).toBe(true);
   });
 
+  it("humans.txt declares TEAM and SITE sections", () => {
+    expect(humans.includes("TEAM")).toBe(true);
+    expect(humans.includes("SITE")).toBe(true);
+  });
+
   it("webmanifest has name start_url and theme", () => {
     const j = JSON.parse(manifest);
     expect(j.name).toMatch(/Nemo/i);

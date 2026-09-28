@@ -29,4 +29,9 @@ describe("hubMetadata", () => {
     const m = hubMetadata({ title: "Hub", description: "D".repeat(80), path: "/ut" });
     expect((m.openGraph as { type?: string }).type).toBe("website");
   });
+
+  it("hubMetadata sets canonical for path", () => {
+    const m = hubMetadata({ title: "Hub", description: "D".repeat(80), path: "/portal" });
+    expect(m.alternates?.canonical).toBe("https://nemo-app-v-1.vercel.app/portal");
+  });
 });

@@ -14,6 +14,7 @@ describe("next.config security headers", () => {
     expect(cfg.includes("strict-origin-when-cross-origin")).toBe(true);
     expect(cfg.includes("Permissions-Policy")).toBe(true);
     expect(cfg.includes("camera=()")).toBe(true);
+    expect(cfg.includes("geolocation=()")).toBe(true);
   });
 
   it("registers headers() for all paths", () => {
