@@ -24,4 +24,9 @@ describe("marketing primary nav", () => {
     expect(layout.includes("Idaho guides")).toBe(true);
   });
 
+
+  it("exposes team link in header", () => {
+    expect(layout.includes('href="/team"')).toBe(true);
+  });
+
 });

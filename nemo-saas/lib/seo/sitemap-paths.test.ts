@@ -80,4 +80,9 @@ describe("sitemap article paths", () => {
     expect(new Set(PUBLIC_ARTICLE_PATHS).size).toBe(PUBLIC_ARTICLE_PATHS.length);
   });
 
+
+  it("hub paths are unique", () => {
+    expect(new Set(PUBLIC_HUB_PATHS).size).toBe(PUBLIC_HUB_PATHS.length);
+  });
+
 });

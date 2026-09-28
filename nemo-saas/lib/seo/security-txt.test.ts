@@ -30,4 +30,9 @@ describe("security.txt route", () => {
     expect(/Expires:\s*202[6-9]/.test(src) || /Expires:\s*20[3-9]/.test(src)).toBe(true);
   });
 
+
+  it("Canonical points at well-known security.txt", () => {
+    expect(src.includes(".well-known/security.txt")).toBe(true);
+  });
+
 });
