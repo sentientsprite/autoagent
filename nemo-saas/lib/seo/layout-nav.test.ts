@@ -34,4 +34,9 @@ describe("marketing primary nav", () => {
     expect(layout.includes("Full score")).toBe(true);
   });
 
+
+  it("brands header NEMO LOCAL", () => {
+    expect(layout.includes("NEMO LOCAL")).toBe(true);
+  });
+
 });

@@ -107,4 +107,9 @@ describe("sitemap article paths", () => {
     expect(PUBLIC_ARTICLE_PATHS.filter((p) => p.startsWith("/ut/")).length).toBe(9);
   });
 
+
+  it("sitemap paths are unique", () => {
+    expect(new Set(PUBLIC_SITEMAP_PATHS).size).toBe(PUBLIC_SITEMAP_PATHS.length);
+  });
+
 });
