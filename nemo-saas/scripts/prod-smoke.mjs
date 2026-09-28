@@ -41,7 +41,7 @@ try {
     }
   }
   const pp = headRes.headers.get("permissions-policy") || "";
-  if (!pp.includes("camera=") || !pp.includes("microphone=")) {
+  if (!pp.includes("camera=") || !pp.includes("microphone=") || !pp.includes("geolocation=")) {
     console.log(`WARN\tmissing-header\tpermissions-policy=${pp || "(absent)"}`);
     fail = 1;
   } else {
@@ -525,6 +525,12 @@ try {
     fail = 1;
   } else {
     console.log(`OK\thumans-team\tTEAM + site present`);
+  }
+  if (!/Next\.js/i.test(txt)) {
+    console.log(`WARN\thumans-next\tmissing Next.js`);
+    fail = 1;
+  } else {
+    console.log(`OK\thumans-next\tNext.js present`);
   }
 } catch (e) {
   fail = 1;

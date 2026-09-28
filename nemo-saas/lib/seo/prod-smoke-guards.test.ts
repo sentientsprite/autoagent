@@ -56,6 +56,7 @@ describe("prod-smoke guard inventory", () => {
       "home-og",
       "portal-meta-desc",
       "llms-nemo",
+      "humans-next",
       "hub-canonical",
       "product-canonical",
       "llms-product",
