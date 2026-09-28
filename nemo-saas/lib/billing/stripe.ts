@@ -4,18 +4,35 @@ import type { JobKind, PlanTier } from "@/lib/db/types";
 
 let cached: Stripe | null = null;
 
-/**
- * True when STRIPE_SECRET_KEY is set. Money Farm P0 / tests run without a key
- * via mock Checkout + Portal URLs. LIVE Stripe = Owner GATE — do not require
- * live keys to verify the mock path.
- */
-export function isStripeConfigured(): boolean {
-  return Boolean((process.env.STRIPE_SECRET_KEY ?? "").trim());
+/** True when secret looks like Stripe LIVE (sk_live_ / rk_live_). */
+export function isStripeLiveSecret(secret = process.env.STRIPE_SECRET_KEY ?? ""): boolean {
+  const s = secret.trim();
+  return s.startsWith("sk_live") || s.startsWith("rk_live");
 }
 
-/** Stripe SDK client, or null when STRIPE_SECRET_KEY is unset (mock mode). */
+/** Owner-only override — bots/dayshift must not hit LIVE without ALLOW_STRIPE_LIVE=1. */
+export function stripeLiveAllowed(): boolean {
+  return process.env.ALLOW_STRIPE_LIVE === "1";
+}
+
+/**
+ * True when STRIPE_SECRET_KEY is set *and* usable. Money Farm P0 / tests run
+ * without a key via mock Checkout + Portal URLs. LIVE Stripe = Owner GATE —
+ * refuse LIVE keys unless ALLOW_STRIPE_LIVE=1 (parity with provision script).
+ */
+export function isStripeConfigured(): boolean {
+  const key = (process.env.STRIPE_SECRET_KEY ?? "").trim();
+  if (!key) return false;
+  if (isStripeLiveSecret(key) && !stripeLiveAllowed()) return false;
+  return true;
+}
+
+/** Stripe SDK client, or null when unset / LIVE-refused (mock mode). */
 export function stripeMaybe(): Stripe | null {
-  if (!isStripeConfigured()) return null;
+  if (!isStripeConfigured()) {
+    cached = null;
+    return null;
+  }
   if (cached) return cached;
   cached = new Stripe(process.env.STRIPE_SECRET_KEY!.trim());
   return cached;

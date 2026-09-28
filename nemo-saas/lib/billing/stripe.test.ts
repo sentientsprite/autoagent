@@ -6,14 +6,17 @@ import {
   FOUNDING_PLAN,
   foundingPriceId,
   isStripeConfigured,
+  isStripeLiveSecret,
   MOCK_PRICE_FOUNDING,
   planAllows,
+  stripeLiveAllowed,
   stripeMaybe,
 } from "@/lib/billing/stripe";
 
 afterEach(() => {
   delete process.env.STRIPE_SECRET_KEY;
   delete process.env.STRIPE_PRICE_FOUNDING;
+  delete process.env.ALLOW_STRIPE_LIVE;
 });
 
 describe("stripe mock mode (Money Farm P0)", () => {
@@ -54,5 +57,38 @@ describe("stripe mock mode (Money Farm P0)", () => {
   it("planAllows keeps free LVS", () => {
     expect(planAllows("free", "local_visibility_audit")).toBe(true);
     expect(planAllows("free", "competitor_pulse")).toBe(false);
+  });
+});
+
+
+describe("Stripe LIVE refuse parity (dayshift)", () => {
+  it("detects sk_live / rk_live secrets", () => {
+    expect(isStripeLiveSecret("sk_live_example")).toBe(true);
+    expect(isStripeLiveSecret("rk_live_example")).toBe(true);
+    expect(isStripeLiveSecret("sk_test_example")).toBe(false);
+    expect(isStripeLiveSecret("")).toBe(false);
+  });
+
+  it("refuses LIVE keys unless ALLOW_STRIPE_LIVE=1 (mock path)", async () => {
+    process.env.STRIPE_SECRET_KEY = "sk_live_dayshift_refuse_example";
+    delete process.env.ALLOW_STRIPE_LIVE;
+    expect(stripeLiveAllowed()).toBe(false);
+    expect(isStripeConfigured()).toBe(false);
+    expect(stripeMaybe()).toBeNull();
+    const session = await createCheckoutSession({
+      orgId: "00000000-0000-0000-0000-000000000002",
+      successUrl: "http://localhost:3000/success",
+      cancelUrl: "http://localhost:3000/cancel",
+    });
+    expect(session.mode).toBe("mock");
+    expect(session.url).toMatch(/^https:\/\/mock\.stripe\.local\/checkout\//);
+  });
+
+  it("allows LIVE only with explicit ALLOW_STRIPE_LIVE=1 flag (configured gate)", () => {
+    process.env.STRIPE_SECRET_KEY = "sk_live_dayshift_refuse_example";
+    process.env.ALLOW_STRIPE_LIVE = "1";
+    expect(stripeLiveAllowed()).toBe(true);
+    expect(isStripeConfigured()).toBe(true);
+    // Do not call Stripe SDK with a fake live key — only assert the gate opens.
   });
 });
