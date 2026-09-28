@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const BASE = "https://nemo-app-v-1.vercel.app";
+import { PUBLIC_BASE } from "@/lib/seo/public-paths";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -11,7 +11,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/team", "/hq/", "/billing/"],
       },
     ],
-    sitemap: `${BASE}/sitemap.xml`,
-    host: BASE,
+    sitemap: `${PUBLIC_BASE}/sitemap.xml`,
+    host: PUBLIC_BASE,
   };
 }
