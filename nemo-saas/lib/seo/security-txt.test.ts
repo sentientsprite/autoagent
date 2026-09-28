@@ -15,4 +15,13 @@ describe("security.txt route", () => {
     expect(src.includes("text/plain")).toBe(true);
     expect(src.includes("security/advisories")).toBe(true);
   });
+
+  it("Expires stays in the future past overnight window", () => {
+    const m = src.match(/Expires:\s*([^"\n]+)/);
+    expect(m).toBeTruthy();
+    const expires = Date.parse(m![1]!.replace(/",?$/, "").trim());
+    expect(Number.isFinite(expires)).toBe(true);
+    // must be after 2026-09-28 06:00 MDT (= 12:00Z)
+    expect(expires).toBeGreaterThan(Date.parse("2026-09-28T12:00:00.000Z"));
+  });
 });

@@ -313,6 +313,22 @@ try {
   console.log(`ERR\tllms-guides\t${e.message}`);
 }
 
+
+// portal should mention Local Visibility Score CTA language
+try {
+  const res = await fetch(BASE + "/portal", { redirect: "follow" });
+  const text = await res.text();
+  if (!/Local Visibility Score/i.test(text)) {
+    console.log(`WARN\tportal-cta\tmissing LVS copy`);
+    fail = 1;
+  } else {
+    console.log(`OK\tportal-cta\tLVS copy present`);
+  }
+} catch (e) {
+  fail = 1;
+  console.log(`ERR\tportal-cta\t${e.message}`);
+}
+
 // Private routes must stay noindex (belt-and-suspenders with robots.txt)
 const PRIVATE = ["/team", "/billing/success", "/hq/locations"];
 for (const r of PRIVATE) {
