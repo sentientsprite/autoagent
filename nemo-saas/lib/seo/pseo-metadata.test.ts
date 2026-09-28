@@ -13,6 +13,15 @@ describe("pseoMetadata", () => {
     expect((m.openGraph as { type?: string }).type).toBe("article");
     expect((m.twitter as { card?: string }).card).toBe("summary");
   });
+
+  it("description is non-trivial length", () => {
+    const m = pseoMetadata({
+      title: "T | Nemo Local",
+      description: "D".repeat(80),
+      path: "/ut/demo",
+    });
+    expect(String(m.description).length).toBeGreaterThanOrEqual(50);
+  });
 });
 
 describe("hubMetadata", () => {
