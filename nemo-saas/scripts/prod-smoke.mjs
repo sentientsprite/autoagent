@@ -150,6 +150,10 @@ for (const r of ROUTES) {
         console.log(`WARN\tmissing-og-url\t${r}`);
         fail = 1;
       }
+      if (!/<meta[^>]+name=["']description["']/i.test(text)) {
+        console.log(`WARN\tmissing-meta-description\t${r}`);
+        fail = 1;
+      }
       if (!/<h1[\s>]/i.test(text)) {
         console.log(`WARN\tmissing-h1\t${r}`);
         fail = 1;
@@ -273,6 +277,18 @@ for (const r of ["/products/beacon", "/products/bloom", "/products/echo"]) {
       fail = 1;
     } else {
       console.log(`OK\tproduct-og\t${r}`);
+    }
+    if (!/<h1[\s>]/i.test(text)) {
+      console.log(`WARN\tproduct-h1\t${r}`);
+      fail = 1;
+    } else {
+      console.log(`OK\tproduct-h1\t${r}`);
+    }
+    if (!/Local Visibility Score/i.test(text)) {
+      console.log(`WARN\tproduct-lvs-cta\t${r}`);
+      fail = 1;
+    } else {
+      console.log(`OK\tproduct-lvs-cta\t${r}`);
     }
   } catch (e) {
     fail = 1;

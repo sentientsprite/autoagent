@@ -37,6 +37,9 @@ describe("prod-smoke guard inventory", () => {
       "security-ctype",
       "missing-h1",
       "sitemap-urlset",
+      "product-h1",
+      "product-lvs-cta",
+      "missing-meta-description",
     ]) {
       expect(smoke.includes(needle), needle).toBe(true);
     }
