@@ -154,6 +154,10 @@ for (const r of ROUTES) {
         console.log(`WARN\tmissing-meta-description\t${r}`);
         fail = 1;
       }
+      if (!text.includes("og:description")) {
+        console.log(`WARN\tmissing-og-description\t${r}`);
+        fail = 1;
+      }
       if (!/<h1[\s>]/i.test(text)) {
         console.log(`WARN\tmissing-h1\t${r}`);
         fail = 1;
@@ -363,6 +367,12 @@ try {
     fail = 1;
   } else {
     console.log(`OK\tportal-cta\tLVS copy present`);
+  }
+  if (!/<h1[\s>]/i.test(text)) {
+    console.log(`WARN\tportal-h1\tmissing h1`);
+    fail = 1;
+  } else {
+    console.log(`OK\tportal-h1\tpresent`);
   }
 } catch (e) {
   fail = 1;
