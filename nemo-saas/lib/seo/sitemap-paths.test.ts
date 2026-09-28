@@ -36,4 +36,9 @@ describe("sitemap article paths", () => {
       expect(existsSync(file), `missing ${file}`).toBe(true);
     }
   });
+
+  it("stays at exactly ten articles overnight (pSEO #11 out of scope)", () => {
+    expect(PUBLIC_ARTICLE_PATHS.length).toBe(10);
+  });
+
 });
