@@ -93,6 +93,12 @@ try {
   } else {
     console.log(`OK\thome-og\tpresent`);
   }
+  if (!homeHtml.includes("twitter:card")) {
+    console.log(`WARN\thome-twitter\tmissing`);
+    fail = 1;
+  } else {
+    console.log(`OK\thome-twitter\tpresent`);
+  }
 
   }
 
