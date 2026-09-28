@@ -39,4 +39,20 @@ describe("product pages metadata", () => {
     expect(/Echo/i.test(src)).toBe(true);
   });
 
+
+  it("Echo Review Flywheel title", () => {
+    const src = readFileSync(join(root, "echo", "page.tsx"), "utf8");
+    expect(src.includes("Review Flywheel")).toBe(true);
+  });
+
+  it("Echo priceLine is $89/mo", () => {
+    const src = readFileSync(join(root, "echo", "page.tsx"), "utf8");
+    expect(src.includes("$89/mo")).toBe(true);
+  });
+
+  it("Bloom priceLine is present", () => {
+    const src = readFileSync(join(root, "bloom", "page.tsx"), "utf8");
+    expect(/\$\d+\/mo/.test(src)).toBe(true);
+  });
+
 });

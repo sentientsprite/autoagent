@@ -68,4 +68,10 @@ describe("static SEO content files", () => {
     expect(llms.includes("## Optional")).toBe(true);
   });
 
+
+  it("llms.txt lists exactly ten guide URLs", () => {
+    const guideLines = llms.split("\n").filter((l) => l.includes("/ut/") || l.includes("/id/"));
+    expect(guideLines.length).toBe(10);
+  });
+
 });

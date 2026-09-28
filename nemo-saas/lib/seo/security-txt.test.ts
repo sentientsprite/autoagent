@@ -40,4 +40,13 @@ describe("security.txt route", () => {
     expect(src.includes("Preferred-Languages")).toBe(true);
   });
 
+
+  it("Preferred-Languages is en", () => {
+    expect(src.includes("Preferred-Languages: en")).toBe(true);
+  });
+
+  it("Expires year is 2027", () => {
+    expect(src.includes("Expires: 2027-")).toBe(true);
+  });
+
 });

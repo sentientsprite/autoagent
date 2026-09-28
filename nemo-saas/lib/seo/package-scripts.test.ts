@@ -10,4 +10,14 @@ describe("nemo-saas package scripts", () => {
     expect(pkg.scripts.test).toMatch(/vitest/);
     expect(pkg.scripts["smoke:prod"]).toMatch(/prod-smoke/);
   });
+
+  it("engines.node requires >=20", () => {
+    expect(String(pkg.engines?.node || "")).toMatch(/>=?20/);
+  });
+
+  it("private package named nemo-saas", () => {
+    expect(pkg.name).toBe("nemo-saas");
+    expect(pkg.private).toBe(true);
+  });
+
 });

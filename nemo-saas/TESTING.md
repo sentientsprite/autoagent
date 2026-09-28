@@ -380,5 +380,5 @@ Overnight smoke guards (2026-09-28):
 - Articles must NOT be noindex
 - Private routes (/team, /billing/success, /hq/locations) should be noindex (robots.txt also disallows /api/ /team /hq/ /billing/)
 
-Tip at doc update: ed88a56 — remaining article path locks + ROUTES=23 + header exacts; tests 168.
+Tip at doc update: (pending) — Echo/Bloom/pkg/llms/security locks; tests 176.
 
