@@ -122,4 +122,9 @@ describe("sitemap article paths", () => {
     expect(PUBLIC_ARTICLE_PATHS).toContain("/id/boise/concrete-sealing-google-maps");
   });
 
+
+  it("locks ogden roofer guide path", () => {
+    expect(PUBLIC_ARTICLE_PATHS).toContain("/ut/ogden/roofer-google-review-replies");
+  });
+
 });

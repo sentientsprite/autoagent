@@ -16,6 +16,7 @@ describe("next.config security headers", () => {
     expect(cfg.includes("camera=()")).toBe(true);
     expect(cfg.includes("geolocation=()")).toBe(true);
     expect(cfg.includes("microphone=()")).toBe(true);
+    expect(cfg.includes("camera=(), microphone=(), geolocation=()")).toBe(true);
   });
 
   it("registers headers() for all paths", () => {
