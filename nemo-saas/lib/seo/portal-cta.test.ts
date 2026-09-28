@@ -16,4 +16,8 @@ describe("portal CTA copy", () => {
     expect(portal.includes("hubMetadata")).toBe(true);
     expect(portal.includes('path: "/portal"')).toBe(true);
   });
+
+  it("includes SalesPerksSection", () => {
+    expect(portal.includes("SalesPerksSection")).toBe(true);
+  });
 });
