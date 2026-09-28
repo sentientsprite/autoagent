@@ -75,6 +75,12 @@ try {
   } else {
     console.log(`OK\thome-title\tNemo in title`);
   }
+  if (!/<meta[^>]+name=["']description["']/i.test(homeHtml)) {
+    console.log(`WARN\thome-meta-desc\tmissing`);
+    fail = 1;
+  } else {
+    console.log(`OK\thome-meta-desc\tpresent`);
+  }
 
   }
 
@@ -160,6 +166,10 @@ for (const r of ROUTES) {
       }
       if (!text.includes("twitter:title")) {
         console.log(`WARN\tmissing-twitter-title\t${r}`);
+        fail = 1;
+      }
+      if (!/og:locale/i.test(text) && !/en_US/.test(text)) {
+        console.log(`WARN\tmissing-og-locale\t${r}`);
         fail = 1;
       }
       if (!/<h1[\s>]/i.test(text)) {
