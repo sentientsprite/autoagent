@@ -366,3 +366,11 @@ See `~/Projects/build-assistant/workflows/nemo-skilleval-overnight-summary-2026-
 | GSC case_01 | 0.000 (one run; no thrash) |
 | GA4 case_01 | 1.000 |
 | LVS case_01 | skipped (ACK; prior hill-climb 1.000) |
+
+## Production smoke (overnight helper)
+
+Run: npm run smoke:prod
+
+Or: node scripts/prod-smoke.mjs https://nemo-app-v-1.vercel.app
+
+Tip at doc update: f26b07f — expects HTTP 200 + FAQPage on all ten articles.
