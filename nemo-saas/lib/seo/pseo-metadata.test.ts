@@ -22,6 +22,15 @@ describe("pseoMetadata", () => {
     });
     expect(String(m.description).length).toBeGreaterThanOrEqual(50);
   });
+
+  it("twitter title mirrors page title", () => {
+    const m = pseoMetadata({
+      title: "T | Nemo Local",
+      description: "D".repeat(80),
+      path: "/ut/demo",
+    });
+    expect((m.twitter as { title?: string }).title).toBe("T | Nemo Local");
+  });
 });
 
 describe("hubMetadata", () => {
