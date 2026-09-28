@@ -341,6 +341,12 @@ for (const r of ["/products/beacon", "/products/bloom", "/products/echo"]) {
     } else {
       console.log(`OK\tproduct-meta-desc\t${r}`);
     }
+    if (!text.includes('rel="canonical"') && !text.includes("rel='canonical'")) {
+      console.log(`WARN\tproduct-canonical\t${r}`);
+      fail = 1;
+    } else {
+      console.log(`OK\tproduct-canonical\t${r}`);
+    }
   } catch (e) {
     fail = 1;
     console.log(`ERR\tproduct-og\t${r}\t${e.message}`);
@@ -432,6 +438,12 @@ try {
     fail = 1;
   } else {
     console.log(`OK\tportal-og\tpresent`);
+  }
+  if (!/<meta[^>]+name=["']description["']/i.test(text)) {
+    console.log(`WARN\tportal-meta-desc\tmissing`);
+    fail = 1;
+  } else {
+    console.log(`OK\tportal-meta-desc\tpresent`);
   }
 } catch (e) {
   fail = 1;
