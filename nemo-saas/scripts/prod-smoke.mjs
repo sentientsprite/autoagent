@@ -367,6 +367,12 @@ for (const r of ["/products/beacon", "/products/bloom", "/products/echo"]) {
     } else {
       console.log(`OK\tproduct-canonical\t${r}`);
     }
+    if (!text.includes("twitter:card")) {
+      console.log(`WARN\tproduct-twitter\t${r}`);
+      fail = 1;
+    } else {
+      console.log(`OK\tproduct-twitter\t${r}`);
+    }
   } catch (e) {
     fail = 1;
     console.log(`ERR\tproduct-og\t${r}\t${e.message}`);
@@ -511,6 +517,12 @@ for (const r of ["/ut", "/id"]) {
       fail = 1;
     } else {
       console.log(`OK\thub-canonical\t${r}`);
+    }
+    if (!text.includes("twitter:card")) {
+      console.log(`WARN\thub-twitter\t${r}`);
+      fail = 1;
+    } else {
+      console.log(`OK\thub-twitter\t${r}`);
     }
   } catch (e) {
     fail = 1;

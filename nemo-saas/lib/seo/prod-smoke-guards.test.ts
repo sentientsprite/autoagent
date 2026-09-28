@@ -61,6 +61,8 @@ describe("prod-smoke guard inventory", () => {
       "webmanifest-short",
       "home-twitter",
       "security-contact-scheme",
+      "hub-twitter",
+      "product-twitter",
       "robots-allow",
       "portal-canonical",
       "hub-canonical",
