@@ -31,6 +31,16 @@ for (const r of ROUTES) {
     if (depth >= 3 && (r.startsWith("/ut/") || r.startsWith("/id/"))) {
       faq = text.includes("FAQPage") ? "yes" : "NO";
       if (faq === "NO") fail = 1;
+      // indexable articles must not carry robots noindex
+      if (text.includes("name=\"robots\"") && text.includes("noindex") && !text.includes("name=\"robots\" content=\"index")) {
+        // Next may emit noindex on error pages only; flag if FAQ present AND noindex in head meta robots
+      }
+      const robotsNoindex = /<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(text)
+        || /<meta[^>]+content=["'][^"']*noindex[^"']*["'][^>]+name=["']robots["']/i.test(text);
+      if (robotsNoindex) {
+        console.log(`WARN\tnoindex-on-article\t${r}`);
+        fail = 1;
+      }
     }
     if (res.status !== 200) fail = 1;
     console.log(`${res.status}\tFAQ=${faq}\t${r}`);
