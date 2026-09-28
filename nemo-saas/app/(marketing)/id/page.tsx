@@ -4,46 +4,25 @@ import Link from "next/link";
 import { hubH1, hubLead, hubMain, linkBtn, mutedNote } from "@/lib/portal-hub-styles";
 
 export const metadata: Metadata = {
-  title: "Utah local SEO & GEO guides | Nemo Local",
-  description:
-    "Utah pSEO guides for plumbing, HVAC, roofing, and electrical — Maps first, then GEO citation readiness.",
+  title: "Idaho local SEO & GEO guides | Nemo Local",
+  description: "Idaho pSEO guides for concrete and home services — Maps first, then GEO citation readiness.",
 };
 
 const PAGES = [
   {
-    href: "/ut/salt-lake-city/plumber-google-maps-visibility",
-    title: "Why bigger plumbers beat you on Salt Lake Maps",
-    niche: "Plumbing · Salt Lake City",
-  },
-  {
-    href: "/ut/provo/hvac-ai-seo-vs-google-maps",
-    title: "Is AI SEO a second website for Provo HVAC?",
-    niche: "HVAC · Provo",
-  },
-  {
-    href: "/ut/salt-lake-city/roofer-google-review-velocity",
-    title: "Does one Google review a week beat a burst?",
-    niche: "Roofing · Salt Lake City",
-  },
-  {
-    href: "/ut/salt-lake-city/electrician-gbp-website-link",
-    title: "GBP website: homepage or Salt Lake service page?",
-    niche: "Electrical · Salt Lake City",
-  },
-  {
-    href: "/ut/salt-lake-city/electrician-ppc-seo-same-landing",
-    title: "Should PPC and SEO share the same electrician landing?",
-    niche: "Electrical · Salt Lake City",
+    href: "/id/boise/concrete-sealing-google-maps",
+    title: "Why isn’t my Boise concrete sealing showing on Maps?",
+    niche: "Concrete · Boise / Treasure Valley",
   },
 ] as const;
 
-export default function UtahPseoIndexPage() {
+export default function IdahoPseoIndexPage() {
   return (
     <main style={hubMain}>
       <p style={{ fontSize: 12, letterSpacing: "0.06em", textTransform: "uppercase", color: "#64748b", margin: 0 }}>
-        Utah · pSEO / GEO
+        Idaho · pSEO / GEO
       </p>
-      <h1 style={hubH1}>Local guides for Utah home services</h1>
+      <h1 style={hubH1}>Local guides for Idaho home services</h1>
       <p style={hubLead}>
         Maps first, then citation-ready pages. Each guide ends with a free Local Visibility Score CTA.
       </p>
@@ -71,8 +50,8 @@ export default function UtahPseoIndexPage() {
         </Link>
       </p>
       <p style={mutedNote}>
-        <Link href="/id" style={{ color: "#64748b" }}>
-          Idaho guides
+        <Link href="/ut" style={{ color: "#64748b" }}>
+          Utah guides
         </Link>
         {" · "}
         <Link href="/portal" style={{ color: "#64748b" }}>

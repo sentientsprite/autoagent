@@ -124,7 +124,7 @@ export default function CustomerPortalPage() {
         <Link href="/team" style={{ color: "#334155" }}>
           /team
         </Link>{" "}
-        (not indexed). Utah pSEO:{" "}
+        (not indexed).         Utah/ID pSEO:{" "}
         <Link href="/ut/salt-lake-city/plumber-google-maps-visibility" style={{ color: "#334155" }}>
           plumber Maps
         </Link>
@@ -135,6 +135,14 @@ export default function CustomerPortalPage() {
         {" · "}
         <Link href="/ut/salt-lake-city/roofer-google-review-velocity" style={{ color: "#334155" }}>
           roofer reviews
+        </Link>
+        {" · "}
+        <Link href="/ut/salt-lake-city/electrician-gbp-website-link" style={{ color: "#334155" }}>
+          electrician GBP link
+        </Link>
+        {" · "}
+        <Link href="/id/boise/concrete-sealing-google-maps" style={{ color: "#334155" }}>
+          Boise concrete
         </Link>
         .
       </p>
