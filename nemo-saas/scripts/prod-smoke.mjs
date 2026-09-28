@@ -96,6 +96,10 @@ for (const r of ROUTES) {
         console.log(`WARN\tmissing-twitter-card\t${r}`);
         fail = 1;
       }
+      if (!text.includes("og:type")) {
+        console.log(`WARN\tmissing-og-type\t${r}`);
+        fail = 1;
+      }
       if (!text.includes("BreadcrumbList")) {
         console.log(`WARN\tmissing-breadcrumb\t${r}`);
         fail = 1;
@@ -109,6 +113,40 @@ for (const r of ROUTES) {
   } catch (e) {
     fail = 1;
     console.log(`ERR\tFAQ=n/a\t${r}\t${e.message}`);
+  }
+}
+
+
+// Related-guide hrefs on sample articles must 200
+const RELATED_SAMPLES = [
+  "/ut/salt-lake-city/plumber-google-maps-visibility",
+  "/id/boise/concrete-sealing-google-maps",
+  "/ut/ogden/roofer-google-review-replies",
+];
+for (const r of RELATED_SAMPLES) {
+  try {
+    const res = await fetch(BASE + r, { redirect: "follow" });
+    const text = await res.text();
+    const section = text.match(/More guides[\s\S]*?<\/ul>/i);
+    const hrefs = section
+      ? [...section[0].matchAll(/href=["']([^"']+)["']/g)].map((x) => x[1])
+      : [];
+    const uniq = [...new Set(hrefs)].filter((h) => h.startsWith("/"));
+    if (uniq.length === 0) {
+      console.log(`WARN\trelated-href-empty\t${r}`);
+      fail = 1;
+    }
+    for (const h of uniq) {
+      const rr = await fetch(BASE + h, { redirect: "follow" });
+      if (rr.status !== 200) {
+        console.log(`WARN\trelated-href\t${rr.status}\t${h}\tfrom ${r}`);
+        fail = 1;
+      }
+    }
+    console.log(`OK\trelated-hrefs\t${uniq.length}\tfrom ${r}`);
+  } catch (e) {
+    fail = 1;
+    console.log(`ERR\trelated-href\t${r}\t${e.message}`);
   }
 }
 
