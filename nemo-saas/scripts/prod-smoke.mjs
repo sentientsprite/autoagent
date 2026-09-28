@@ -178,6 +178,10 @@ for (const r of ROUTES) {
         console.log(`WARN\tmissing-og-locale\t${r}`);
         fail = 1;
       }
+      if (!text.includes("twitter:description")) {
+        console.log(`WARN\tmissing-twitter-description\t${r}`);
+        fail = 1;
+      }
       if (!/<h1[\s>]/i.test(text)) {
         console.log(`WARN\tmissing-h1\t${r}`);
         fail = 1;

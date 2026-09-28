@@ -51,6 +51,7 @@ describe("prod-smoke guard inventory", () => {
       "webmanifest-theme",
       "robots-https-sitemap",
       "portal-og",
+      "missing-twitter-description",
       "llms-product",
       "missing-og-locale",
     ]) {
