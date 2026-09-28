@@ -45,6 +45,9 @@ export default function OgdenRooferReviewRepliesPage() {
         title="Do Ogden / Weber County roofers lose Google Maps trust when they ignore reviews?"
         lead="Star ratings without owner replies look abandoned. Ask the same day the job finishes; reply within about two days. That beats a pile of old five-star reviews from 2019 with silence since."
         ctaHref={CTA}
+      
+        path="/ut/ogden/roofer-google-review-replies"
+        hubPath="/ut"
       >
         <PseoH2>Why replies matter</PseoH2>
         <PseoP>

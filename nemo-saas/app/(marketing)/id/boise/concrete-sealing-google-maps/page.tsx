@@ -45,6 +45,9 @@ export default function BoiseConcreteSealingMapsPage() {
         title="Why isn’t my concrete sealing business showing up on Google Maps in Boise?"
         lead="Completeness beats brand size in the Treasure Valley map pack. Right category, a phone that matches the truck, sealing and staining named the way people search, job photos from real Boise-area pours, and reviews that got a human reply."
         ctaHref={CTA}
+      
+        path="/id/boise/concrete-sealing-google-maps"
+        hubPath="/id"
       >
         <PseoH2>How it works</PseoH2>
         <PseoP>

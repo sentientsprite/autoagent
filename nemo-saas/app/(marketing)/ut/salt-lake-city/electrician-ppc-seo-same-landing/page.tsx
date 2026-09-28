@@ -45,6 +45,9 @@ export default function ElectricianPpcSeoSameLandingPage() {
         title="Should PPC and SEO for Salt Lake electricians share the same landing page?"
         lead="Yes for intent match. Ads into a weak listing or homepage still lose. One URL per search intent, the same phone as GBP, and fix the profile before you raise bids — no invented ROAS or CPC theater."
         ctaHref={CTA}
+      
+        path="/ut/salt-lake-city/electrician-ppc-seo-same-landing"
+        hubPath="/ut"
       >
         <PseoH2>Ads into a weak GBP = paid waste</PseoH2>
         <PseoP>

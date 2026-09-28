@@ -45,6 +45,9 @@ export default function OremHvacMapsVisibilityPage() {
         title="Why isn’t my heating and air shop showing up on Google Maps in Orem / Utah County?"
         lead="Completeness beats brand size on the Utah County map pack. Right category, a phone that matches the truck, AC repair and furnace work named how people search, real job photos, and reviews that got a human reply."
         ctaHref={CTA}
+      
+        path="/ut/orem/hvac-google-maps-visibility"
+        hubPath="/ut"
       >
         <PseoH2>How it works</PseoH2>
         <PseoP>

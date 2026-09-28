@@ -45,6 +45,9 @@ export default function HvacAiSeoPage() {
         title="Is AI SEO a second website for Provo HVAC shops — or clearer answers?"
         lead="AI SEO is not a second website. For Provo HVAC it is clearer answers on the pages and Google Business Profile you already need for Maps. Finish Maps first; then make those pages easy for an AI to cite without inventing."
         ctaHref={CTA}
+      
+        path="/ut/provo/hvac-ai-seo-vs-google-maps"
+        hubPath="/ut"
       >
         <PseoH2>Maps first</PseoH2>
         <PseoP>

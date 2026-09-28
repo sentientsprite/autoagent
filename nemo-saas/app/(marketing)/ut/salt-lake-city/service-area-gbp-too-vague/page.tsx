@@ -45,6 +45,9 @@ export default function ServiceAreaGbpTooVaguePage() {
         title="Mobile / service-area businesses: how a vague Google profile loses the Salt Lake map pack"
         lead="Claiming “whole Utah” with no real jobs in those cities looks like spam. Name the cities you actually drive, list the jobs people search, set the map pin honestly, and keep the Google Business Profile finished."
         ctaHref={CTA}
+      
+        path="/ut/salt-lake-city/service-area-gbp-too-vague"
+        hubPath="/ut"
       >
         <PseoH2>Storefront pin vs service-area</PseoH2>
         <PseoP>

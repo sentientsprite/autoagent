@@ -45,6 +45,9 @@ export default function PlumberMapsVisibilityPage() {
         title="Why bigger plumbing companies beat you on Salt Lake Google Maps"
         lead="Bigger Salt Lake plumbing companies do not own the map pack because of brand mythology. They win because the listing is finished: right category, a phone that matches the truck, services named the way people search, photos from real jobs, and reviews that got a human reply."
         ctaHref={CTA}
+      
+        path="/ut/salt-lake-city/plumber-google-maps-visibility"
+        hubPath="/ut"
       >
         <PseoH2>How it works</PseoH2>
         <PseoP>

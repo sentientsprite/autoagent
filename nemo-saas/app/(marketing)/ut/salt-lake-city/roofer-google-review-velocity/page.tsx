@@ -45,6 +45,9 @@ export default function RooferReviewVelocityPage() {
         title="Does one Google review a week beat a big burst for Salt Lake roofers?"
         lead="A steady drip of fresh Google reviews usually beats a one-time burst that goes quiet. Recency is the signal. Pair that with a complete profile — not a review campaign into an empty listing."
         ctaHref={CTA}
+      
+        path="/ut/salt-lake-city/roofer-google-review-velocity"
+        hubPath="/ut"
       >
         <PseoH2>Why review velocity matters</PseoH2>
         <PseoP>

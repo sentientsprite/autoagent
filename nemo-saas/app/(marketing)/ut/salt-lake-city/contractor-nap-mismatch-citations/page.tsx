@@ -45,6 +45,9 @@ export default function ContractorNapMismatchCitationsPage() {
         title="Why mismatched name, address, and phone kill your Salt Lake directory listings"
         lead="Online directories (Yelp, Apple Maps, Bing, industry sites) copy and amplify a wrong phone or address. Match the Name, Address, and Phone on your truck, your website footer, and your Google Business Profile first. Buy more directory listings second."
         ctaHref={CTA}
+      
+        path="/ut/salt-lake-city/contractor-nap-mismatch-citations"
+        hubPath="/ut"
       >
         <PseoH2>Plain words first</PseoH2>
         <PseoP>

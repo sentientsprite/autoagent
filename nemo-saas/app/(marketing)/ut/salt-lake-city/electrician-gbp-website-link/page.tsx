@@ -45,6 +45,9 @@ export default function ElectricianGbpWebsiteLinkPage() {
         title="Should my Salt Lake electrician Google profile link to the homepage or a service page?"
         lead="Service page. Homepage sells brand. The GBP website button should land on the job people searched — panel upgrade, EV charger, outdoor lighting — with Salt Lake proof and the same phone as the truck."
         ctaHref={CTA}
+      
+        path="/ut/salt-lake-city/electrician-gbp-website-link"
+        hubPath="/ut"
       >
         <PseoH2>Answer first</PseoH2>
         <PseoP>

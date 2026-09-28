@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
 
+import { PUBLIC_BASE } from "@/lib/seo/public-paths";
 import { hubH1, hubLead, hubMain, linkBtn, mutedNote } from "@/lib/portal-hub-styles";
 
 const sectionTitle: CSSProperties = {
@@ -32,9 +33,17 @@ export function PseoArticle(props: {
   children: ReactNode;
   ctaHref: string;
   ctaLabel?: string;
+  /** State hub path, e.g. `/ut` or `/id` */
+  hubPath?: string;
+  hubLabel?: string;
+  /** Canonical article path for BreadcrumbList JSON-LD */
+  path?: string;
 }) {
+  const hubPath = props.hubPath ?? "/ut";
+  const hubLabel = props.hubLabel ?? (hubPath === "/id" ? "Idaho guides" : "Utah guides");
   return (
     <main style={hubMain}>
+      {props.path ? <PseoBreadcrumbJsonLd path={props.path} title={props.title} hubPath={hubPath} hubLabel={hubLabel} /> : null}
       <p style={{ fontSize: 12, letterSpacing: "0.06em", textTransform: "uppercase", color: "#64748b", margin: "0 0 8px" }}>
         {props.eyebrow}
       </p>
@@ -51,8 +60,12 @@ export function PseoArticle(props: {
         </Link>
       </div>
       <p style={{ ...mutedNote, marginTop: 24 }}>
+        <Link href={hubPath} style={{ color: "#64748b" }}>
+          ← {hubLabel}
+        </Link>
+        {" · "}
         <Link href="/" style={{ color: "#64748b" }}>
-          ← Nemo Local
+          Nemo Local
         </Link>
       </p>
     </main>
@@ -94,6 +107,30 @@ export function PseoFaqJsonLd({ faqs }: { faqs: { q: string; a: string }[] }) {
         text: f.a,
       },
     })),
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+/** BreadcrumbList: Home → state hub → article */
+export function PseoBreadcrumbJsonLd(props: {
+  path: string;
+  title: string;
+  hubPath: string;
+  hubLabel: string;
+}) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: PUBLIC_BASE + "/" },
+      { "@type": "ListItem", position: 2, name: props.hubLabel, item: PUBLIC_BASE + props.hubPath },
+      { "@type": "ListItem", position: 3, name: props.title, item: PUBLIC_BASE + props.path },
+    ],
   };
   return (
     <script
