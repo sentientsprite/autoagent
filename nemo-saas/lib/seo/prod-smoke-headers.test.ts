@@ -12,4 +12,12 @@ describe("prod-smoke REQUIRED_HEADERS", () => {
     expect(smoke.includes("DENY")).toBe(true);
     expect(smoke.includes("referrer-policy")).toBe(true);
   });
+
+  it("REQUIRED_HEADERS length is three", () => {
+    const m = smoke.match(/const REQUIRED_HEADERS = \[([\s\S]*?)\];/);
+    expect(m).toBeTruthy();
+    const count = (m![1].match(/\[/g) || []).length;
+    expect(count).toBe(3);
+  });
+
 });

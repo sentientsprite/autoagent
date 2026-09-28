@@ -55,4 +55,10 @@ describe("product pages metadata", () => {
     expect(/\$\d+\/mo/.test(src)).toBe(true);
   });
 
+
+  it("Beacon From $129/mo priceLine", () => {
+    const src = readFileSync(join(root, "beacon", "page.tsx"), "utf8");
+    expect(src.includes("From $129/mo")).toBe(true);
+  });
+
 });

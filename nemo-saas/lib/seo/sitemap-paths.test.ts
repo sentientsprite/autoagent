@@ -156,4 +156,10 @@ describe("sitemap article paths", () => {
     expect(PUBLIC_ARTICLE_PATHS).toContain("/ut/salt-lake-city/service-area-gbp-too-vague");
   });
 
+
+  it("exactly six Salt Lake City articles overnight", () => {
+    const slc = PUBLIC_ARTICLE_PATHS.filter((p) => p.includes("/salt-lake-city/"));
+    expect(slc.length).toBe(6);
+  });
+
 });
