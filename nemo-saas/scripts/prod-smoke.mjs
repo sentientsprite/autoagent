@@ -79,6 +79,11 @@ for (const r of ROUTES) {
     if (depth >= 3 && (r.startsWith("/ut/") || r.startsWith("/id/"))) {
       faq = text.includes("FAQPage") ? "yes" : "NO";
       if (faq === "NO") fail = 1;
+      const faqQs = (text.match(/"@type":\s*"Question"/g) || []).length;
+      if (faqQs < 2) {
+        console.log(`WARN\tfaq-count\t${faqQs}\t${r}`);
+        fail = 1;
+      }
       const robotsNoindex = /<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(text)
         || /<meta[^>]+content=["'][^"']*noindex[^"']*["'][^>]+name=["']robots["']/i.test(text);
       if (robotsNoindex) {
@@ -94,6 +99,15 @@ for (const r of ROUTES) {
       if (!text.includes("More guides")) {
         console.log(`WARN\tmissing-related\t${r}`);
         fail = 1;
+      }
+      // related section should not only self-link
+      const relSec = text.match(/More guides[\s\S]*?<\/ul>/i);
+      if (relSec) {
+        const hrefs = [...relSec[0].matchAll(/href=["']([^"']+)["']/g)].map((x) => x[1]);
+        if (hrefs.length > 0 && hrefs.every((h) => h === r)) {
+          console.log(`WARN\trelated-self\t${r}`);
+          fail = 1;
+        }
       }
       if (!text.includes('rel="canonical"') && !text.includes("rel='canonical'")) {
         console.log(`WARN\tmissing-canonical\t${r}`);
