@@ -12,8 +12,9 @@ describe("public-paths exports", () => {
   });
 
   it("sitemap paths include hubs portal home and all articles", () => {
+    const sitemap = PUBLIC_SITEMAP_PATHS as readonly string[];
     for (const p of ["/", "/portal", "/ut", "/id", ...PUBLIC_ARTICLE_PATHS]) {
-      expect(PUBLIC_SITEMAP_PATHS.includes(p), p).toBe(true);
+      expect(sitemap.includes(p), p).toBe(true);
     }
   });
 
