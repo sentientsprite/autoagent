@@ -65,6 +65,8 @@ describe("prod-smoke guard inventory", () => {
       "webmanifest-lang",
       "home-indexable",
       "llms-states",
+      "humans-site",
+      "security-canonical-host",
       "product-indexable",
       "portal-indexable",
       "home-noindex",

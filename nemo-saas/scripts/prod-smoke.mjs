@@ -332,6 +332,12 @@ try {
   } else {
     console.log(`OK\tsecurity-contact-scheme\tmailto/https`);
   }
+  if (!/Canonical:.*nemo-app-v-1\.vercel\.app/i.test(body)) {
+    console.log(`WARN\tsecurity-canonical-host\tmissing host`);
+    fail = 1;
+  } else {
+    console.log(`OK\tsecurity-canonical-host\tpresent`);
+  }
 } catch (e) {
   fail = 1;
   console.log(`ERR\tsecurity-ctype\t${e.message}`);
@@ -616,6 +622,12 @@ try {
     fail = 1;
   } else {
     console.log(`OK\thumans-next\tNext.js present`);
+  }
+  if (!txt.includes("SITE")) {
+    console.log(`WARN\thumans-site\tmissing SITE`);
+    fail = 1;
+  } else {
+    console.log(`OK\thumans-site\tSITE present`);
   }
 } catch (e) {
   fail = 1;
