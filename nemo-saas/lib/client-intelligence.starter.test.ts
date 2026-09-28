@@ -12,13 +12,15 @@ const site = {
   city: "Boulder",
   region: "CO",
   postal_code: "80301",
+  country: "US",
   phone: "303-555-0100",
   primary_category: "plumber",
   service_area_zips: ["80301", "80302"],
   google_maps_url: null,
+  playbook_md: null,
   created_at: "2026-01-01T00:00:00Z",
   updated_at: "2026-01-01T00:00:00Z",
-} as Site;
+} as unknown as Site;
 
 describe("renderStarterClientMd", () => {
   it("includes business name, category, and SEO/GEO baseline section", () => {
