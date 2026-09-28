@@ -43,6 +43,8 @@ describe("prod-smoke guard inventory", () => {
       "hub-og",
       "missing-og-description",
       "portal-h1",
+      "product-meta-desc",
+      "missing-twitter-title",
     ]) {
       expect(smoke.includes(needle), needle).toBe(true);
     }

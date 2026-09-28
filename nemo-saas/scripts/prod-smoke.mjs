@@ -158,6 +158,10 @@ for (const r of ROUTES) {
         console.log(`WARN\tmissing-og-description\t${r}`);
         fail = 1;
       }
+      if (!text.includes("twitter:title")) {
+        console.log(`WARN\tmissing-twitter-title\t${r}`);
+        fail = 1;
+      }
       if (!/<h1[\s>]/i.test(text)) {
         console.log(`WARN\tmissing-h1\t${r}`);
         fail = 1;
@@ -293,6 +297,12 @@ for (const r of ["/products/beacon", "/products/bloom", "/products/echo"]) {
       fail = 1;
     } else {
       console.log(`OK\tproduct-lvs-cta\t${r}`);
+    }
+    if (!/<meta[^>]+name=["']description["']/i.test(text)) {
+      console.log(`WARN\tproduct-meta-desc\t${r}`);
+      fail = 1;
+    } else {
+      console.log(`OK\tproduct-meta-desc\t${r}`);
     }
   } catch (e) {
     fail = 1;
