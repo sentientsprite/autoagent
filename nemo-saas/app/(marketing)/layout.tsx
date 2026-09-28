@@ -10,8 +10,8 @@ const navLink: React.CSSProperties = {
   fontWeight: 500,
 };
 
-function OrganizationJsonLd() {
-  const data = {
+function SiteJsonLd() {
+  const org = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Nemo Local",
@@ -19,18 +19,25 @@ function OrganizationJsonLd() {
     description:
       "Local Visibility Score and Maps-first guides for Utah and Idaho home-service businesses.",
   };
+  const site = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Nemo Local",
+    url: PUBLIC_BASE + "/",
+    publisher: { "@type": "Organization", name: "Nemo Local" },
+  };
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-    />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(org) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(site) }} />
+    </>
   );
 }
 
 export default function MarketingLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      <OrganizationJsonLd />
+      <SiteJsonLd />
       <header
         style={{
           fontFamily: "system-ui, sans-serif",
