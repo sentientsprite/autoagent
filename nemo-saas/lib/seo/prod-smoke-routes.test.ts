@@ -18,4 +18,18 @@ describe("prod-smoke ROUTES coverage", () => {
       expect(smoke.includes(`"${path}"`) || smoke.includes(`'${path}'`), path).toBe(true);
     }
   });
+
+  it("ROUTES includes static SEO assets", () => {
+    for (const path of [
+      "/robots.txt",
+      "/sitemap.xml",
+      "/llms.txt",
+      "/humans.txt",
+      "/site.webmanifest",
+      "/.well-known/security.txt",
+    ]) {
+      expect(smoke.includes(`"${path}"`), path).toBe(true);
+    }
+  });
+
 });

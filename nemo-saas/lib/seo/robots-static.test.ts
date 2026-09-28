@@ -24,4 +24,11 @@ describe("public SEO static assets", () => {
     expect(src.includes("userAgent") || src.includes("User-agent")).toBe(true);
   });
 
+
+  it("robots declares host from PUBLIC_BASE", () => {
+    const src = readFileSync(join(root, "app/robots.ts"), "utf8");
+    expect(src.includes("PUBLIC_BASE")).toBe(true);
+    expect(src.includes("host")).toBe(true);
+  });
+
 });
