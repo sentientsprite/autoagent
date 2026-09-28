@@ -73,6 +73,9 @@ while IFS= read -r tests_dir; do
   if [[ -f "$ROOT/tasks/_shared/lvs_apply_rules.py" ]]; then
     cp -f "$ROOT/tasks/_shared/lvs_apply_rules.py" "$tests_dir/_shared/lvs_apply_rules.py"
   fi
+  if [[ -f "$ROOT/tasks/_shared/gsc_apply_rules.py" ]]; then
+    cp -f "$ROOT/tasks/_shared/gsc_apply_rules.py" "$tests_dir/_shared/gsc_apply_rules.py"
+  fi
 done < <(find "$ROOT/tasks" -type d -name tests)
 
 mkdir -p jobs
