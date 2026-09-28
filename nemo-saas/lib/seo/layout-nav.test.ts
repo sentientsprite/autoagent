@@ -18,4 +18,10 @@ describe("marketing primary nav", () => {
       expect(layout.includes(`href="${href}"`) || layout.includes(`href={'${href}'}`), href).toBe(true);
     }
   });
+
+  it("labels Utah and Idaho guide links", () => {
+    expect(layout.includes("Utah guides")).toBe(true);
+    expect(layout.includes("Idaho guides")).toBe(true);
+  });
+
 });

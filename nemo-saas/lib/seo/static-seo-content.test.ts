@@ -56,4 +56,9 @@ describe("static SEO content files", () => {
     expect(/Builder:/i.test(humans)).toBe(true);
   });
 
+
+  it("llms.txt has Site section", () => {
+    expect(llms.includes("## Site")).toBe(true);
+  });
+
 });

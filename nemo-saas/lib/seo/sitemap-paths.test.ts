@@ -69,4 +69,10 @@ describe("sitemap article paths", () => {
     ]);
   });
 
+
+  it("includes Boise and Ogden articles", () => {
+    expect(PUBLIC_ARTICLE_PATHS.some((p) => p.includes("/boise/"))).toBe(true);
+    expect(PUBLIC_ARTICLE_PATHS.some((p) => p.includes("/ogden/"))).toBe(true);
+  });
+
 });
