@@ -96,6 +96,13 @@ async function main() {
       : "UNKNOWN";
   console.log(`STRIPE_SECRET_KEY: SET (${modeHint} prefix detected — value not printed)`);
 
+  // Dayshift hardening: NEVER provision against LIVE unless Owner explicitly opts in.
+  if (modeHint === "LIVE" && process.env.ALLOW_STRIPE_LIVE !== "1") {
+    console.error("refuse: LIVE Stripe key detected. Dayshift/bot must not provision LIVE.");
+    console.error("Owner override only: ALLOW_STRIPE_LIVE=1 (explicit). Prefer sk_test_.");
+    process.exit(3);
+  }
+
   let Stripe;
   try {
     const require = createRequire(path.join(ROOT, "package.json"));
