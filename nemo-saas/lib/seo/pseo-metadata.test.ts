@@ -31,6 +31,15 @@ describe("pseoMetadata", () => {
     });
     expect((m.twitter as { title?: string }).title).toBe("T | Nemo Local");
   });
+
+  it("openGraph siteName is Nemo Local", () => {
+    const m = pseoMetadata({
+      title: "T | Nemo Local",
+      description: "D".repeat(80),
+      path: "/ut/demo",
+    });
+    expect((m.openGraph as { siteName?: string }).siteName).toBe("Nemo Local");
+  });
 });
 
 describe("hubMetadata", () => {
