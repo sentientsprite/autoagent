@@ -2,6 +2,8 @@
  * Money Farm P0 — founding SaaS pricing + location caps.
  * Maps founding Stripe price → existing plan_tier `local_autopilot`
  * (no DB enum migration). Live Stripe requires Owner spend GATE.
+ * Dayshift: lib/billing/stripe.ts refuses sk_live_/rk_live_ unless
+ * ALLOW_STRIPE_LIVE=1 — checkout falls back to mock.stripe.local.
  */
 import type { PlanTier } from "@/lib/db/types";
 import {
