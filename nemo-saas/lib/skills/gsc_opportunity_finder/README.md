@@ -68,3 +68,15 @@ finds those automatically.
 
 - Deterministic: < 1s on 5k rows.
 - Narrative: ~2s per page; capped at top 10 pages = 1 batched LLM call.
+
+## Harbor SkillEval
+
+Deterministic Harbor path (local models):
+
+```bash
+python3 /task/_shared/gsc_apply_rules.py
+# reads /task/files/input.json → writes /task/output.json
+```
+
+Host source: `tasks/_shared/gsc_apply_rules.py` (vendored into each case `tests/_shared` by `scripts/run-skilleval.sh`). Agent `SYSTEM_PROMPT` points `gsc_opportunity_finder` tasks at this script (above FIXED ADAPTER BOUNDARY).
+

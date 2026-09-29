@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+
+import { hubMetadata } from "@/lib/seo/pseo-metadata";
 import Link from "next/link";
 
 import { growthCoachInstallLabel, growthCoachInstallUrl } from "@/lib/access-directory";
@@ -15,11 +17,14 @@ import {
   mutedNote,
 } from "@/lib/portal-hub-styles";
 
-export const metadata: Metadata = {
-  title: "Customer portal | Nemo Local",
+import { SalesPerksSection } from "../_components/SalesPerksSection";
+
+export const metadata: Metadata = hubMetadata({
+  title: "Customer portal & tools | Nemo Local",
   description:
     "Install GrowthCoach, explore Beacon / Echo / Bloom, and run the close-ready Local Visibility Score with live Places.",
-};
+  path: "/portal",
+});
 
 export default function CustomerPortalPage() {
   const installUrl = growthCoachInstallUrl();
@@ -90,7 +95,46 @@ export default function CustomerPortalPage() {
             Get the full score →
           </Link>
         </article>
+
+        <article style={cardShell()}>
+          <p style={badge}>Money Farm · HQ</p>
+          <h2 style={cardTitle}>HQ locations (Money Farm)</h2>
+          <p style={cardBody}>
+            Thin HQ stub: plan location cap, site count, and locations for the seed org. Offline demo via{" "}
+            <code style={{ fontSize: 12 }}>?fixture=1</code> when DB is down. Live Founding billing is paused until
+            entity/LLC setup — use the free Local Visibility Score for demos today.
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 12 }}>
+            <Link
+              href="/hq/locations?orgId=00000000-0000-0000-0000-000000000001&fixture=1&plan=local_autopilot"
+              style={linkBtn}
+            >
+              Open HQ locations →
+            </Link>
+            <Link href="/" style={linkBtn}>
+              Run free LVS →
+            </Link>
+          </div>
+        </article>
       </section>
+
+      <SalesPerksSection />
+
+      <p style={mutedNote}>
+        Public SEO:{" "}
+        <Link href="/sitemap.xml" style={{ color: "#334155" }}>
+          sitemap.xml
+        </Link>
+        {" · "}
+        <Link href="/robots.txt" style={{ color: "#334155" }}>
+          robots.txt
+        </Link>
+        {" · "}
+        <Link href="/llms.txt" style={{ color: "#334155" }}>
+          llms.txt
+        </Link>
+        .
+      </p>
 
       <p style={mutedNote}>
         <strong>Ops note:</strong> Extension install URL uses{" "}
@@ -99,7 +143,47 @@ export default function CustomerPortalPage() {
         <Link href="/team" style={{ color: "#334155" }}>
           /team
         </Link>{" "}
-        (not indexed).
+        (not indexed).         Utah/ID pSEO:{" "}
+        <Link href="/ut/salt-lake-city/plumber-google-maps-visibility" style={{ color: "#334155" }}>
+          plumber Maps
+        </Link>
+        {" · "}
+        <Link href="/ut/provo/hvac-ai-seo-vs-google-maps" style={{ color: "#334155" }}>
+          Provo HVAC GEO
+        </Link>
+        {" · "}
+        <Link href="/ut/salt-lake-city/roofer-google-review-velocity" style={{ color: "#334155" }}>
+          roofer reviews
+        </Link>
+        {" · "}
+        <Link href="/ut/salt-lake-city/electrician-gbp-website-link" style={{ color: "#334155" }}>
+          electrician GBP link
+        </Link>
+        {" · "}
+        <Link href="/ut/salt-lake-city/contractor-nap-mismatch-citations" style={{ color: "#334155" }}>
+          name/address/phone match
+        </Link>
+        {" · "}
+        <Link href="/ut/orem/hvac-google-maps-visibility" style={{ color: "#334155" }}>
+          Orem HVAC Maps
+        </Link>
+        {" · "}
+        <Link href="/id/boise/concrete-sealing-google-maps" style={{ color: "#334155" }}>
+          Boise concrete
+        </Link>
+        {" · "}
+        <Link href="/ut/salt-lake-city/electrician-ppc-seo-same-landing" style={{ color: "#334155" }}>
+          electrician paid+SEO landing
+        </Link>
+        {" · "}
+        <Link href="/ut/salt-lake-city/service-area-gbp-too-vague" style={{ color: "#334155" }}>
+          vague service-area profile
+        </Link>
+        {" · "}
+        <Link href="/ut/ogden/roofer-google-review-replies" style={{ color: "#334155" }}>
+          Ogden review replies
+        </Link>
+        .
       </p>
     </main>
   );

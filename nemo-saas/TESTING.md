@@ -354,3 +354,39 @@ jobs:
 
 Run `lint-typecheck` and `unit` on every push. Run `workflow-smoke` on PRs.
 Run `skilleval` nightly + on release branches.
+
+## SkillEval overnight (2026-09-28)
+
+See `~/Projects/build-assistant/workflows/nemo-skilleval-overnight-summary-2026-09-28.md`.
+
+| Case | Mean (qwen3.5:9b) |
+|------|-------------------|
+| LVS case_02 | 1.000 |
+| LVS case_03 | 1.000 |
+| GSC case_01 | **1.000** (dayshift; was 0.000 overnight — `gsc_apply_rules.py`) |
+| GA4 case_01 | 1.000 |
+| LVS case_01 | skipped (ACK; prior hill-climb 1.000) |
+
+## SkillEval dayshift (2026-09-28)
+
+See `~/Projects/build-assistant/workflows/nemo-skilleval-gsc01-dayshift-2026-09-28.md`.
+
+- ONE fix: `tasks/_shared/gsc_apply_rules.py` + SYSTEM_PROMPT nudge (above FIXED ADAPTER BOUNDARY)
+- ONE Harbor retry `gsc_01_dayshift` @ `qwen3.5:9b` → mean **1.000**
+- Vitest: `lib/skills/gsc_opportunity_finder/index.test.ts`
+
+## Production smoke (overnight helper)
+
+Run: npm run smoke:prod
+
+Or: node scripts/prod-smoke.mjs https://nemo-app-v-1.vercel.app
+
+Overnight smoke guards (2026-09-28):
+- HTTP 200 on hubs, all 10 pSEO articles, robots/sitemap, llms/humans/webmanifest, security.txt
+- Security headers on /ut: X-Content-Type-Options nosniff, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy
+- Articles: FAQPage, og:title, canonical, twitter:card, BreadcrumbList, Article JSON-LD, related-guide footer ("More guides")
+- Articles must NOT be noindex
+- Private routes (/team, /billing/success, /hq/locations) should be noindex (robots.txt also disallows /api/ /team /hq/ /billing/)
+
+Tip at doc update: 3fc4fb8 — dayshift H162-H165 SDK/hubs/final-draft/floor370; tests 379.
+

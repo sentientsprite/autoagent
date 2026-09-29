@@ -13,7 +13,7 @@ export function LvsProcessSection() {
         <p style={body}>
           Built for warmer leads and sales demos. You get a graded scorecard, ranked action
           checklists, and a PDF by email. We look up your Google Business Profile with live
-          Places data when your listing matches name + ZIP.
+          Places data when your listing matches name + city.
         </p>
         <AuditFlowDiagram />
       </div>
@@ -33,8 +33,8 @@ export function LvsProcessSection() {
 
 function AuditFlowDiagram() {
   const steps = [
-    { n: "1", t: "Name + ZIP", d: "Optional website. Email required for the PDF." },
-    { n: "2", t: "Google lookup", d: "We search Places for your Business Profile." },
+    { n: "1", t: "Name + city", d: "Optional state + website. Email required for the PDF." },
+    { n: "2", t: "Google lookup", d: "Places search biased to a 25-mile circle around your city." },
     { n: "3", t: "Score + checklist", d: "Grade, ranked fixes, expandable how-tos." },
     { n: "4", t: "PDF in inbox", d: "Report emailed. Sales can follow up from there." },
   ];

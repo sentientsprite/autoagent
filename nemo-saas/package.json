@@ -2,7 +2,7 @@
   "name": "nemo-saas",
   "version": "0.1.0",
   "private": true,
-  "description": "Nemo Local — SMB marketing AI, distribution-led, agent-native (v2 plan)",
+  "description": "Nemo Local \u2014 SMB marketing AI, distribution-led, agent-native (v2 plan)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -14,7 +14,8 @@
     "db:push": "supabase db push",
     "test": "vitest run",
     "test:watch": "vitest",
-    "screenshots:products": "node scripts/capture-product-screenshots.mjs"
+    "screenshots:products": "node scripts/capture-product-screenshots.mjs",
+    "smoke:prod": "node scripts/prod-smoke.mjs"
   },
   "dependencies": {
     "next": "^15.0.0",

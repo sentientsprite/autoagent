@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
+import { SalesPerksSection } from "./_components/SalesPerksSection";
 import { LvsProcessSection } from "./LvsProcessSection";
 import { OwnedDemandPanel } from "./OwnedDemandPanel";
 
@@ -131,6 +132,15 @@ export default function HomeClient() {
   const [result, setResult] = useState<AuditResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const prefill = {
+    businessName: searchParams.get("businessName")?.trim() || "",
+    city: searchParams.get("city")?.trim() || "",
+    region: searchParams.get("region")?.trim() || searchParams.get("state")?.trim() || "",
+    email: searchParams.get("email")?.trim() || "",
+    websiteUrl: searchParams.get("websiteUrl")?.trim() || "",
+    googleMapsUrl: searchParams.get("googleMapsUrl")?.trim() || "",
+  };
+
   useEffect(() => {
     const demo = searchParams.get("demo");
     if (demo === "post-submit") {
@@ -153,8 +163,10 @@ export default function HomeClient() {
     const body = {
       email: String(fd.get("email")),
       businessName: String(fd.get("businessName")),
-      zip: String(fd.get("zip")),
+      city: String(fd.get("city")),
+      region: String(fd.get("region") || "") || undefined,
       websiteUrl: String(fd.get("websiteUrl") || "") || undefined,
+      googleMapsUrl: String(fd.get("googleMapsUrl") || "") || undefined,
     };
     try {
       const res = await fetch("/api/lvs", {
@@ -205,7 +217,7 @@ export default function HomeClient() {
         <p style={subStyle}>
           {onLeadSources
             ? "Score every lead source from 0–14. See rented vs mixed vs owned demand, run booked-job math, and follow the replacement checklist — one source at a time."
-            : "For warmer leads and sales demos. Name + ZIP → live GBP lookup → graded scorecard + ranked checklist → PDF in your inbox. Built when someone asks to see the full score."}
+            : "For warmer leads and sales demos. Name + city → live Google listing lookup → graded scorecard + ranked checklist → PDF in your inbox. Built when someone asks to see the full score."}
         </p>
 
         <div style={tabRow} role="tablist" aria-label="Nemo Local tools">
@@ -259,21 +271,42 @@ export default function HomeClient() {
             {!result ? (
               <form onSubmit={onSubmit} style={cardStyle}>
                 <div style={fieldGrid}>
-                  <Field name="businessName" placeholder="Business name" required />
                   <Field
-                    name="zip"
-                    placeholder="ZIP (e.g. 84088)"
+                    name="businessName"
+                    placeholder="Business name"
                     required
-                    pattern="\d{5}"
-                    inputMode="numeric"
+                    defaultValue={prefill.businessName}
+                  />
+                  <Field
+                    name="city"
+                    placeholder="City (e.g. Salt Lake City)"
+                    required
+                    defaultValue={prefill.city}
                   />
                 </div>
-                <Field name="websiteUrl" placeholder="Website (optional)" type="url" />
+                <Field
+                  name="region"
+                  placeholder="State (e.g. UT) — optional"
+                  defaultValue={prefill.region}
+                />
+                <Field
+                  name="websiteUrl"
+                  placeholder="Website (optional)"
+                  type="url"
+                  defaultValue={prefill.websiteUrl}
+                />
+                <Field
+                  name="googleMapsUrl"
+                  placeholder="Google Maps link (optional — helps service-area contractors)"
+                  type="url"
+                  defaultValue={prefill.googleMapsUrl}
+                />
                 <Field
                   name="email"
                   placeholder="Your email — we send the PDF here"
                   required
                   type="email"
+                  defaultValue={prefill.email}
                 />
                 <button
                   type="submit"
@@ -299,6 +332,7 @@ export default function HomeClient() {
             ) : null}
 
             {!result ? <LvsProcessSection /> : null}
+            {!result ? <SalesPerksSection /> : null}
           </>
         )}
       </section>

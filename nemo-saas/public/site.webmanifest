@@ -1,0 +1,10 @@
+{
+  "name": "Nemo Local",
+  "short_name": "Nemo",
+  "description": "Local Visibility Score and Utah/Idaho Maps-first guides",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "lang": "en-US"
+}

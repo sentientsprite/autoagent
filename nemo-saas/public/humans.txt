@@ -1,0 +1,8 @@
+/* TEAM */
+Builder: Prana / sentientsprite
+Site: https://nemo-app-v-1.vercel.app/
+
+/* SITE */
+Standards: HTML5, Next.js App Router
+Components: Local Visibility Score, Utah/Idaho pSEO guides
+Doctype: HTML5

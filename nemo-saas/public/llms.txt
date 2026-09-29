@@ -1,0 +1,27 @@
+# Nemo Local
+> Local Visibility Score and Utah/Idaho Maps-first guides for home-service SMBs.
+
+## Site
+- Home: https://nemo-app-v-1.vercel.app/
+- Portal: https://nemo-app-v-1.vercel.app/portal
+- Utah guides: https://nemo-app-v-1.vercel.app/ut
+- Idaho guides: https://nemo-app-v-1.vercel.app/id
+- Sitemap: https://nemo-app-v-1.vercel.app/sitemap.xml
+
+## Product
+Nemo Local helps local service businesses understand Google Business Profile gaps with a free Local Visibility Score. Guides focus on Maps completeness first, then GEO citation readiness. No unsupervised profile edits.
+
+## Guides
+- https://nemo-app-v-1.vercel.app/ut/provo/hvac-ai-seo-vs-google-maps
+- https://nemo-app-v-1.vercel.app/id/boise/concrete-sealing-google-maps
+- https://nemo-app-v-1.vercel.app/ut/salt-lake-city/electrician-gbp-website-link
+- https://nemo-app-v-1.vercel.app/ut/salt-lake-city/plumber-google-maps-visibility
+- https://nemo-app-v-1.vercel.app/ut/salt-lake-city/roofer-google-review-velocity
+- https://nemo-app-v-1.vercel.app/ut/salt-lake-city/electrician-ppc-seo-same-landing
+- https://nemo-app-v-1.vercel.app/ut/salt-lake-city/contractor-nap-mismatch-citations
+- https://nemo-app-v-1.vercel.app/ut/orem/hvac-google-maps-visibility
+- https://nemo-app-v-1.vercel.app/ut/salt-lake-city/service-area-gbp-too-vague
+- https://nemo-app-v-1.vercel.app/ut/ogden/roofer-google-review-replies
+
+## Optional
+- Beacon / Echo / Bloom product pages under /products/

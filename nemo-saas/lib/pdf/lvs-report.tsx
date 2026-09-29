@@ -130,12 +130,15 @@ const s = StyleSheet.create({
 
 export async function renderLvsReportPdf(args: {
   businessName: string;
-  zip: string;
+  /** City[, State] — preferred display location. */
+  location?: string;
+  zip?: string;
   deterministic: DeterministicOutput;
   narrative?: NarrativeOutput;
   generatedAt: Date;
 }): Promise<Buffer> {
-  const { businessName, zip, deterministic, narrative, generatedAt } = args;
+  const { businessName, location, zip, deterministic, narrative, generatedAt } = args;
+  const placeLine = location?.trim() || (zip ? `ZIP ${zip}` : "Local market");
   const gradeColor = GRADE_COLOR[deterministic.grade] ?? MUTED;
   const gradeLabel = GRADE_LABEL[deterministic.grade] ?? "";
   const criticalCount = deterministic.insights.filter((i) => i.severity === "critical").length;
@@ -152,7 +155,7 @@ export async function renderLvsReportPdf(args: {
         </View>
 
         <Text style={s.h1}>{businessName}</Text>
-        <Text style={s.sub}>Local visibility audit · ZIP {zip}</Text>
+        <Text style={s.sub}>Local visibility audit · {placeLine}</Text>
 
         <View style={s.scoreCard}>
           <View style={[s.gradeBadge, { borderColor: gradeColor }]}>

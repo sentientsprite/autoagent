@@ -113,12 +113,84 @@ const CHECKLISTS: Record<string, (insight: Insight) => ActionChecklistStep[]> = 
     { id: "4", label: "Don’t delete bad reviews or argue in public" },
     { id: "5", label: "Re-check average rating monthly until you’re consistently above 4.2" },
   ],
+  "gbp.local_presence_ok": (insight) => [
+    {
+      id: "1",
+      label: `You’re inside the ${insight.evidence?.radiusMi ?? 25}-mile local market — keep the pin + service area honest`,
+    },
+    { id: "2", label: "Post one Google update naming a nearby city you actually serve this week" },
+    { id: "3", label: "Add 3 job photos tagged to recent work in that city" },
+  ],
+  "gbp.outside_local_radius": (insight) => [
+    {
+      id: "1",
+      label: `Confirm the city you want to win (${insight.evidence?.city ?? "your city"}) matches where the truck works`,
+    },
+    { id: "2", label: "In GBP → Info, set service area / location pin for that city (not a far warehouse)" },
+    { id: "3", label: "Re-run this audit with the city name locals search" },
+    { id: "4", label: "If you serve multiple cities, pick the primary market first — don’t dilute the pin" },
+  ],
+  "gbp.local_competition": (insight) => [
+    {
+      id: "1",
+      label: `Open Maps and skim the ${insight.evidence?.competitorCount ?? "nearby"} peers in your category`,
+    },
+    { id: "2", label: "Match or beat them on category accuracy, photo count, and review replies" },
+    { id: "3", label: "Skip buying random citations — fix the listing first" },
+  ],
+  "gbp.thin_local_category": () => [
+    { id: "1", label: "Open GBP → Category and set the most specific primary type customers search" },
+    { id: "2", label: "Add secondary categories only if you really offer them" },
+    { id: "3", label: "Re-run the audit — peers should appear once the type is right" },
+  ],
+  "gbp.behind_local_ratings": () => [
+    { id: "1", label: "Reply to every open review this week" },
+    { id: "2", label: "Ask three recent happy customers for a Google review today" },
+    { id: "3", label: "Fix any operational complaints that keep repeating" },
+  ],
+  "gbp.behind_local_review_volume": () => [
+    { id: "1", label: "Create a one-tap Google review link from GBP" },
+    { id: "2", label: "Text it after every completed job for two weeks" },
+    { id: "3", label: "Stop when you clear the local peer median" },
+  ],
   "nap.inconsistent": () => [
     { id: "1", label: "Write down the canonical Name, Address, Phone you’ll use everywhere" },
     { id: "2", label: "Update Google Business Profile first — that is the source of truth" },
     { id: "3", label: "Fix Yelp, BBB, Apple Maps, and your website footer to match exactly" },
     { id: "4", label: "Same punctuation and suite numbers — “St” vs “Street” matters" },
     { id: "5", label: "Re-run this audit in 2 weeks to confirm directories caught up" },
+  ],
+  "schema.localbusiness_missing": () => [
+    { id: "1", label: "Copy your exact GBP name, phone, and address (or areaServed cities) into a notepad" },
+    { id: "2", label: "Add JSON-LD LocalBusiness (or ProfessionalService) on the homepage + main service page" },
+    { id: "3", label: "Match telephone / url / address fields to GBP character-for-character — no tracking numbers in schema" },
+    { id: "4", label: "Validate with Google’s Rich Results Test, then re-run this audit" },
+  ],
+  "schema.localbusiness_ok": () => [
+    { id: "1", label: "Re-check schema NAP whenever you change phone or move — keep it identical to GBP" },
+  ],
+  "kw.onpage_coverage_low": () => [
+    { id: "1", label: "Open your CRM keyword sheet (topic → key_phrase) and pick the top 5 service topics" },
+    { id: "2", label: "For each topic, ship or expand an intent-focused service page (800–1,500 words)" },
+    { id: "3", label: "Use H2s that match the CRM phrases naturally — no stuffing" },
+    { id: "4", label: "Link GBP primary website to your best service page, not only the homepage" },
+    { id: "5", label: "Re-run LVS with the same keyword pack to confirm coverage rose" },
+  ],
+  "kw.onpage_coverage_thin": () => [
+    { id: "1", label: "List the missing CRM phrases from this audit" },
+    { id: "2", label: "Add one city+service section or FAQ that covers the top missing phrases" },
+    { id: "3", label: "Update internal links from homepage → that service page" },
+  ],
+  "kw.onpage_coverage_ok": () => [
+    { id: "1", label: "Keep CRM topics and on-page copy in sync when you add cities" },
+  ],
+  "kw.missing_phrases": () => [
+    { id: "1", label: "Pick the first 3 missing phrases and add them as H2s or FAQ answers" },
+    { id: "2", label: "Publish the page, then re-audit" },
+  ],
+  "kw.site_fetch_failed": () => [
+    { id: "1", label: "Confirm the website URL loads in a browser" },
+    { id: "2", label: "Re-run the audit; keyword check needs a reachable site" },
   ],
 };
 

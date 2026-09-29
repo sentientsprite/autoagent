@@ -1,0 +1,94 @@
+import type { Metadata } from "next";
+
+import { pseoMetadata } from "@/lib/seo/pseo-metadata";
+
+import {
+  PseoArticle,
+  PseoFaq,
+  PseoFaqJsonLd,
+  PseoH2,
+  PseoP,
+  PseoUl,
+} from "../../../_components/PseoArticle";
+
+export const metadata: Metadata = pseoMetadata({
+  title: "Does one Google review a week beat a burst? Salt Lake roofers | Nemo Local",
+  description:
+    "Review velocity vs historic star piles for Salt Lake roofers. Steady drip, replies, complete GBP — then GEO.",
+  path: "/ut/salt-lake-city/roofer-google-review-velocity",
+});
+
+const CTA =
+  "/?utm_source=pseo&utm_medium=web&utm_campaign=roofer-google-review-velocity&utm_content=google-maps-visibility";
+
+const FAQS = [
+  {
+    q: "Does one review a week beat a burst?",
+    a: "A steady drip usually outlasts a one-time pile that goes quiet. Burst campaigns without an ongoing ask leave the profile looking frozen again.",
+  },
+  {
+    q: "Do citations fix review velocity?",
+    a: "No. Citations help NAP consistency. Velocity comes from finished jobs plus a same-day ask plus replies.",
+  },
+  {
+    q: "Will LVS change my reviews for me?",
+    a: "No. Local Visibility Score ranks gaps and emails a checklist/PDF. You stay in control of the profile.",
+  },
+] as const;
+
+export default function RooferReviewVelocityPage() {
+  return (
+    <>
+      <PseoFaqJsonLd faqs={[...FAQS]} />
+      <PseoArticle
+        eyebrow="Utah · Roofing · Salt Lake City"
+        title="Does one Google review a week beat a big burst for Salt Lake roofers?"
+        lead="A steady drip of fresh Google reviews usually beats a one-time burst that goes quiet. Recency is the signal. Pair that with a complete profile — not a review campaign into an empty listing."
+        ctaHref={CTA}
+      
+        path="/ut/salt-lake-city/roofer-google-review-velocity"
+        hubPath="/ut"
+        related={[
+          { href: "/ut/salt-lake-city/contractor-nap-mismatch-citations", title: "Name/address/phone match" },
+          { href: "/ut/ogden/roofer-google-review-replies", title: "Ogden review replies" }
+        ]}
+      >
+        <PseoH2>Why review velocity matters</PseoH2>
+        <PseoP>
+          In 2026 a complete Google Business Profile — right category, full services, fresh photos, recent reviews —
+          is one of the inputs Google can draw on for AI Overviews, not only the map pack. Reviews are one layer of
+          that completeness. Freshness compounds with category, services, and photos.
+        </PseoP>
+
+        <PseoH2>Freshness vs historic star pile</PseoH2>
+        <PseoP>
+          A shop getting a few new reviews most months usually outlasts a competitor with a big stack of reviews from
+          years ago — recency is the signal. Salt Lake roofing example: a high-star profile with silence since 2019
+          looks abandoned next to a slightly lower star shop with monthly new reviews and owner replies after
+          hail-season jobs. One review a week is a useful operating target — not a magic number. The point is
+          consistency, not a burst that never repeats.
+        </PseoP>
+
+        <PseoH2>How to run velocity without faking it</PseoH2>
+        <PseoUl>
+          <li>Same-day ask after completed jobs with a direct Google review link</li>
+          <li>Reply within 48 hours — thank-yous and calm specifics on hard reviews</li>
+          <li>Do not treat a one-time review push as a replacement for steady fresh reviews</li>
+          <li>Keep services and photos current so new reviews land on a finished listing</li>
+        </PseoUl>
+
+        <PseoH2>NAP / citations</PseoH2>
+        <PseoP>
+          NAP consistency gets you in the game; the profile fields, photos, reviews, and local content are what move
+          you once you are there. Citations that disagree with your Google phone fight the trust story your new
+          reviews are building.
+        </PseoP>
+
+        <PseoH2>FAQ</PseoH2>
+        {FAQS.map((f) => (
+          <PseoFaq key={f.q} q={f.q} a={f.a} />
+        ))}
+      </PseoArticle>
+    </>
+  );
+}

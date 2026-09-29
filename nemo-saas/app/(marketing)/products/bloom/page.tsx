@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 
+import { hubMetadata } from "@/lib/seo/pseo-metadata";
+
 import { BulletList, ProductChrome } from "../ProductChrome";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = hubMetadata({
   title: "Bloom — Seasonal Content Engine | Nemo Local",
   description:
     "Rolling 90-day calendar, drafted posts and blogs, visuals, and distribution — Bloom add-on for seasonal local brands.",
-};
+  path: "/products/bloom",
+});
 
 export default function BloomProductPage() {
   return (
